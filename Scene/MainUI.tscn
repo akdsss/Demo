@@ -1,0 +1,444 @@
+[gd_scene format=3 uid="uid://ba60nq45wqe81"]
+
+[ext_resource type="Script" uid="uid://bs2iuk2fyrsgp" path="res://Script/UIControl/MainUIControl.cs" id="1_ht100"]
+[ext_resource type="PackedScene" uid="uid://rnxjw7f23gom" path="res://Scene/UI/CharacterHeadButton.tscn" id="1_pmoct"]
+[ext_resource type="Texture2D" uid="uid://benwjl4bfqpdj" path="res://Asset/character/characterB01_head.png" id="2_kvsts"]
+[ext_resource type="Texture2D" uid="uid://bwvtee5brsh66" path="res://Asset/ui image/set_gear.png" id="2_mtny8"]
+[ext_resource type="Texture2D" uid="uid://dfwhei5sjmw88" path="res://Asset/ui image/close.png" id="5_a6gju"]
+[ext_resource type="Texture2D" uid="uid://bkh4vcqood6bm" path="res://Asset/ui image/play.png" id="5_m4gcn"]
+[ext_resource type="PackedScene" uid="uid://b0mnse4n3h5if" path="res://Scene/UI/ActionButton.tscn" id="5_ttkx3"]
+[ext_resource type="Texture2D" uid="uid://djpa8kwcyf6yt" path="res://Asset/character/characterA01_head.png" id="6_ttkx3"]
+
+[node name="MainUi" type="CanvasLayer" unique_id=1092813157 node_paths=PackedStringArray("SetPanel")]
+script = ExtResource("1_ht100")
+SetPanel = NodePath("Panel/SetPanel")
+
+[node name="Panel" type="Panel" parent="." unique_id=1997549538]
+self_modulate = Color(1, 1, 1, 0)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TopPanel" type="Panel" parent="Panel" unique_id=1859375851]
+self_modulate = Color(6.4442754, 4.9101825, 4.9101825, 1)
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 0.141
+grow_horizontal = 2
+
+[node name="Button" type="Button" parent="Panel/TopPanel" unique_id=1297374720]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -72.0
+offset_top = 6.0
+offset_right = -6.0
+offset_bottom = 72.00001
+grow_horizontal = 0
+
+[node name="TextureRect" type="TextureRect" parent="Panel/TopPanel/Button" unique_id=396422756]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_mtny8")
+
+[node name="MidPanel" type="Panel" parent="Panel" unique_id=958133218]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.141
+anchor_right = 1.0
+anchor_bottom = 0.8
+grow_horizontal = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/MidPanel" unique_id=1798135010]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="LeftRegion" type="Control" parent="Panel/MidPanel/HBoxContainer" unique_id=523585423]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.7
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MidPanel/HBoxContainer/LeftRegion" unique_id=948980234]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.043
+anchor_top = 0.056
+anchor_right = 0.722
+anchor_bottom = 0.859
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="CharacterHeadButton" parent="Panel/MidPanel/HBoxContainer/LeftRegion/VBoxContainer" unique_id=1517803722 instance=ExtResource("1_pmoct")]
+layout_mode = 2
+
+[node name="CharacterHeadButton2" parent="Panel/MidPanel/HBoxContainer/LeftRegion/VBoxContainer" unique_id=39835073 instance=ExtResource("1_pmoct")]
+layout_mode = 2
+
+[node name="TextureRect" parent="Panel/MidPanel/HBoxContainer/LeftRegion/VBoxContainer/CharacterHeadButton2/Button/HBoxContainer" parent_id_path=PackedInt32Array(39835073, 771626670) index="0" unique_id=1416145245]
+texture = ExtResource("2_kvsts")
+
+[node name="ChoseListPanel" type="Panel" parent="Panel/MidPanel/HBoxContainer/LeftRegion" unique_id=1861581180]
+layout_mode = 0
+offset_left = 174.0
+offset_top = 16.631996
+offset_right = 277.0
+offset_bottom = 292.632
+
+[node name="ColorRect" type="ColorRect" parent="Panel/MidPanel/HBoxContainer/LeftRegion/ChoseListPanel" unique_id=965169038]
+self_modulate = Color(0.6958008, 0.7204437, 0.7421875, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MidPanel/HBoxContainer/LeftRegion/ChoseListPanel/ColorRect" unique_id=1221619310]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.1
+anchor_top = 0.025
+anchor_right = 0.9
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 19
+
+[node name="ActionButton" parent="Panel/MidPanel/HBoxContainer/LeftRegion/ChoseListPanel/ColorRect/VBoxContainer" unique_id=1430029491 instance=ExtResource("5_ttkx3")]
+layout_mode = 2
+
+[node name="ActionButton2" parent="Panel/MidPanel/HBoxContainer/LeftRegion/ChoseListPanel/ColorRect/VBoxContainer" unique_id=972303099 instance=ExtResource("5_ttkx3")]
+layout_mode = 2
+text = "防御"
+
+[node name="ActionButton3" parent="Panel/MidPanel/HBoxContainer/LeftRegion/ChoseListPanel/ColorRect/VBoxContainer" unique_id=2012313837 instance=ExtResource("5_ttkx3")]
+layout_mode = 2
+text = "移动"
+
+[node name="MidRegion" type="Control" parent="Panel/MidPanel/HBoxContainer" unique_id=1600460319]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RightRegion" type="Control" parent="Panel/MidPanel/HBoxContainer" unique_id=600154088]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.7
+
+[node name="DownPanel" type="Panel" parent="Panel" unique_id=680743190]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.697
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+
+[node name="ColorRect" type="ColorRect" parent="Panel/DownPanel" unique_id=366311626]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.54296875, 0.46873474, 0.46873474, 1)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/DownPanel" unique_id=1860273468]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Control" type="Control" parent="Panel/DownPanel/HBoxContainer" unique_id=1766965952]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.15
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/DownPanel/HBoxContainer" unique_id=1787373257]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.7
+
+[node name="Control" type="Control" parent="Panel/DownPanel/HBoxContainer/VBoxContainer" unique_id=737441298]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel/DownPanel/HBoxContainer/VBoxContainer" unique_id=519707947]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.8
+theme_override_constants/separation = 22
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer" unique_id=198364959]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.5
+
+[node name="TextureRect" type="TextureRect" parent="Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=2100087077]
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("6_ttkx3")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TextureRect2" type="TextureRect" parent="Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=934504148]
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("6_ttkx3")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TextureRect3" type="TextureRect" parent="Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=1790709377]
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("6_ttkx3")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TextureRect4" type="TextureRect" parent="Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=1071035276]
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("6_ttkx3")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TextureRect5" type="TextureRect" parent="Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=796726349]
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("6_ttkx3")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TextureRect6" type="TextureRect" parent="Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer" unique_id=599911854]
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("6_ttkx3")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ColorRect" type="ColorRect" parent="Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer" unique_id=1113825448]
+layout_mode = 2
+size_flags_horizontal = 3
+color = Color(0.4522705, 0.47136307, 0.5078125, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/ColorRect" unique_id=350292892]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Control" type="Control" parent="Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/ColorRect/VBoxContainer" unique_id=1829873831]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ColorRect" type="ColorRect" parent="Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/ColorRect/VBoxContainer/Control" unique_id=1992816896]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.97265625, 0.93466187, 0.93466187, 1)
+
+[node name="Label" type="Label" parent="Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/ColorRect/VBoxContainer/Control/ColorRect" unique_id=481268407]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 8
+text = "进攻意图"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Control2" type="Control" parent="Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/ColorRect/VBoxContainer" unique_id=1243376338]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ColorRect" type="ColorRect" parent="Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/ColorRect/VBoxContainer/Control2" unique_id=356922907]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.97265625, 0.93466187, 0.93466187, 1)
+
+[node name="Control3" type="Control" parent="Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/ColorRect/VBoxContainer" unique_id=1694446507]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ColorRect" type="ColorRect" parent="Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/ColorRect/VBoxContainer/Control3" unique_id=1045866699]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.97265625, 0.93466187, 0.93466187, 1)
+
+[node name="Control4" type="Control" parent="Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/ColorRect/VBoxContainer" unique_id=1402168724]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ColorRect" type="ColorRect" parent="Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/ColorRect/VBoxContainer/Control4" unique_id=1475673201]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.97265625, 0.93466187, 0.93466187, 1)
+
+[node name="Control5" type="Control" parent="Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/ColorRect/VBoxContainer" unique_id=580776028]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ColorRect" type="ColorRect" parent="Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/ColorRect/VBoxContainer/Control5" unique_id=1878256696]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.97265625, 0.93466187, 0.93466187, 1)
+
+[node name="Control6" type="Control" parent="Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/ColorRect/VBoxContainer" unique_id=170082489]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ColorRect" type="ColorRect" parent="Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/ColorRect/VBoxContainer/Control6" unique_id=1438985043]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.97265625, 0.93466187, 0.93466187, 1)
+
+[node name="ColorRect2" type="ColorRect" parent="Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer" unique_id=1633704356]
+layout_mode = 2
+size_flags_horizontal = 3
+color = Color(0.4522705, 0.47136307, 0.5078125, 1)
+
+[node name="ColorRect3" type="ColorRect" parent="Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer" unique_id=19841019]
+layout_mode = 2
+size_flags_horizontal = 3
+color = Color(0.4522705, 0.47136307, 0.5078125, 1)
+
+[node name="ColorRect4" type="ColorRect" parent="Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer" unique_id=1350849928]
+layout_mode = 2
+size_flags_horizontal = 3
+color = Color(0.4522705, 0.47136307, 0.5078125, 1)
+
+[node name="ColorRect5" type="ColorRect" parent="Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer" unique_id=292015611]
+layout_mode = 2
+size_flags_horizontal = 3
+color = Color(0.4522705, 0.47136307, 0.5078125, 1)
+
+[node name="ColorRect6" type="ColorRect" parent="Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer" unique_id=1229034190]
+layout_mode = 2
+size_flags_horizontal = 3
+color = Color(0.4522705, 0.47136307, 0.5078125, 1)
+
+[node name="Control2" type="Control" parent="Panel/DownPanel/HBoxContainer/VBoxContainer" unique_id=185341232]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.1
+
+[node name="Control2" type="Control" parent="Panel/DownPanel/HBoxContainer" unique_id=1130004112]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.05
+
+[node name="TextureButton" type="TextureButton" parent="Panel/DownPanel/HBoxContainer/Control2" unique_id=1521475145]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = 32.0
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("5_m4gcn")
+
+[node name="SetPanel" type="Panel" parent="Panel" unique_id=428333554]
+visible = false
+layout_mode = 0
+offset_left = 147.0
+offset_top = 65.0
+offset_right = 1010.0
+offset_bottom = 551.0
+
+[node name="ColorRect" type="ColorRect" parent="Panel/SetPanel" unique_id=208453488]
+self_modulate = Color(0.7998047, 0.8493164, 0.9140625, 0.7176471)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Button" type="Button" parent="Panel/SetPanel" unique_id=340455370]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -59.600037
+offset_top = 3.199997
+offset_right = -3.0
+offset_bottom = 61.399994
+grow_horizontal = 0
+
+[node name="ColorRect" type="ColorRect" parent="Panel/SetPanel/Button" unique_id=398259452]
+self_modulate = Color(0.9375, 0.83862305, 0.83862305, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="TextureRect" type="TextureRect" parent="Panel/SetPanel/Button/ColorRect" unique_id=1237622469]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -3.6999512
+offset_top = -2.9000015
+offset_right = 3.7000122
+offset_bottom = 2.9000015
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("5_a6gju")
+
+[connection signal="pressed" from="Panel/TopPanel/Button" to="." method="SetPanelOpenButtonClicked"]
+[connection signal="pressed" from="Panel/SetPanel/Button" to="." method="SetPanelCloseButtonClicked"]
+
+[editable path="Panel/MidPanel/HBoxContainer/LeftRegion/VBoxContainer/CharacterHeadButton2"]

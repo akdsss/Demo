@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://b0mnse4n3h5if"]
+
+[node name="ActionButton" type="Button" unique_id=1430029491]
+offset_right = 117.0
+offset_bottom = 31.0
+text = "攻击"

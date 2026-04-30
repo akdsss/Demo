@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://bgs5y7k8fsd5g"]
+
+[ext_resource type="Script" uid="uid://dxrjxj08c457s" path="res://Script/CharacterControl.cs" id="1_anw42"]
+[ext_resource type="Texture2D" uid="uid://d4kwrhjarorf" path="res://Asset/character/characterA01.png" id="2_8285x"]
+
+[node name="BaseCharacter" type="Node2D" unique_id=1466071620]
+script = ExtResource("1_anw42")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=950633242]
+texture = ExtResource("2_8285x")

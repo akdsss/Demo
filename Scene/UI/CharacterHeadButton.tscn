@@ -1,0 +1,42 @@
+[gd_scene format=3 uid="uid://rnxjw7f23gom"]
+
+[ext_resource type="Texture2D" uid="uid://djpa8kwcyf6yt" path="res://Asset/character/characterA01_head.png" id="1_qaosv"]
+
+[node name="CharacterHeadButton" type="Control" unique_id=1517803722]
+custom_minimum_size = Vector2(127.505, 40.605)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Button" type="Button" parent="." unique_id=835133107]
+layout_mode = 0
+offset_right = 127.0
+offset_bottom = 40.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Button" unique_id=771626670]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="Button/HBoxContainer" unique_id=1416145245]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.3
+texture = ExtResource("1_qaosv")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="Button/HBoxContainer" unique_id=1088827159]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+size_flags_stretch_ratio = 0.7
+text = "行动"
+horizontal_alignment = 1
+vertical_alignment = 1

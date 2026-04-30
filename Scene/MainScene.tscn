@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://dxdo713grog1"]
+
+[ext_resource type="PackedScene" uid="uid://ba60nq45wqe81" path="res://Scene/MainUI.tscn" id="1_uptpg"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_8vpbu"]
+load_path = "res://.godot/imported/board.png-c8f1b2171f73faa9a6db9c7bd958e860.ctex"
+
+[node name="Node2D" type="Node2D" unique_id=197655870]
+
+[node name="MainUi" parent="." unique_id=1092813157 instance=ExtResource("1_uptpg")]
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=827220892]
+self_modulate = Color(1.0730743, 1.0258001, 0.87047005, 1)
+position = Vector2(947, 269)
+scale = Vector2(0.6367187, 0.6367187)
+texture = SubResource("CompressedTexture2D_8vpbu")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=774191597]
+position = Vector2(576, 327)
