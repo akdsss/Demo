@@ -20,12 +20,12 @@ public enum CharacterType
 public partial class PlayerData : CharacterData
 {
     [Export] public int hp;
-	[Export] public List<PlayerCommandData> playerCommandDataList;
+	[Export] public PlayerCommandData[] playerCommandDataList;
 }
 
 [GlobalClass]
 public partial class EnemyData : CharacterData
 {
     [Export] public int hp;
-	[Export] public List<EnemyCommandData> enemyCommandDataList;
+	[Export] public EnemyCommandData[] enemyCommandDataList;
 }

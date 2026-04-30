@@ -34,7 +34,6 @@ public class CommandExecuteInfo
 {
     public int targetCharacterNum;
     public List<CharacterData> targetCharacterList;
-    public 
 }
 
 public enum CommandType
