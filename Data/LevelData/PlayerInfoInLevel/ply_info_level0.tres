@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="PlayerInfoInLevel" format=3 uid="uid://ck8g1j4en3sq8"]
+
+[ext_resource type="Resource" uid="uid://1em60xk82xe8" path="res://Data/CharacterData/PlayerData/ply_data0.tres" id="1_ctvik"]
+[ext_resource type="Script" uid="uid://c5cvmqiy66klq" path="res://Data/DataScript/PlayerInfoInLevel.cs" id="1_nyrfv"]
+
+[resource]
+script = ExtResource("1_nyrfv")
+playerData = ExtResource("1_ctvik")
+coord = Vector2i(1, 1)
+metadata/_custom_type_script = "uid://c5cvmqiy66klq"

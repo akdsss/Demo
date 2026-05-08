@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="PlayerData" format=3 uid="uid://1em60xk82xe8"]
+
+[ext_resource type="Resource" uid="uid://d3a2nfknx88k6" path="res://Data/CommandData/PlayerCommandData/ply_cmd0.tres" id="1_cr8x0"]
+[ext_resource type="Script" uid="uid://bw07j5wfv22k0" path="res://Data/DataScript/PlayerData.cs" id="1_kqkx6"]
+
+[resource]
+script = ExtResource("1_kqkx6")
+hp = 100
+playerCommandDataList = Array[Object]([ExtResource("1_cr8x0")])
+characterName = "玩家0"
+characterDescription = "测试用玩家"
+metadata/_custom_type_script = "uid://bw07j5wfv22k0"

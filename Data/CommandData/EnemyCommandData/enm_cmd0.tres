@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="EnemyCommandData" format=3 uid="uid://drsextpc1i58u"]
+
+[ext_resource type="Script" uid="uid://c4mec8i6hyxs7" path="res://Data/DataScript/EnemyCommandData.cs" id="1_wk78q"]
+
+[resource]
+script = ExtResource("1_wk78q")
+commandName = "0号指令"
+commandDescription = "测试用指令"
+metadata/_custom_type_script = "uid://c4mec8i6hyxs7"

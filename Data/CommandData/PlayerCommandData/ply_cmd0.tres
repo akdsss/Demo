@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="PlayerCommandData" format=3 uid="uid://d3a2nfknx88k6"]
+
+[ext_resource type="Script" uid="uid://bjb2y4dhdh5gg" path="res://Data/DataScript/PlayerCommandData.cs" id="1_syoj4"]
+
+[resource]
+script = ExtResource("1_syoj4")
+commandName = "玩家测试指令"
+commandDescription = "测试用指令"
+metadata/_custom_type_script = "uid://bjb2y4dhdh5gg"

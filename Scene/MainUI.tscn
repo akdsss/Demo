@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://rnxjw7f23gom" path="res://Scene/UI/CharacterHeadButton.tscn" id="1_pmoct"]
 [ext_resource type="Texture2D" uid="uid://benwjl4bfqpdj" path="res://Asset/character/characterB01_head.png" id="2_kvsts"]
 [ext_resource type="Texture2D" uid="uid://bwvtee5brsh66" path="res://Asset/ui image/set_gear.png" id="2_mtny8"]
+[ext_resource type="Script" uid="uid://bkxj0aq52ecx8" path="res://Script/GameLogic/GameTest.cs" id="3_2t8ok"]
 [ext_resource type="Texture2D" uid="uid://dfwhei5sjmw88" path="res://Asset/ui image/close.png" id="5_a6gju"]
 [ext_resource type="Texture2D" uid="uid://bkh4vcqood6bm" path="res://Asset/ui image/play.png" id="5_m4gcn"]
 [ext_resource type="PackedScene" uid="uid://b0mnse4n3h5if" path="res://Scene/UI/ActionButton.tscn" id="5_ttkx3"]
@@ -48,6 +49,20 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_mtny8")
+
+[node name="GameTest" type="MenuButton" parent="Panel/TopPanel" unique_id=1918287508]
+layout_mode = 0
+offset_left = 811.0
+offset_top = 26.0
+offset_right = 934.0
+offset_bottom = 76.0
+text = "测试项"
+item_count = 2
+popup/item_0/text = "加载关卡"
+popup/item_0/id = 0
+popup/item_1/text = "退出游戏"
+popup/item_1/id = 1
+script = ExtResource("3_2t8ok")
 
 [node name="MidPanel" type="Panel" parent="Panel" unique_id=958133218]
 self_modulate = Color(1, 1, 1, 0)

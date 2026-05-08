@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="LevelData" format=3 uid="uid://q7ayp2akh3gx"]
+
+[ext_resource type="Resource" uid="uid://dh8e81weebh2c" path="res://Data/LevelData/EnemyInfoInlevel/enm_info_level0.tres" id="1_pclwo"]
+[ext_resource type="Resource" uid="uid://ck8g1j4en3sq8" path="res://Data/LevelData/PlayerInfoInLevel/ply_info_level0.tres" id="2_i8usa"]
+[ext_resource type="Script" uid="uid://b4odp0seqjtt0" path="res://Data/DataScript/LevelData.cs" id="3_jkkqq"]
+
+[resource]
+script = ExtResource("3_jkkqq")
+levelName = "测试关"
+enemyInfoInLevelArray = Array[Object]([ExtResource("1_pclwo")])
+playerInfoInLevelArray = Array[Object]([ExtResource("2_i8usa")])
+metadata/_custom_type_script = "uid://b4odp0seqjtt0"

@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3 uid="uid://b3r3k8kh5csgh"]
+
+[ext_resource type="Script" uid="uid://di57v3n6x1ras" path="res://Data/DataScript/EnemyData.cs" id="1_iwxkr"]
+
+[resource]
+script = ExtResource("1_iwxkr")
+hp = 100
+enemyCommandDataList = Array[Object]([])
+characterName = "测试敌人"
+characterDescription = "用于测试的敌人"
+characterType = 1
+metadata/_custom_type_script = "uid://di57v3n6x1ras"
