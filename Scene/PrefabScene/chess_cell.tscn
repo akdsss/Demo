@@ -1,0 +1,106 @@
+[gd_scene format=3 uid="uid://dq4b3gxtwpy6n"]
+
+[ext_resource type="Script" uid="uid://2nbdi3uv4fnb" path="res://Script/UIControl/ChessCellUIControl.cs" id="1_3jnwh"]
+[ext_resource type="Texture2D" uid="uid://cvtqa2ueu1hyq" path="res://Asset/ui image/character_point.png" id="2_oj0to"]
+
+[node name="ChessCell" type="Control" unique_id=683096677 node_paths=PackedStringArray("allCharacterPointArray")]
+layout_mode = 3
+anchors_preset = 0
+offset_left = -153.91411
+offset_top = -155.48468
+offset_right = -78.91411
+offset_bottom = -80.48468
+script = ExtResource("1_3jnwh")
+allCharacterPointArray = [NodePath(""), NodePath(""), NodePath(""), NodePath(""), NodePath(""), NodePath(""), NodePath(""), NodePath(""), NodePath("")]
+
+[node name="CharacterDisplay" type="VBoxContainer" parent="." unique_id=638981907]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="row0" type="HBoxContainer" parent="CharacterDisplay" unique_id=1434657618]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="col0" type="TextureRect" parent="CharacterDisplay/row0" unique_id=1901331818]
+self_modulate = Color(0.7562256, 0.8131676, 0.921875, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("2_oj0to")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="col1" type="TextureRect" parent="CharacterDisplay/row0" unique_id=678293797]
+self_modulate = Color(0.7562256, 0.8131676, 0.921875, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("2_oj0to")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="col2" type="TextureRect" parent="CharacterDisplay/row0" unique_id=1939150305]
+self_modulate = Color(0.7562256, 0.8131676, 0.921875, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("2_oj0to")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="row1" type="HBoxContainer" parent="CharacterDisplay" unique_id=987099602]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="col0" type="TextureRect" parent="CharacterDisplay/row1" unique_id=1786609228]
+self_modulate = Color(0.7562256, 0.8131676, 0.921875, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("2_oj0to")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="col1" type="TextureRect" parent="CharacterDisplay/row1" unique_id=206879952]
+self_modulate = Color(0.92156863, 0.75686276, 0.75686276, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("2_oj0to")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="col2" type="TextureRect" parent="CharacterDisplay/row1" unique_id=1440010563]
+self_modulate = Color(0.92156863, 0.75686276, 0.75686276, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("2_oj0to")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="row2" type="HBoxContainer" parent="CharacterDisplay" unique_id=1368688327]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="col0" type="TextureRect" parent="CharacterDisplay/row2" unique_id=232792196]
+self_modulate = Color(0.92156863, 0.75686276, 0.75686276, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("2_oj0to")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="col1" type="TextureRect" parent="CharacterDisplay/row2" unique_id=1860727843]
+self_modulate = Color(0.92156863, 0.75686276, 0.75686276, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("2_oj0to")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="col2" type="TextureRect" parent="CharacterDisplay/row2" unique_id=1421360207]
+self_modulate = Color(0.92156863, 0.75686276, 0.75686276, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("2_oj0to")
+expand_mode = 1
+stretch_mode = 5

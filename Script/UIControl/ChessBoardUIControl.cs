@@ -5,6 +5,10 @@ using System.Collections.Generic;
 public partial class ChessBoardUIControl : Sprite2D
 {
 	[Export] public ChessCellUIControl[] chessCellUIControlArray;
+	public override void _Ready()
+	{
+		// 初始化棋盘UI节点树
+	}
 	public void AddCharacterToChessCell(CharacterData characterData, Vector2I coord)
 	{
 		int idx = 0;

@@ -6,6 +6,7 @@
 [ext_resource type="Resource" uid="uid://q7ayp2akh3gx" path="res://Data/LevelData/Level_data0.tres" id="3_ly247"]
 [ext_resource type="Texture2D" uid="uid://cvtqa2ueu1hyq" path="res://Asset/ui image/character_point.png" id="3_vfxjo"]
 [ext_resource type="Script" uid="uid://2nbdi3uv4fnb" path="res://Script/UIControl/ChessCellUIControl.cs" id="5_ly247"]
+[ext_resource type="PackedScene" uid="uid://dq4b3gxtwpy6n" path="res://Scene/PrefabScene/chess_cell.tscn" id="5_nr04c"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_8vpbu"]
 load_path = "res://.godot/imported/board.png-c8f1b2171f73faa9a6db9c7bd958e860.ctex"
@@ -25,109 +26,9 @@ position = Vector2(556, 270)
 scale = Vector2(0.6367187, 0.6367187)
 texture = SubResource("CompressedTexture2D_8vpbu")
 script = ExtResource("3_l7vlk")
-chessCellUIControlArray = [NodePath("Control"), NodePath("Control2"), NodePath("Control3"), NodePath("Control4"), NodePath("Control5"), NodePath("Control6"), NodePath("Control7"), NodePath("Control8"), NodePath("Control9"), NodePath("Control10")]
+chessCellUIControlArray = [NodePath(""), NodePath("Control2"), NodePath("Control3"), NodePath("Control4"), NodePath("Control5"), NodePath("Control6"), NodePath("Control7"), NodePath("Control8"), NodePath("Control9"), NodePath("Control10")]
 
-[node name="Control" type="Control" parent="ChessBoard" unique_id=458274871 node_paths=PackedStringArray("allCharacterPointArray")]
-layout_mode = 3
-anchors_preset = 0
-offset_left = -153.91411
-offset_top = -155.48468
-offset_right = -78.91411
-offset_bottom = -80.48468
-script = ExtResource("5_ly247")
-allCharacterPointArray = [NodePath("VBoxContainer/HBoxContainer/TextureRect"), NodePath("VBoxContainer/HBoxContainer/TextureRect2"), NodePath("VBoxContainer/HBoxContainer/TextureRect3"), NodePath("VBoxContainer/HBoxContainer2/TextureRect"), NodePath("VBoxContainer/HBoxContainer2/TextureRect2"), NodePath("VBoxContainer/HBoxContainer2/TextureRect3"), NodePath("VBoxContainer/HBoxContainer3/TextureRect"), NodePath("VBoxContainer/HBoxContainer3/TextureRect2"), NodePath("VBoxContainer/HBoxContainer3/TextureRect3")]
-
-[node name="VBoxContainer" type="VBoxContainer" parent="ChessBoard/Control" unique_id=1474908385]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="ChessBoard/Control/VBoxContainer" unique_id=839965137]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="ChessBoard/Control/VBoxContainer/HBoxContainer" unique_id=83895833]
-self_modulate = Color(0.7562256, 0.8131676, 0.921875, 1)
-layout_mode = 2
-size_flags_horizontal = 3
-texture = ExtResource("3_vfxjo")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="TextureRect2" type="TextureRect" parent="ChessBoard/Control/VBoxContainer/HBoxContainer" unique_id=938502976]
-self_modulate = Color(0.7562256, 0.8131676, 0.921875, 1)
-layout_mode = 2
-size_flags_horizontal = 3
-texture = ExtResource("3_vfxjo")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="TextureRect3" type="TextureRect" parent="ChessBoard/Control/VBoxContainer/HBoxContainer" unique_id=706586573]
-self_modulate = Color(0.7562256, 0.8131676, 0.921875, 1)
-layout_mode = 2
-size_flags_horizontal = 3
-texture = ExtResource("3_vfxjo")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="HBoxContainer2" type="HBoxContainer" parent="ChessBoard/Control/VBoxContainer" unique_id=2133611103]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="ChessBoard/Control/VBoxContainer/HBoxContainer2" unique_id=474183056]
-self_modulate = Color(0.7562256, 0.8131676, 0.921875, 1)
-layout_mode = 2
-size_flags_horizontal = 3
-texture = ExtResource("3_vfxjo")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="TextureRect2" type="TextureRect" parent="ChessBoard/Control/VBoxContainer/HBoxContainer2" unique_id=964665247]
-self_modulate = Color(0.92156863, 0.75686276, 0.75686276, 1)
-layout_mode = 2
-size_flags_horizontal = 3
-texture = ExtResource("3_vfxjo")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="TextureRect3" type="TextureRect" parent="ChessBoard/Control/VBoxContainer/HBoxContainer2" unique_id=171142947]
-self_modulate = Color(0.92156863, 0.75686276, 0.75686276, 1)
-layout_mode = 2
-size_flags_horizontal = 3
-texture = ExtResource("3_vfxjo")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="HBoxContainer3" type="HBoxContainer" parent="ChessBoard/Control/VBoxContainer" unique_id=802523730]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="ChessBoard/Control/VBoxContainer/HBoxContainer3" unique_id=412587485]
-self_modulate = Color(0.92156863, 0.75686276, 0.75686276, 1)
-layout_mode = 2
-size_flags_horizontal = 3
-texture = ExtResource("3_vfxjo")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="TextureRect2" type="TextureRect" parent="ChessBoard/Control/VBoxContainer/HBoxContainer3" unique_id=228780506]
-self_modulate = Color(0.92156863, 0.75686276, 0.75686276, 1)
-layout_mode = 2
-size_flags_horizontal = 3
-texture = ExtResource("3_vfxjo")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="TextureRect3" type="TextureRect" parent="ChessBoard/Control/VBoxContainer/HBoxContainer3" unique_id=915030877]
-self_modulate = Color(0.92156863, 0.75686276, 0.75686276, 1)
-layout_mode = 2
-size_flags_horizontal = 3
-texture = ExtResource("3_vfxjo")
-expand_mode = 1
-stretch_mode = 5
+[node name="ChessCell" parent="ChessBoard" unique_id=683096677 instance=ExtResource("5_nr04c")]
 
 [node name="Control2" type="Control" parent="ChessBoard" unique_id=568014785 node_paths=PackedStringArray("allCharacterPointArray")]
 layout_mode = 3
