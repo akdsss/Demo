@@ -6,7 +6,7 @@
 [ext_resource type="Resource" uid="uid://q7ayp2akh3gx" path="res://Data/LevelData/Level_data0.tres" id="3_ly247"]
 [ext_resource type="Texture2D" uid="uid://cvtqa2ueu1hyq" path="res://Asset/ui image/character_point.png" id="3_vfxjo"]
 [ext_resource type="Script" uid="uid://2nbdi3uv4fnb" path="res://Script/UIControl/ChessCellUIControl.cs" id="5_ly247"]
-[ext_resource type="PackedScene" uid="uid://dq4b3gxtwpy6n" path="res://Scene/PrefabScene/chess_cell.tscn" id="5_nr04c"]
+[ext_resource type="Script" uid="uid://cy354wtsdib1d" path="res://Script/GameLogic/SceneSingleton.cs" id="7_nr04c"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_8vpbu"]
 load_path = "res://.godot/imported/board.png-c8f1b2171f73faa9a6db9c7bd958e860.ctex"
@@ -26,9 +26,109 @@ position = Vector2(556, 270)
 scale = Vector2(0.6367187, 0.6367187)
 texture = SubResource("CompressedTexture2D_8vpbu")
 script = ExtResource("3_l7vlk")
-chessCellUIControlArray = [NodePath(""), NodePath("Control2"), NodePath("Control3"), NodePath("Control4"), NodePath("Control5"), NodePath("Control6"), NodePath("Control7"), NodePath("Control8"), NodePath("Control9"), NodePath("Control10")]
+chessCellUIControlArray = [NodePath("ChessCell"), NodePath("Control2"), NodePath("Control3"), NodePath("Control4"), NodePath("Control5"), NodePath("Control6"), NodePath("Control7"), NodePath("Control8"), NodePath("Control9"), NodePath("Control10")]
 
-[node name="ChessCell" parent="ChessBoard" unique_id=683096677 instance=ExtResource("5_nr04c")]
+[node name="ChessCell" type="Control" parent="ChessBoard" unique_id=683096677 node_paths=PackedStringArray("allCharacterPointArray")]
+layout_mode = 3
+anchors_preset = 0
+offset_left = -153.91411
+offset_top = -155.48468
+offset_right = -78.91411
+offset_bottom = -80.48468
+script = ExtResource("5_ly247")
+allCharacterPointArray = [NodePath("CharacterDisplay/row0/col0"), NodePath("CharacterDisplay/row0/col1"), NodePath("CharacterDisplay/row0/col2"), NodePath("CharacterDisplay/row1/col0"), NodePath("CharacterDisplay/row1/col1"), NodePath("CharacterDisplay/row1/col2"), NodePath("CharacterDisplay/row2/col0"), NodePath("CharacterDisplay/row2/col1"), NodePath("CharacterDisplay/row2/col2")]
+
+[node name="CharacterDisplay" type="VBoxContainer" parent="ChessBoard/ChessCell" unique_id=638981907]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="row0" type="HBoxContainer" parent="ChessBoard/ChessCell/CharacterDisplay" unique_id=1434657618]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="col0" type="TextureRect" parent="ChessBoard/ChessCell/CharacterDisplay/row0" unique_id=1901331818]
+self_modulate = Color(0.7562256, 0.8131676, 0.921875, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("3_vfxjo")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="col1" type="TextureRect" parent="ChessBoard/ChessCell/CharacterDisplay/row0" unique_id=678293797]
+self_modulate = Color(0.7562256, 0.8131676, 0.921875, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("3_vfxjo")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="col2" type="TextureRect" parent="ChessBoard/ChessCell/CharacterDisplay/row0" unique_id=1939150305]
+self_modulate = Color(0.7562256, 0.8131676, 0.921875, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("3_vfxjo")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="row1" type="HBoxContainer" parent="ChessBoard/ChessCell/CharacterDisplay" unique_id=987099602]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="col0" type="TextureRect" parent="ChessBoard/ChessCell/CharacterDisplay/row1" unique_id=1786609228]
+self_modulate = Color(0.7562256, 0.8131676, 0.921875, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("3_vfxjo")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="col1" type="TextureRect" parent="ChessBoard/ChessCell/CharacterDisplay/row1" unique_id=206879952]
+self_modulate = Color(0.92156863, 0.75686276, 0.75686276, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("3_vfxjo")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="col2" type="TextureRect" parent="ChessBoard/ChessCell/CharacterDisplay/row1" unique_id=1440010563]
+self_modulate = Color(0.92156863, 0.75686276, 0.75686276, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("3_vfxjo")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="row2" type="HBoxContainer" parent="ChessBoard/ChessCell/CharacterDisplay" unique_id=1368688327]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="col0" type="TextureRect" parent="ChessBoard/ChessCell/CharacterDisplay/row2" unique_id=232792196]
+self_modulate = Color(0.92156863, 0.75686276, 0.75686276, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("3_vfxjo")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="col1" type="TextureRect" parent="ChessBoard/ChessCell/CharacterDisplay/row2" unique_id=1860727843]
+self_modulate = Color(0.92156863, 0.75686276, 0.75686276, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("3_vfxjo")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="col2" type="TextureRect" parent="ChessBoard/ChessCell/CharacterDisplay/row2" unique_id=1421360207]
+self_modulate = Color(0.92156863, 0.75686276, 0.75686276, 1)
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("3_vfxjo")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="Control2" type="Control" parent="ChessBoard" unique_id=568014785 node_paths=PackedStringArray("allCharacterPointArray")]
 layout_mode = 3
@@ -950,6 +1050,9 @@ stretch_mode = 5
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=774191597]
 position = Vector2(576, 327)
+
+[node name="SceneSingleton" type="Node" parent="." unique_id=1711598913]
+script = ExtResource("7_nr04c")
 
 [editable path="MainUi"]
 [editable path="MainUi/Panel/MidPanel/HBoxContainer/LeftRegion/VBoxContainer/CharacterHeadButton2"]

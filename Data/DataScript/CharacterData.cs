@@ -7,4 +7,12 @@ public partial class CharacterData : Resource
 	[Export] public string characterName;
 	[Export] public string characterDescription;
 	public Vector2I coord;
+    public CharacterBattleState characterBattleState;
+}
+
+public enum CharacterBattleState
+{
+	ALIVE,
+	DYING,
+    DEAD
 }
