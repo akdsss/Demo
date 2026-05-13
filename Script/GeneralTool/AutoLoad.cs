@@ -22,4 +22,5 @@ public static class Autoloads
 		}
 		set => _gd_ChessBoard = value;
 	}
+	public static SceneSingleton sceneSingleton;
 }

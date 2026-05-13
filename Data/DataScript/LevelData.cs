@@ -12,8 +12,11 @@ public partial class LevelData : Resource
 
 	public void LevelInitialize()
 	{
+		Autoloads.sceneSingleton.gameStateLable.Text = $"{levelName}加载中";
 		ChessBoard chessBoard = Autoloads.gd_ChessBoard;
-		foreach (EnemyInfoInLevel enemyInfo in enemyInfoInLevelArray)
+		chessBoard.ResetChessBoard();
+
+        foreach (EnemyInfoInLevel enemyInfo in enemyInfoInLevelArray)
 		{
 			chessBoard.SetCharacterToChessCell(enemyInfo.enemyData, enemyInfo.coord);
 		}
@@ -21,7 +24,8 @@ public partial class LevelData : Resource
 		{
 			chessBoard.SetCharacterToChessCell(playerInfo.playerData, playerInfo.coord);
 		}
-	}
+        Autoloads.sceneSingleton.gameStateLable.Text = "关卡已加载";
+    }
 }
 
 public enum LevelType

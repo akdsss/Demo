@@ -3,13 +3,6 @@ using System;
 
 public partial class GameMain : Node
 {
-	public ChessBoard chessBoard
-	{
-		get
-		{
-			return GetTree().Root.GetNode<ChessBoard>("/root/gd_ChessBoard");
-		}
-	}
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
@@ -37,10 +30,5 @@ public partial class GameMain : Node
 	{
 		GD.Print("退出游戏");
 		GetTree().Quit();
-	}
-
-	public void TestLevelLoad(LevelData levelData)
-	{
-		levelData.LevelInitialize();
 	}
 }

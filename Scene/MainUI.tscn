@@ -9,6 +9,8 @@
 [ext_resource type="Texture2D" uid="uid://bkh4vcqood6bm" path="res://Asset/ui image/play.png" id="5_m4gcn"]
 [ext_resource type="PackedScene" uid="uid://b0mnse4n3h5if" path="res://Scene/UI/ActionButton.tscn" id="5_ttkx3"]
 [ext_resource type="Texture2D" uid="uid://djpa8kwcyf6yt" path="res://Asset/character/characterA01_head.png" id="6_ttkx3"]
+[ext_resource type="Texture2D" uid="uid://cmmry41jr5po5" path="res://Asset/character/enemyA01_head.png" id="7_50gh3"]
+[ext_resource type="Texture2D" uid="uid://cs2w8ffvm4mqi" path="res://Asset/character/enemyB01_head.png" id="8_yy3k1"]
 
 [node name="MainUi" type="CanvasLayer" unique_id=1092813157 node_paths=PackedStringArray("SetPanel")]
 script = ExtResource("1_ht100")
@@ -52,10 +54,10 @@ texture = ExtResource("2_mtny8")
 
 [node name="GameTest" type="MenuButton" parent="Panel/TopPanel" unique_id=1918287508]
 layout_mode = 0
-offset_left = 811.0
-offset_top = 26.0
-offset_right = 934.0
-offset_bottom = 76.0
+offset_left = 938.0
+offset_top = 14.0
+offset_right = 1061.0
+offset_bottom = 64.0
 text = "测试项"
 item_count = 2
 popup/item_0/text = "加载关卡"
@@ -64,13 +66,28 @@ popup/item_1/text = "退出游戏"
 popup/item_1/id = 1
 script = ExtResource("3_2t8ok")
 
+[node name="Label" type="Label" parent="Panel/TopPanel" unique_id=1815430504]
+layout_mode = 1
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -159.0
+offset_right = 164.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 39
+text = "游戏状态"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="MidPanel" type="Panel" parent="Panel" unique_id=958133218]
 self_modulate = Color(1, 1, 1, 0)
 layout_mode = 1
 anchors_preset = -1
 anchor_top = 0.141
 anchor_right = 1.0
-anchor_bottom = 0.8
+anchor_bottom = 0.698
 grow_horizontal = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Panel/MidPanel" unique_id=1798135010]
@@ -154,6 +171,50 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.7
 
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MidPanel/HBoxContainer/RightRegion" unique_id=208221730]
+layout_mode = 0
+offset_left = 174.0
+offset_top = 19.631996
+offset_right = 301.0
+offset_bottom = 307.632
+theme_override_constants/separation = 30
+
+[node name="CharacterHeadButton" parent="Panel/MidPanel/HBoxContainer/RightRegion/VBoxContainer" unique_id=633040429 instance=ExtResource("1_pmoct")]
+layout_mode = 2
+
+[node name="Button" parent="Panel/MidPanel/HBoxContainer/RightRegion/VBoxContainer/CharacterHeadButton" index="0" unique_id=835133107]
+disabled = true
+
+[node name="TextureRect" parent="Panel/MidPanel/HBoxContainer/RightRegion/VBoxContainer/CharacterHeadButton/Button/HBoxContainer" parent_id_path=PackedInt32Array(633040429, 771626670) index="0" unique_id=1416145245]
+texture = ExtResource("7_50gh3")
+
+[node name="Label" parent="Panel/MidPanel/HBoxContainer/RightRegion/VBoxContainer/CharacterHeadButton/Button/HBoxContainer" parent_id_path=PackedInt32Array(633040429, 771626670) index="1" unique_id=1088827159]
+text = "待命"
+
+[node name="CharacterHeadButton2" parent="Panel/MidPanel/HBoxContainer/RightRegion/VBoxContainer" unique_id=244080416 instance=ExtResource("1_pmoct")]
+layout_mode = 2
+
+[node name="Button" parent="Panel/MidPanel/HBoxContainer/RightRegion/VBoxContainer/CharacterHeadButton2" index="0" unique_id=835133107]
+disabled = true
+
+[node name="TextureRect" parent="Panel/MidPanel/HBoxContainer/RightRegion/VBoxContainer/CharacterHeadButton2/Button/HBoxContainer" parent_id_path=PackedInt32Array(244080416, 771626670) index="0" unique_id=1416145245]
+texture = ExtResource("8_yy3k1")
+
+[node name="Label" parent="Panel/MidPanel/HBoxContainer/RightRegion/VBoxContainer/CharacterHeadButton2/Button/HBoxContainer" parent_id_path=PackedInt32Array(244080416, 771626670) index="1" unique_id=1088827159]
+text = "待命"
+
+[node name="CharacterHeadButton3" parent="Panel/MidPanel/HBoxContainer/RightRegion/VBoxContainer" unique_id=451431989 instance=ExtResource("1_pmoct")]
+layout_mode = 2
+
+[node name="Button" parent="Panel/MidPanel/HBoxContainer/RightRegion/VBoxContainer/CharacterHeadButton3" index="0" unique_id=835133107]
+disabled = true
+
+[node name="TextureRect" parent="Panel/MidPanel/HBoxContainer/RightRegion/VBoxContainer/CharacterHeadButton3/Button/HBoxContainer" parent_id_path=PackedInt32Array(451431989, 771626670) index="0" unique_id=1416145245]
+texture = ExtResource("8_yy3k1")
+
+[node name="Label" parent="Panel/MidPanel/HBoxContainer/RightRegion/VBoxContainer/CharacterHeadButton3/Button/HBoxContainer" parent_id_path=PackedInt32Array(451431989, 771626670) index="1" unique_id=1088827159]
+text = "待命"
+
 [node name="DownPanel" type="Panel" parent="Panel" unique_id=680743190]
 layout_mode = 1
 anchors_preset = -1
@@ -182,7 +243,7 @@ grow_vertical = 2
 [node name="Control" type="Control" parent="Panel/DownPanel/HBoxContainer" unique_id=1766965952]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.15
+size_flags_stretch_ratio = 0.07
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Panel/DownPanel/HBoxContainer" unique_id=1787373257]
 layout_mode = 2
@@ -385,7 +446,7 @@ size_flags_stretch_ratio = 0.1
 [node name="Control2" type="Control" parent="Panel/DownPanel/HBoxContainer" unique_id=1130004112]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.05
+size_flags_stretch_ratio = 0.09
 
 [node name="TextureButton" type="TextureButton" parent="Panel/DownPanel/HBoxContainer/Control2" unique_id=1521475145]
 layout_mode = 1
@@ -457,3 +518,6 @@ texture = ExtResource("5_a6gju")
 [connection signal="pressed" from="Panel/SetPanel/Button" to="." method="SetPanelCloseButtonClicked"]
 
 [editable path="Panel/MidPanel/HBoxContainer/LeftRegion/VBoxContainer/CharacterHeadButton2"]
+[editable path="Panel/MidPanel/HBoxContainer/RightRegion/VBoxContainer/CharacterHeadButton"]
+[editable path="Panel/MidPanel/HBoxContainer/RightRegion/VBoxContainer/CharacterHeadButton2"]
+[editable path="Panel/MidPanel/HBoxContainer/RightRegion/VBoxContainer/CharacterHeadButton3"]

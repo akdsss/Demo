@@ -8,18 +8,11 @@ public partial class CommandData : Resource
 	[Export] public int commandId;
 	[Export] public string commandName;
 	[Export] public string commandDescription;
-	[Export] public CommandType commandType;
 }
 
 public class CommandExecuteInfo
 {
+	public CommandData commandData;
 	public int targetCharacterNum;
 	public List<CharacterData> targetCharacterList;
-}
-
-public enum CommandType
-{
-	ATTACK,
-	DEFENT,
-	MOVE
 }

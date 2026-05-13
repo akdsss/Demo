@@ -5,7 +5,11 @@
 [ext_resource type="Script" uid="uid://ddlv0r2f80vpr" path="res://Script/UIControl/ChessBoardUIControl.cs" id="3_l7vlk"]
 [ext_resource type="Resource" uid="uid://q7ayp2akh3gx" path="res://Data/LevelData/Level_data0.tres" id="3_ly247"]
 [ext_resource type="Texture2D" uid="uid://cvtqa2ueu1hyq" path="res://Asset/ui image/character_point.png" id="3_vfxjo"]
+[ext_resource type="Texture2D" uid="uid://benwjl4bfqpdj" path="res://Asset/character/characterB01_head.png" id="4_so1si"]
+[ext_resource type="Texture2D" uid="uid://cmmry41jr5po5" path="res://Asset/character/enemyA01_head.png" id="5_h4sd3"]
 [ext_resource type="Script" uid="uid://2nbdi3uv4fnb" path="res://Script/UIControl/ChessCellUIControl.cs" id="5_ly247"]
+[ext_resource type="Texture2D" uid="uid://cs2w8ffvm4mqi" path="res://Asset/character/enemyB01_head.png" id="6_fr17n"]
+[ext_resource type="Texture2D" uid="uid://kb5ad8pjvdeb" path="res://Asset/character/unknown_head.png" id="7_j5k17"]
 [ext_resource type="Script" uid="uid://cy354wtsdib1d" path="res://Script/GameLogic/SceneSingleton.cs" id="7_nr04c"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_8vpbu"]
@@ -17,8 +21,31 @@ script = ExtResource("1_hcm6b")
 [node name="MainUi" parent="." unique_id=1092813157 instance=ExtResource("1_uptpg")]
 
 [node name="GameTest" parent="MainUi/Panel/TopPanel" parent_id_path=PackedInt32Array(1092813157, 1859375851) index="1" unique_id=1918287508 node_paths=PackedStringArray("gameMain")]
+item_count = 4
+popup/item_2/text = "测试-敌方准备结束"
+popup/item_2/id = 2
+popup/item_3/text = "测试-玩家准备结束"
+popup/item_3/id = 3
 gameMain = NodePath("../../../..")
 levelData = ExtResource("3_ly247")
+
+[node name="TextureRect2" parent="MainUi/Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer" parent_id_path=PackedInt32Array(1092813157, 198364959) index="1" unique_id=934504148]
+texture = ExtResource("4_so1si")
+
+[node name="TextureRect3" parent="MainUi/Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer" parent_id_path=PackedInt32Array(1092813157, 198364959) index="2" unique_id=1790709377]
+texture = ExtResource("5_h4sd3")
+
+[node name="TextureRect4" parent="MainUi/Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer" parent_id_path=PackedInt32Array(1092813157, 198364959) index="3" unique_id=1071035276]
+texture = ExtResource("6_fr17n")
+
+[node name="TextureRect5" parent="MainUi/Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer" parent_id_path=PackedInt32Array(1092813157, 198364959) index="4" unique_id=796726349]
+texture = ExtResource("6_fr17n")
+
+[node name="TextureRect6" parent="MainUi/Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/VBoxContainer" parent_id_path=PackedInt32Array(1092813157, 198364959) index="5" unique_id=599911854]
+texture = ExtResource("7_j5k17")
+
+[node name="Label" parent="MainUi/Panel/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/ColorRect/VBoxContainer/Control/ColorRect" parent_id_path=PackedInt32Array(1092813157, 1992816896) index="0" unique_id=481268407]
+theme_override_font_sizes/font_size = 12
 
 [node name="ChessBoard" type="Sprite2D" parent="." unique_id=827220892 node_paths=PackedStringArray("chessCellUIControlArray")]
 self_modulate = Color(1.0730743, 1.0258001, 0.87047005, 1)
@@ -1051,8 +1078,12 @@ stretch_mode = 5
 [node name="Camera2D" type="Camera2D" parent="." unique_id=774191597]
 position = Vector2(576, 327)
 
-[node name="SceneSingleton" type="Node" parent="." unique_id=1711598913]
+[node name="SceneSingleton" type="Node" parent="." unique_id=1711598913 node_paths=PackedStringArray("gameStateLable")]
 script = ExtResource("7_nr04c")
+gameStateLable = NodePath("../MainUi/Panel/TopPanel/Label")
 
 [editable path="MainUi"]
 [editable path="MainUi/Panel/MidPanel/HBoxContainer/LeftRegion/VBoxContainer/CharacterHeadButton2"]
+[editable path="MainUi/Panel/MidPanel/HBoxContainer/RightRegion/VBoxContainer/CharacterHeadButton"]
+[editable path="MainUi/Panel/MidPanel/HBoxContainer/RightRegion/VBoxContainer/CharacterHeadButton2"]
+[editable path="MainUi/Panel/MidPanel/HBoxContainer/RightRegion/VBoxContainer/CharacterHeadButton3"]

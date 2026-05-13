@@ -18,14 +18,28 @@ public partial class GameTest : MenuButton
 		switch (id)
 		{
 			case 0:
-				gameMain.TestLevelLoad(levelData);
-				break;
+				TestStartGame();
+                break;
 			case 1:
 				gameMain.ExitGame();
 				break;
-			default:
+			case 2:
+				//PubTool.instance.SetManagerState(Autoloads.sceneSingleton.battleManager, PrepareTurnState.ENEMY_PRE_OVER);
+                Autoloads.sceneSingleton.battleManager.SetManagerState(PrepareTurnState.ENEMY_PRE_OVER);
+                break;
+            case 3:
+                //PubTool.instance.SetManagerState(Autoloads.sceneSingleton.battleManager, PrepareTurnState.PLAYER_PRE_OVER);
+                Autoloads.sceneSingleton.battleManager.SetManagerState(PrepareTurnState.PLAYER_PRE_OVER);
+                break;
+            default:
 				GD.Print("未知菜单项");
 				break;
 		}
 	}
+	private void TestStartGame()
+	{
+		PubTool.instance.gameMode = GameMode.Test;
+        levelData.LevelInitialize();
+		Autoloads.sceneSingleton.battleManager.BattleStart(levelData);
+    }
 }

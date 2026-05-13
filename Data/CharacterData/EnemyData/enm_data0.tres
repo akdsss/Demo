@@ -5,8 +5,7 @@
 [resource]
 script = ExtResource("1_iwxkr")
 hp = 100
-enemyCommandDataList = Array[Object]([])
+enemyCommandDataArray = null
 characterName = "测试敌人"
 characterDescription = "用于测试的敌人"
-characterType = 1
 metadata/_custom_type_script = "uid://di57v3n6x1ras"

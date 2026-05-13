@@ -1,8 +1,10 @@
 using Godot;
 using System;
+using static BattleManager;
 
 public partial class PubTool : Node
 {
+	public GameMode gameMode = GameMode.Normal;
 	private static PubTool _instance;
 	public static PubTool instance
 	{
@@ -28,4 +30,35 @@ public partial class PubTool : Node
 									   // 或 child.Free();        // 立即释放（不推荐，可能引发错误）
 		}
 	}
+	public void PrintToCmdAndTitle(string content)
+	{
+		GD.Print(content);
+		Autoloads.sceneSingleton.gameStateLable.Text = content;
+	}
+    //public void SetManagerState(BattleManager battleManager, BattleState _battleState)
+    //{
+    //    battleManager.battleState = _battleState;
+    //    EmitSignal(nameof(BattleStateChangedEventHandler));
+    //}
+    //public void SetManagerState(BattleManager battleManager, MainTurnState _mainTurnState)
+    //{
+    //    battleManager.mainTurnState = _mainTurnState;
+    //    EmitSignal(nameof(MainTurnStateChangedEventHandler));
+    //}
+    //public void SetManagerState(BattleManager battleManager, PrepareTurnState _prepareTurnState)
+    //{
+    //    battleManager.prepareTurnState = _prepareTurnState;
+    //    EmitSignal(nameof(PrepareTurnStateChangedEventHandler));
+    //}
+    //public void SetManagerState(BattleManager battleManager, PlayTurnState _playTurnState)
+    //{
+    //    battleManager.playTurnState = _playTurnState;
+    //    EmitSignal(nameof(PlayTurnStateChangedEventHandler));
+    //}
+}
+
+public enum GameMode
+{
+	Test,
+	Normal
 }
