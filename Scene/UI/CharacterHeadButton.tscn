@@ -2,9 +2,42 @@
 
 [ext_resource type="StyleBox" uid="uid://bdkc5c3x7uxy5" path="res://Asset/ui image/button_image.tres" id="1_d8uoa"]
 [ext_resource type="Texture2D" uid="uid://djpa8kwcyf6yt" path="res://Asset/character/characterA01_head.png" id="1_qaosv"]
-[ext_resource type="StyleBox" uid="uid://bjgvkt8utwi7a" path="res://Asset/ui image/disable_button_image.tres" id="2_h4qj3"]
+[ext_resource type="Script" uid="uid://cplr3kd26bm2p" path="res://Script/UIControl/CharacterHeadButtonControl.cs" id="1_vy6d6"]
+[ext_resource type="Texture2D" uid="uid://b54n2m4nrjgn3" path="res://Asset/ui image/trangle.png" id="3_h4qj3"]
 
-[node name="CharacterHeadButton" type="Control" unique_id=1517803722]
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_vy6d6"]
+load_path = "res://.godot/imported/rectangle.png-1d62f6ac2d0bc525f2a8983978cdca99.ctex"
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_1m8ul"]
+texture = SubResource("CompressedTexture2D_vy6d6")
+texture_margin_left = 10.0
+texture_margin_top = 10.0
+texture_margin_right = 10.0
+texture_margin_bottom = 10.0
+modulate_color = Color(0.6328125, 0.6328125, 0.6328125, 1)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_1m8ul"]
+load_path = "res://.godot/imported/rectangle.png-1d62f6ac2d0bc525f2a8983978cdca99.ctex"
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_33gp6"]
+texture = SubResource("CompressedTexture2D_1m8ul")
+texture_margin_left = 10.0
+texture_margin_top = 10.0
+texture_margin_right = 10.0
+texture_margin_bottom = 10.0
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_qc2kn"]
+load_path = "res://.godot/imported/rectangle.png-1d62f6ac2d0bc525f2a8983978cdca99.ctex"
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_m5abo"]
+texture = SubResource("CompressedTexture2D_qc2kn")
+texture_margin_left = 10.0
+texture_margin_top = 10.0
+texture_margin_right = 10.0
+texture_margin_bottom = 10.0
+modulate_color = Color(0.4296875, 0.24169922, 0.24169922, 1)
+
+[node name="CharacterHeadButton" type="Control" unique_id=1517803722 node_paths=PackedStringArray("characterHeadTextureRect", "actionStateLabel", "actionTimesArray", "button", "focusTrangle")]
 custom_minimum_size = Vector2(127.505, 40.605)
 layout_mode = 3
 anchors_preset = 15
@@ -12,13 +45,22 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_vy6d6")
+characterHeadTextureRect = NodePath("Button/HBoxContainer/TextureRect")
+actionStateLabel = NodePath("Button/HBoxContainer/Label")
+actionTimesArray = [NodePath("Button/HBoxContainer/VBoxContainer/ColorRect2"), NodePath("Button/HBoxContainer/VBoxContainer/ColorRect3"), NodePath("Button/HBoxContainer/VBoxContainer/ColorRect4"), NodePath("Button/HBoxContainer/VBoxContainer/ColorRect5")]
+button = NodePath("Button")
+focusTrangle = NodePath("Button/FocusTrangle")
 
 [node name="Button" type="Button" parent="." unique_id=1713320923]
 layout_mode = 0
 offset_right = 127.0
 offset_bottom = 40.0
 theme_override_styles/normal = ExtResource("1_d8uoa")
-theme_override_styles/disabled = ExtResource("2_h4qj3")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_1m8ul")
+theme_override_styles/hover = SubResource("StyleBoxTexture_33gp6")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_m5abo")
+toggle_mode = true
 
 [node name="HBoxContainer" type="HBoxContainer" parent="Button" unique_id=771626670]
 layout_mode = 1
@@ -40,6 +82,44 @@ texture = ExtResource("1_qaosv")
 expand_mode = 3
 stretch_mode = 5
 
+[node name="VBoxContainer" type="VBoxContainer" parent="Button/HBoxContainer" unique_id=536137367]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.19
+theme_override_constants/separation = 2
+
+[node name="ColorRect" type="ColorRect" parent="Button/HBoxContainer/VBoxContainer" unique_id=1948645583]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
+color = Color(0.8901961, 0.7647059, 0.52156866, 0)
+
+[node name="ColorRect2" type="ColorRect" parent="Button/HBoxContainer/VBoxContainer" unique_id=1622720780]
+layout_mode = 2
+size_flags_vertical = 3
+color = Color(0.84765625, 0.6481414, 0.26158142, 1)
+
+[node name="ColorRect3" type="ColorRect" parent="Button/HBoxContainer/VBoxContainer" unique_id=1601835067]
+layout_mode = 2
+size_flags_vertical = 3
+color = Color(0.84765625, 0.6481414, 0.26158142, 1)
+
+[node name="ColorRect4" type="ColorRect" parent="Button/HBoxContainer/VBoxContainer" unique_id=80656836]
+layout_mode = 2
+size_flags_vertical = 3
+color = Color(0.84765625, 0.6481414, 0.26158142, 1)
+
+[node name="ColorRect5" type="ColorRect" parent="Button/HBoxContainer/VBoxContainer" unique_id=1821575942]
+layout_mode = 2
+size_flags_vertical = 3
+color = Color(0.84765625, 0.6481414, 0.26158142, 1)
+
+[node name="ColorRect6" type="ColorRect" parent="Button/HBoxContainer/VBoxContainer" unique_id=1541959809]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
+color = Color(0.8901961, 0.7647059, 0.52156866, 0)
+
 [node name="Label" type="Label" parent="Button/HBoxContainer" unique_id=1088827159]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -49,3 +129,17 @@ theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "行动"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="FocusTrangle" type="TextureRect" parent="Button" unique_id=128246485]
+visible = false
+layout_mode = 0
+offset_left = 129.0
+offset_top = 9.0
+offset_right = 152.21527
+offset_bottom = 28.07306
+rotation = -1.5707964
+pivot_offset_ratio = Vector2(0.5, 0.5)
+texture = ExtResource("3_h4qj3")
+expand_mode = 1
+
+[connection signal="toggled" from="Button" to="." method="CharacterHeadButtonPressed"]

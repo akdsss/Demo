@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="PlayerInfoInLevel" format=3 uid="uid://ck8g1j4en3sq8"]
 
-[ext_resource type="Resource" uid="uid://1em60xk82xe8" path="res://Data/CharacterData/PlayerData/ply_data0.tres" id="1_ctvik"]
+[ext_resource type="Resource" uid="uid://grtxmchfk7wy" path="res://Data/CharacterData/PlayerData/ply_data0.tres" id="1_ctvik"]
 [ext_resource type="Script" uid="uid://c5cvmqiy66klq" path="res://Data/DataScript/PlayerInfoInLevel.cs" id="1_nyrfv"]
 
 [resource]

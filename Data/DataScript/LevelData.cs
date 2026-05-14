@@ -12,7 +12,7 @@ public partial class LevelData : Resource
 
 	public void LevelInitialize()
 	{
-		Autoloads.sceneSingleton.gameStateLable.Text = $"{levelName}加载中";
+		Autoloads.sceneSingleton.gameStateLable.Text = $"关卡{levelName}加载中";
 		ChessBoard chessBoard = Autoloads.gd_ChessBoard;
 		chessBoard.ResetChessBoard();
 
@@ -24,6 +24,7 @@ public partial class LevelData : Resource
 		{
 			chessBoard.SetCharacterToChessCell(playerInfo.playerData, playerInfo.coord);
 		}
+
         Autoloads.sceneSingleton.gameStateLable.Text = "关卡已加载";
     }
 }

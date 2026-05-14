@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="PlayerCommandData" format=3 uid="uid://djte3fnfk71y7"]
+
+[ext_resource type="Script" uid="uid://bjb2y4dhdh5gg" path="res://Data/DataScript/PlayerCommandData.cs" id="1_tssbn"]
+
+[resource]
+script = ExtResource("1_tssbn")
+commandId = 2
+commandName = "移动"
+commandDescription = "移动到指定地点"
+metadata/_custom_type_script = "uid://bjb2y4dhdh5gg"

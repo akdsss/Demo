@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="PlayerCommandData" format=3 uid="uid://blo0ajilvr0vb"]
+
+[ext_resource type="Script" uid="uid://bjb2y4dhdh5gg" path="res://Data/DataScript/PlayerCommandData.cs" id="1_oidgd"]
+
+[resource]
+script = ExtResource("1_oidgd")
+commandId = 1
+commandName = "攻击"
+commandDescription = "对1个近战目标进行攻击"
+metadata/_custom_type_script = "uid://bjb2y4dhdh5gg"

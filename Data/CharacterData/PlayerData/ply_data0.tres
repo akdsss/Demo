@@ -1,12 +1,18 @@
-[gd_resource type="Resource" script_class="PlayerData" format=3 uid="uid://1em60xk82xe8"]
+[gd_resource type="Resource" script_class="PlayerData" format=3 uid="uid://grtxmchfk7wy"]
 
+[ext_resource type="Texture2D" uid="uid://djpa8kwcyf6yt" path="res://Asset/character/characterA01_head.png" id="1_5xrfs"]
 [ext_resource type="Resource" uid="uid://d3a2nfknx88k6" path="res://Data/CommandData/PlayerCommandData/ply_cmd0.tres" id="1_cr8x0"]
 [ext_resource type="Script" uid="uid://bw07j5wfv22k0" path="res://Data/DataScript/PlayerData.cs" id="1_kqkx6"]
+[ext_resource type="Resource" uid="uid://blo0ajilvr0vb" path="res://Data/CommandData/PlayerCommandData/ply_cmd1.tres" id="3_1of5w"]
+[ext_resource type="Resource" uid="uid://djte3fnfk71y7" path="res://Data/CommandData/PlayerCommandData/ply_cmd2.tres" id="4_1of5w"]
 
 [resource]
 script = ExtResource("1_kqkx6")
-hp = 100
-playerCommandDataList = Array[Object]([ExtResource("1_cr8x0")])
-characterName = "玩家0"
-characterDescription = "测试用玩家"
+playerCommandDataList = Array[Object]([ExtResource("1_cr8x0"), ExtResource("3_1of5w"), ExtResource("4_1of5w")])
+characterName = "测试玩家A"
+characterDescription = "这是一个测试玩家A的描述"
+characterHeadImage = ExtResource("1_5xrfs")
+hp = 100.0
+atk = 10.0
+turnInitialActionTimes = 4
 metadata/_custom_type_script = "uid://bw07j5wfv22k0"

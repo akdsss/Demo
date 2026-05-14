@@ -29,7 +29,11 @@ public partial class ChessBoard : Node
 		// 在场景树准备好时把实例注册到静态访问器
 		Autoloads.gd_ChessBoard = this;
 	}
-
+	public void MoveCharacter(CharacterData characterData, Vector2I targetCoord)
+	{
+		RemoveCharacterFromChessCell(characterData);
+        SetCharacterToChessCell(characterData, targetCoord);
+	}
 	public void SetCharacterToChessCell(CharacterData characterData, Vector2I coord)
 	{
 		// 设置角色坐标
@@ -50,17 +54,12 @@ public partial class ChessBoard : Node
 		//}
 	}
 
-	//public void RemoveCharacterFromChessCell(CharacterData characterData)
-	//{
-	//	var chessBoardUIControl = GetTree().CurrentScene.GetNode<ChessBoardUIControl>("ChessBoard");
-	//	foreach (var chessCellRow in chessCellList)
-	//	{
-	//		foreach(var chessCell in chessCellRow)
-	//		{
-	//			chessCell.chessCellUIControl.RemoveAllCharacterDisplay();
-	//		}
-	//	}
-	//}
+	public void RemoveCharacterFromChessCell(CharacterData characterData)
+	{
+		Vector2I originCoord = characterData.coord;
+        ChessCell targetChessCell = chessCellList[originCoord.X][originCoord.Y];
+        targetChessCell.chessCellUIControl.RemoveCharacterDisplay(characterData);
+	}
 
 	public void ResetChessBoard()
 	{

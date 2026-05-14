@@ -2,11 +2,13 @@
 
 [ext_resource type="Resource" uid="uid://dh8e81weebh2c" path="res://Data/LevelData/EnemyInfoInlevel/enm_info_level0.tres" id="1_pclwo"]
 [ext_resource type="Resource" uid="uid://ck8g1j4en3sq8" path="res://Data/LevelData/PlayerInfoInLevel/ply_info_level0.tres" id="2_i8usa"]
+[ext_resource type="Resource" uid="uid://k50keva7c6i" path="res://Data/LevelData/PlayerInfoInLevel/ply_info_level1.tres" id="3_i8usa"]
 [ext_resource type="Script" uid="uid://b4odp0seqjtt0" path="res://Data/DataScript/LevelData.cs" id="3_jkkqq"]
+[ext_resource type="Resource" uid="uid://cwi34lb5hv5c1" path="res://Data/LevelData/PlayerInfoInLevel/ply_info_level2.tres" id="4_jkkqq"]
 
 [resource]
 script = ExtResource("3_jkkqq")
 levelName = "测试关"
 enemyInfoInLevelArray = Array[Object]([ExtResource("1_pclwo")])
-playerInfoInLevelArray = Array[Object]([ExtResource("2_i8usa")])
+playerInfoInLevelArray = Array[Object]([ExtResource("2_i8usa"), ExtResource("3_i8usa"), ExtResource("4_jkkqq")])
 metadata/_custom_type_script = "uid://b4odp0seqjtt0"

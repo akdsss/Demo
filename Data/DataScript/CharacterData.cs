@@ -8,7 +8,10 @@ public partial class CharacterData : Resource
 	[Export] public int characterId;
 	[Export] public string characterName;
 	[Export] public string characterDescription;
-	public Vector2I coord;
+	[Export] public Texture2D characterHeadImage;
+    [Export] public float hp;
+    [Export] public float atk;
+    public Vector2I coord;
 	public CharacterBattleState characterBattleState;
     [Export] public int turnInitialActionTimes;
     public int currentRestActionTimes;
@@ -17,7 +20,8 @@ public partial class CharacterData : Resource
 	public void CharacterInitialize()
 	{
 		commandQueue = new List<CommandExecuteInfo>();
-		for (int i = 0; i < 6; i++)
+		int targetQueueLength = Autoloads.gameQueueLength;
+		for (int i = 0; i < targetQueueLength; i++)
 		{
             commandQueue.Add(new CommandExecuteInfo());
 		}

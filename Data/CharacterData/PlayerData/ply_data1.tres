@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="PlayerData" format=3 uid="uid://dxesp6pjxwnm3"]
+
+[ext_resource type="Texture2D" uid="uid://benwjl4bfqpdj" path="res://Asset/character/characterB01_head.png" id="1_rk4s4"]
+[ext_resource type="Script" uid="uid://bw07j5wfv22k0" path="res://Data/DataScript/PlayerData.cs" id="2_7w7sr"]
+[ext_resource type="Resource" uid="uid://blo0ajilvr0vb" path="res://Data/CommandData/PlayerCommandData/ply_cmd1.tres" id="2_y02dh"]
+[ext_resource type="Resource" uid="uid://djte3fnfk71y7" path="res://Data/CommandData/PlayerCommandData/ply_cmd2.tres" id="3_dnfav"]
+
+[resource]
+script = ExtResource("2_7w7sr")
+playerCommandDataList = Array[Object]([ExtResource("2_y02dh"), ExtResource("3_dnfav")])
+characterId = 1
+characterName = "测试玩家B"
+characterDescription = "测试玩家B的描述略有不同"
+characterHeadImage = ExtResource("1_rk4s4")
+hp = 120.0
+atk = 8.0
+turnInitialActionTimes = 3
+metadata/_custom_type_script = "uid://bw07j5wfv22k0"

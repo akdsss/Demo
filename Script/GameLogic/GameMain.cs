@@ -16,6 +16,9 @@ public partial class GameMain : Node
                 ui_ctl_idx++;
             }
         }
+
+		// 关闭玩家选项面板
+		Autoloads.sceneSingleton.playerActionChoseList.Visible = false;
     }
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.

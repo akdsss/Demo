@@ -4,6 +4,6 @@
 
 [resource]
 script = ExtResource("1_syoj4")
-commandName = "玩家测试指令"
+commandName = "测试指令"
 commandDescription = "测试用指令"
 metadata/_custom_type_script = "uid://bjb2y4dhdh5gg"

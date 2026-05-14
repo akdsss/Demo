@@ -5,6 +5,10 @@ public partial class SceneSingleton : Node
 {
 	public BattleManager battleManager;
 	[Export] public Label gameStateLable;
+	[Export] public Panel playerActionChoseList;
+	[Export] public Texture2D defaultCharacterImage;
+	public PlayerCharacterHeadListUIControl playerCharacterHeadListUIControl;
+	public EnemyCharacterHeadListUIControl enemyCharacterHeadListUIControl;
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{

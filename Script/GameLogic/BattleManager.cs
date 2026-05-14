@@ -7,7 +7,7 @@ public partial class BattleManager : Node
 	public BattleState battleState = BattleState.NOT_INITIALIZED;
 	//private TurnManager turnManager;
 	private List<CharacterData> battleCharacterDataList;
-	public List<PlayerData> battlePlayerDateList;
+	public List<PlayerData> battlePlayerDataList;
 	public List<EnemyData> battleEnemyDataList;
 
 	[Signal] public delegate void BSEventHandler();
@@ -43,11 +43,11 @@ public partial class BattleManager : Node
 		battleState = BattleState.INITIALIZED;
 
 		// 玩家、敌人列表初始化
-		battlePlayerDateList = new();
+		battlePlayerDataList = new();
 		battleEnemyDataList = new();
 		foreach (var playerInfo in levelData.playerInfoInLevelArray)
 		{
-			battlePlayerDateList.Add(playerInfo.playerData);
+			battlePlayerDataList.Add(playerInfo.playerData);
 		}
 		foreach (var enemyInfo in levelData.enemyInfoInLevelArray)
 		{
@@ -57,7 +57,7 @@ public partial class BattleManager : Node
 		// 回合管理初始化
 		battleCharacterDataList = new();
 
-		battleCharacterDataList.AddRange(battlePlayerDateList);
+		battleCharacterDataList.AddRange(battlePlayerDataList);
 		battleCharacterDataList.AddRange(battleEnemyDataList);
 
 		// 角色初始化
@@ -65,6 +65,9 @@ public partial class BattleManager : Node
 		{
 			characterData.CharacterInitialize();
 		}
+
+		// 玩家列表初始化
+		Autoloads.sceneSingleton.playerCharacterHeadListUIControl.Initialize();
 	}
 	public void BattleEnd()
 	{
