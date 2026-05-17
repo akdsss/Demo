@@ -3,13 +3,14 @@ using Godot;
 [GlobalClass]
 public partial class EnemyCommandData : CommandData
 {
-    [Export] public EnemyCommandName enemyCommandName;
+    //[Export] public EnemyCommandName enemyCommandName;
 }
 
-public enum EnemyCommandName
-{
-    Move,
-    Attack,
-    Skill,
-    Dead
-}
+//public enum EnemyCommandName
+//{
+//    Move,
+//    Attack,
+//    Skill,
+//    Skip,
+//    Dead
+//}

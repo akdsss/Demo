@@ -1,0 +1,117 @@
+[gd_scene format=3 uid="uid://dpv5jprlrbrrn"]
+
+[ext_resource type="Script" uid="uid://cplr3kd26bm2p" path="res://Script/UIControl/CharacterHeadButtonControl.cs" id="1_rlh3i"]
+[ext_resource type="Texture2D" uid="uid://cmmry41jr5po5" path="res://Asset/character/enemyA01_head.png" id="3_f7f14"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_bj3dg"]
+load_path = "res://.godot/imported/rectangle.png-1d62f6ac2d0bc525f2a8983978cdca99.ctex"
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_rlh3i"]
+texture = SubResource("CompressedTexture2D_bj3dg")
+texture_margin_left = 10.0
+texture_margin_top = 10.0
+texture_margin_right = 10.0
+texture_margin_bottom = 10.0
+modulate_color = Color(1, 0.484375, 0.484375, 1)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_r1r7l"]
+load_path = "res://.godot/imported/trangle.png-165355f88e83316ba71cc05f69d6110c.ctex"
+
+[node name="CharacterHeadButton" type="Control" unique_id=129399693 node_paths=PackedStringArray("characterHeadTextureRect", "actionStateLabel", "actionTimesArray", "button", "focusTrangle")]
+custom_minimum_size = Vector2(127.505, 40.605)
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_rlh3i")
+characterHeadTextureRect = NodePath("Button/HBoxContainer/TextureRect")
+actionStateLabel = NodePath("Button/HBoxContainer/Label")
+actionTimesArray = [null, null, null, null]
+button = NodePath("Button")
+focusTrangle = NodePath("Button/FocusTrangle")
+
+[node name="Button" type="Button" parent="." unique_id=2034325520]
+layout_mode = 0
+offset_right = 127.0
+offset_bottom = 40.0
+mouse_filter = 2
+theme_override_styles/normal = SubResource("StyleBoxTexture_rlh3i")
+toggle_mode = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Button" unique_id=1849068866]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 7.0
+offset_top = 4.0
+offset_right = -7.0
+offset_bottom = -5.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="Button/HBoxContainer" unique_id=893191995]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.3
+texture = ExtResource("3_f7f14")
+expand_mode = 3
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Button/HBoxContainer" unique_id=1768929965]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.19
+theme_override_constants/separation = 2
+
+[node name="ColorRect" type="ColorRect" parent="Button/HBoxContainer/VBoxContainer" unique_id=494186142]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
+color = Color(0.8901961, 0.7647059, 0.52156866, 0)
+
+[node name="ColorRect2" type="ColorRect" parent="Button/HBoxContainer/VBoxContainer" unique_id=1788063140]
+layout_mode = 2
+size_flags_vertical = 3
+color = Color(0.84765625, 0.6481414, 0.26158142, 1)
+
+[node name="ColorRect3" type="ColorRect" parent="Button/HBoxContainer/VBoxContainer" unique_id=686599692]
+layout_mode = 2
+size_flags_vertical = 3
+color = Color(0.84765625, 0.6481414, 0.26158142, 1)
+
+[node name="ColorRect4" type="ColorRect" parent="Button/HBoxContainer/VBoxContainer" unique_id=1552426640]
+layout_mode = 2
+size_flags_vertical = 3
+color = Color(0.84765625, 0.6481414, 0.26158142, 1)
+
+[node name="ColorRect5" type="ColorRect" parent="Button/HBoxContainer/VBoxContainer" unique_id=754577969]
+layout_mode = 2
+size_flags_vertical = 3
+color = Color(0.84765625, 0.6481414, 0.26158142, 1)
+
+[node name="ColorRect6" type="ColorRect" parent="Button/HBoxContainer/VBoxContainer" unique_id=239719048]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
+color = Color(0.8901961, 0.7647059, 0.52156866, 0)
+
+[node name="Label" type="Label" parent="Button/HBoxContainer" unique_id=1249858424]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+size_flags_stretch_ratio = 0.7
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "待命"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="FocusTrangle" type="TextureRect" parent="Button" unique_id=1990426798]
+modulate = Color(1, 0.4862745, 0.4862745, 1)
+layout_mode = 0
+offset_left = 129.0
+offset_top = 9.0
+offset_right = 152.21527
+offset_bottom = 28.07306
+rotation = -4.712389
+pivot_offset_ratio = Vector2(0.5, 0.5)
+texture = SubResource("CompressedTexture2D_r1r7l")
+expand_mode = 1

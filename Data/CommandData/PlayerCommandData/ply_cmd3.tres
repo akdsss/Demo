@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="PlayerCommandData" format=3 uid="uid://baoxeiy3g2dvl"]
+
+[ext_resource type="Script" uid="uid://bjb2y4dhdh5gg" path="res://Data/DataScript/PlayerCommandData.cs" id="1_y3j4r"]
+
+[resource]
+script = ExtResource("1_y3j4r")
+commandId = 3
+commandName = "跳过"
+commandDescription = "不执行任何行动"
+metadata/_custom_type_script = "uid://bjb2y4dhdh5gg"

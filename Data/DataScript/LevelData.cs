@@ -13,6 +13,7 @@ public partial class LevelData : Resource
 	public void LevelInitialize()
 	{
 		Autoloads.sceneSingleton.gameStateLable.Text = $"关卡{levelName}加载中";
+		// 加载角色到棋盘
 		ChessBoard chessBoard = Autoloads.gd_ChessBoard;
 		chessBoard.ResetChessBoard();
 

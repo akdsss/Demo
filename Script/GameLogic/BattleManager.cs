@@ -66,8 +66,10 @@ public partial class BattleManager : Node
 			characterData.CharacterInitialize();
 		}
 
-		// 玩家列表初始化
+		// 玩家头像列表UI初始化
 		Autoloads.sceneSingleton.playerCharacterHeadListUIControl.Initialize();
+		// 敌方头像列表UI初始化
+		Autoloads.sceneSingleton.enemyCharacterHeadListUIControl.Initialize();
 	}
 	public void BattleEnd()
 	{
@@ -124,6 +126,15 @@ public partial class BattleManager : Node
 			while (prepareTurnState != PrepareTurnState.ENEMY_PRE_OVER)
 			{
 				PubTool.instance.PrintToCmdAndTitle("敌人准备中……");
+				for (int i = 0; i < battleEnemyDataList.Count; i++)
+				{
+					EnemyData enemyData = battleEnemyDataList[i];
+					CommandExecuteInfo commandExecuteInfo = new();
+					commandExecuteInfo.sourceCharacterData = enemyData;
+					commandExecuteInfo.commandData = enemyData.enemyCommandDataArray[0];
+					enemyData.commandQueue[0] = commandExecuteInfo;
+
+				}
 				await ToSignal(this, nameof(PreTS));
 			}
 			// 玩家准备

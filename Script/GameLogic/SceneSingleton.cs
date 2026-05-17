@@ -9,6 +9,7 @@ public partial class SceneSingleton : Node
 	[Export] public Texture2D defaultCharacterImage;
 	public PlayerCharacterHeadListUIControl playerCharacterHeadListUIControl;
 	public EnemyCharacterHeadListUIControl enemyCharacterHeadListUIControl;
+	public CmdQueueUIControl cmdQueueUIControl;
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{

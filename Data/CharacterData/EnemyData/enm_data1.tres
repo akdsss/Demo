@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3 uid="uid://d3dp20y6xhorw"]
+
+[ext_resource type="Texture2D" uid="uid://cs2w8ffvm4mqi" path="res://Asset/character/enemyB01_head.png" id="1_esboh"]
+[ext_resource type="Resource" uid="uid://drsextpc1i58u" path="res://Data/CommandData/EnemyCommandData/enm_cmd0.tres" id="2_3dei7"]
+[ext_resource type="Script" uid="uid://di57v3n6x1ras" path="res://Data/DataScript/EnemyData.cs" id="3_hhxjn"]
+
+[resource]
+script = ExtResource("3_hhxjn")
+enemyCommandDataArray = Array[Object]([ExtResource("2_3dei7")])
+characterId = 2
+characterName = "测试敌人"
+characterDescription = "用于测试的敌人"
+characterHeadImage = ExtResource("1_esboh")
+hp = 120.0
+atk = 7.0
+turnInitialActionTimes = 3
+metadata/_custom_type_script = "uid://di57v3n6x1ras"

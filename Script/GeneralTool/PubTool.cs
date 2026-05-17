@@ -35,6 +35,15 @@ public partial class PubTool : Node
 		GD.Print(content);
 		Autoloads.sceneSingleton.gameStateLable.Text = content;
 	}
+	public async void PrintToTitleForTime(string content, float time)
+	{
+		string  old_content = Autoloads.sceneSingleton.gameStateLable.Text;
+		Autoloads.sceneSingleton.gameStateLable.Text = content;
+        //GD.Print("开始暂停...");
+        await ToSignal(GetTree().CreateTimer(time), "timeout");
+        //GD.Print("暂停结束，1 秒过去了");
+        Autoloads.sceneSingleton.gameStateLable.Text = old_content;
+	}
     //public void SetManagerState(BattleManager battleManager, BattleState _battleState)
     //{
     //    battleManager.battleState = _battleState;

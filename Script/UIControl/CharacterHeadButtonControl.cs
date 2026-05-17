@@ -16,13 +16,26 @@ public partial class CharacterHeadButtonControl : Node
 
     public override void _Ready()
     {
-        // 注册按钮组
-        button.ButtonGroup = (ButtonGroup)ResourceLoader.Load(buttonGroupAddress);
-        if(button.ButtonGroup == null)
+        if (characterData is PlayerData)
         {
-            GD.PrintErr("未找到按钮组");
+            // 注册按钮组
+            button.ButtonGroup = (ButtonGroup)ResourceLoader.Load(buttonGroupAddress);
+            if (button.ButtonGroup == null)
+            {
+                GD.PrintErr("未找到按钮组");
+            }
+        }
+        else if (characterData is EnemyData)
+        {
+
+        }
+        else
+        {
+            GD.PrintErr($"错误：未知角色类型{characterData?.GetType()}");
         }
 
+        // 设置开关类型
+        button.ToggleMode = true;
         // 重置按钮状态
         button.ButtonPressed = false;
         focusTrangle.Visible = false;
@@ -49,7 +62,7 @@ public partial class CharacterHeadButtonControl : Node
 
     public void SetActionTimes(int actionTimes)
     {
-        if(actionTimesArray.Length > actionTimes)
+        if (actionTimesArray.Length > actionTimes)
         {
             GD.PrintErr("行动点数超过最大上限");
         }
@@ -67,7 +80,7 @@ public partial class CharacterHeadButtonControl : Node
     }
     public void CharacterHeadButtonPressed(bool toggled)
     {
-        if(toggled == false)
+        if (toggled == false)
         {
             //GD.Print("取消点击状态");
             focusTrangle.Visible = false;
@@ -82,7 +95,7 @@ public partial class CharacterHeadButtonControl : Node
             switch (characterData)
             {
                 case PlayerData playerData:
-                    ((PlayerChoseListPanelControl) Autoloads.sceneSingleton.playerActionChoseList).SetChoseListPanel(playerData.playerCommandDataList.ToList());
+                    ((PlayerChoseListPanelControl)Autoloads.sceneSingleton.playerActionChoseList).SetChoseListPanel(playerData.playerCommandDataList.ToList());
                     break;
                 case EnemyData enemyData:
                     //((EnemyCharacterHeadListUIControl) Autoloads.sceneSingleton.enemyCharacterHeadListUIControl).SetEnemyCharacterHeadList(characterData);

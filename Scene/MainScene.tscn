@@ -29,6 +29,9 @@ popup/item_3/id = 3
 gameMain = NodePath("../../../..")
 levelData = ExtResource("3_ly247")
 
+[node name="EnemyCHContent" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/RightRegion" parent_id_path=PackedInt32Array(1092813157, 600154088) index="0" unique_id=208221730]
+theme_override_constants/separation = 10
+
 [node name="TextureRect2" parent="MainUi/Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/HeadList" parent_id_path=PackedInt32Array(1092813157, 198364959) index="1" unique_id=934504148]
 texture = ExtResource("4_so1si")
 
@@ -50,7 +53,10 @@ position = Vector2(576, 327)
 [editable path="MainUi"]
 [editable path="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion/PlayerCHContainer/CharacterHeadButton"]
 [editable path="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion/PlayerCHContainer/CharacterHeadButton2"]
-[editable path="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/RightRegion/VBoxContainer/CharacterHeadButton"]
-[editable path="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/RightRegion/VBoxContainer/CharacterHeadButton2"]
-[editable path="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/RightRegion/VBoxContainer/CharacterHeadButton3"]
+[editable path="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/RightRegion/EnemyCHContent/CharacterHeadButton"]
 [editable path="MainUi/Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/CommandMatrix/CommandColumn"]
+[editable path="MainUi/Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/CommandMatrix/CommandColumn2"]
+[editable path="MainUi/Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/CommandMatrix/CommandColumn3"]
+[editable path="MainUi/Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/CommandMatrix/CommandColumn4"]
+[editable path="MainUi/Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/CommandMatrix/CommandColumn5"]
+[editable path="MainUi/Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/CommandMatrix/CommandColumn6"]

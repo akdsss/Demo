@@ -14,8 +14,8 @@ public partial class EnemyCharacterHeadListUIControl : Node
         foreach (EnemyData enemyData in Autoloads.sceneSingleton.battleManager.battleEnemyDataList)
         {
             Node characterHeadButton = enemyHeadButtonPrefab.Instantiate();
-            AddChild(characterHeadButton);
             ((CharacterHeadButtonControl)characterHeadButton).characterData = enemyData;
+            AddChild(characterHeadButton);
         }
     }
 }

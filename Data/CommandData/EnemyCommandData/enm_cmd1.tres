@@ -5,6 +5,6 @@
 [resource]
 script = ExtResource("1_ew0rh")
 commandId = 1
-commandName = "跳过"
-commandDescription = "跳过行动"
+commandName = "移动"
+commandDescription = "移动到指定位置"
 metadata/_custom_type_script = "uid://c4mec8i6hyxs7"
