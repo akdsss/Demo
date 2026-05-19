@@ -1,4 +1,6 @@
 using Godot;
+using System;
+using System.Collections.Generic;
 
 public partial class CmdQueueUIControl : Node
 {
@@ -6,11 +8,43 @@ public partial class CmdQueueUIControl : Node
     [Export] public string defaultCmdName;
     [Export] public TextureRect[] allCharacterHeadArray;
     [Export] public Label[] allCmdMatrix;
+    [Export] public HBoxContainer CommandQueueMatrix;
+    [Export] public PackedScene commandListPrefab;
+    List<ActionListUIControl> actionListUIControlList = new();
+    public List<List<CommandItemUIControl>> commandItemUIControlMatrix;
     public override void _Ready()
     {
         // 注册到场景单例
         Autoloads.sceneSingleton.cmdQueueUIControl = this;
-        ResetAll();
+        // ResetAll();
+
+        for (int i = 0; i < allCharacterHeadArray.Length; i++)
+        {
+            allCharacterHeadArray[i].Texture = (Texture2D)defaultCharacterHead;
+        }
+
+        PubTool.instance.ClearChildren(CommandQueueMatrix);
+        for(int i = 0; i < 7; i++)
+        {
+            Node commandItemList = commandListPrefab.Instantiate();
+            actionListUIControlList.Add(commandItemList as ActionListUIControl);
+            CommandQueueMatrix.AddChild(commandItemList);
+        }
+
+        commandItemUIControlMatrix = new List<List<CommandItemUIControl>>();
+        foreach(ActionListUIControl actionListUIControl in actionListUIControlList)
+        {
+            commandItemUIControlMatrix.Add(actionListUIControl.actionItemUIControlList);
+        }
+
+        foreach (var commandItemUIControlList in commandItemUIControlMatrix)
+        {
+            foreach (var commandItemUIControl in commandItemUIControlList)
+            {
+                commandItemUIControl.commandItemState = CommandItemState.NORMAL;
+                commandItemUIControl.label.Text = defaultCmdName;
+            }
+        }
     }
     public void ResetAll()
     {
@@ -23,7 +57,7 @@ public partial class CmdQueueUIControl : Node
             allCmdMatrix[i].Text = defaultCmdName;
         }
     }
-    public void SetCharacterHeadAndCmd(LevelData levelData)
+    public void SetCharacterHead(LevelData levelData)
     {
         int idx = 0;
         for (int i = 0; i < levelData.playerInfoInLevelArray.Length; i++)
@@ -47,5 +81,6 @@ public partial class CmdQueueUIControl : Node
             idx++;
         }
     }
+    
 }
 

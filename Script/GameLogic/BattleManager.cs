@@ -10,6 +10,9 @@ public partial class BattleManager : Node
 	public List<PlayerData> battlePlayerDataList;
 	public List<EnemyData> battleEnemyDataList;
 
+	// 事件管理
+	public EventManager eventManager = new();
+
 	[Signal] public delegate void BSEventHandler();
 	[Signal] public delegate void MainTSEventHandler();
 	[Signal] public delegate void PreTSEventHandler();
@@ -70,6 +73,8 @@ public partial class BattleManager : Node
 		Autoloads.sceneSingleton.playerCharacterHeadListUIControl.Initialize();
 		// 敌方头像列表UI初始化
 		Autoloads.sceneSingleton.enemyCharacterHeadListUIControl.Initialize();
+		// 命令队列头像初始化
+		Autoloads.sceneSingleton.cmdQueueUIControl.SetCharacterHead(levelData);
 	}
 	public void BattleEnd()
 	{

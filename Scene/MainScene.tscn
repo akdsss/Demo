@@ -21,12 +21,7 @@ defaultCharacterImage = ExtResource("7_j5k17")
 [node name="MainUi" parent="." unique_id=1092813157 instance=ExtResource("1_uptpg")]
 
 [node name="GameTest" parent="MainUi/Panel/VBoxContainer/TopPanel" parent_id_path=PackedInt32Array(1092813157, 1859375851) index="1" unique_id=1918287508 node_paths=PackedStringArray("gameMain")]
-item_count = 4
-popup/item_2/text = "测试-敌方准备结束"
-popup/item_2/id = 2
-popup/item_3/text = "测试-玩家准备结束"
-popup/item_3/id = 3
-gameMain = NodePath("../../../..")
+gameMain = NodePath("../../../../..")
 levelData = ExtResource("3_ly247")
 
 [node name="EnemyCHContent" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/RightRegion" parent_id_path=PackedInt32Array(1092813157, 600154088) index="0" unique_id=208221730]

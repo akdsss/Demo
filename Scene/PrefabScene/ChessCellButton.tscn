@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://dser138is3qmi"]
+
+[ext_resource type="Texture2D" uid="uid://cstark6dbaykr" path="res://Asset/ui image/rectangle.png" id="1_rjwkk"]
+[ext_resource type="Script" uid="uid://bb2si2kj08ca7" path="res://Script/UIControl/MainUIControl/ChessBoardUIControl/ChessCellButtonControl.cs" id="2_e6avr"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_e6avr"]
+texture = ExtResource("1_rjwkk")
+modulate_color = Color(0.8509804, 0.84313726, 0.4862745, 0.52156866)
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_rjwkk"]
+load_path = "res://.godot/imported/rectangle.png-1d62f6ac2d0bc525f2a8983978cdca99.ctex"
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_kbry0"]
+texture = SubResource("CompressedTexture2D_rjwkk")
+modulate_color = Color(0.5803922, 0.5764706, 0.40784314, 0.5372549)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_sp335"]
+
+[node name="ChessCellButton" type="Button" unique_id=1986853642]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = -50.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/normal = SubResource("StyleBoxTexture_e6avr")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_kbry0")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_sp335")
+script = ExtResource("2_e6avr")

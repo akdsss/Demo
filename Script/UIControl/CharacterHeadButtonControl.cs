@@ -83,6 +83,15 @@ public partial class CharacterHeadButtonControl : Node
         if (toggled == false)
         {
             //GD.Print("取消点击状态");
+            // 取消选中角色
+            if (characterData is PlayerData)
+            {
+                Autoloads.sceneSingleton.battleManager.eventManager.currentMainPlayer = null;
+            }
+            else if (characterData is EnemyData)
+            {
+                Autoloads.sceneSingleton.battleManager.eventManager.currentMainEnemy = null;
+            }
             focusTrangle.Visible = false;
             Autoloads.sceneSingleton.playerActionChoseList.Visible = false;
             actionStateLabel.Text = "待命";
@@ -90,6 +99,15 @@ public partial class CharacterHeadButtonControl : Node
         else
         {
             //PubTool.instance.PrintToCmdAndTitle("点击了角色头像");
+            // 设置当前选中角色
+            if (characterData is PlayerData)
+            {
+                Autoloads.sceneSingleton.battleManager.eventManager.currentMainPlayer = characterData as PlayerData;
+            }
+            else if (characterData is EnemyData)
+            {
+                Autoloads.sceneSingleton.battleManager.eventManager.currentMainEnemy = characterData as EnemyData;
+            }
             focusTrangle.Visible = true;
             Autoloads.sceneSingleton.playerActionChoseList.Visible = true;
             switch (characterData)

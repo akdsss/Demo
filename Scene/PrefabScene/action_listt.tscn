@@ -1,6 +1,9 @@
 [gd_scene format=3 uid="uid://dtswcstgg5vrr"]
 
-[node name="CommandColumn" type="ColorRect" unique_id=914612584]
+[ext_resource type="PackedScene" uid="uid://d2xknx4c12bfn" path="res://Scene/PrefabScene/CommandItem.tscn" id="1_juull"]
+[ext_resource type="Script" uid="uid://cydbfo0uf8j2o" path="res://Script/UIControl/MainUIControl/ActionListUIControl.cs" id="1_veri4"]
+
+[node name="CommandColumn" type="ColorRect" unique_id=914612584 node_paths=PackedStringArray("VBoxActionItemContent")]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -8,6 +11,9 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 color = Color(0.4522705, 0.47136307, 0.5078125, 1)
+script = ExtResource("1_veri4")
+actionItemPrefab = ExtResource("1_juull")
+VBoxActionItemContent = NodePath("VBoxContainer")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1535893101]
 layout_mode = 1
@@ -17,31 +23,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Control" type="Control" parent="VBoxContainer" unique_id=1883276735]
+[node name="Control" parent="VBoxContainer" unique_id=1151502167 instance=ExtResource("1_juull")]
 layout_mode = 2
-size_flags_vertical = 3
-
-[node name="ColorRect" type="ColorRect" parent="VBoxContainer/Control" unique_id=983069386]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.97265625, 0.93466187, 0.93466187, 1)
-
-[node name="Label" type="Label" parent="VBoxContainer/Control/ColorRect" unique_id=858311671]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 20
-text = "进攻意图"
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="Control2" type="Control" parent="VBoxContainer" unique_id=1077153683]
 layout_mode = 2

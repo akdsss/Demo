@@ -17,4 +17,21 @@ public partial class PlayerCommandData : CommandData
     //            break;
     //    }
     //}
+    public void UIButtonClick()
+    {
+        switch (commandId)
+        {
+            case 0:// 攻击
+                break;
+            case 1:// 移动
+                Autoloads.sceneSingleton.battleManager.eventManager.moveEventInfo = new()
+                {
+                    moveSourceCharacter = Autoloads.sceneSingleton.battleManager.eventManager.currentMainPlayer
+                };
+                Autoloads.gd_ChessBoard.chessBoardUIControl.ShowAllChessCellButton();
+                break;
+            case 2:// 防御
+                break;
+        }
+    }
 }

@@ -5,10 +5,14 @@ using System.Collections.Generic;
 public partial class ChessCellUIControl : Control
 {
     [Export] public TextureRect[] allCharacterPointArray;
+    [Export] public Button chessCellButton;
+    private Dictionary<CharacterData, TextureRect> characterDisplayMap = new();
 
     public override void _Ready()
     {
         RemoveAllCharacterDisplay();
+        chessCellButton.Disabled = true;
+        // ((ChessCellButtonControl)chessCellButton).chessCellUIControl = this;
     }
     //public int currentCharacterNum;
 
@@ -38,68 +42,46 @@ public partial class ChessCellUIControl : Control
     //}
     public void RemoveAllCharacterDisplay()
     {
+        characterDisplayMap.Clear();
         foreach (TextureRect textureRect in allCharacterPointArray)
         {
             textureRect.Visible = false;
+            textureRect.Texture = null;
         }
-        //currentCharacterNum = 0;
     }
+
     public void RemoveCharacterDisplay(CharacterData characterData)
     {
-        bool removed = false;
-        Color color = Color.Color8(0, 0, 0);
-        switch (characterData)
+        if (characterDisplayMap.TryGetValue(characterData, out TextureRect textureRect))
         {
-            case PlayerData playerData:
-                color = Color.FromHtml(Autoloads.playerHexColor);
-                break;
-            case EnemyData enemyData:
-                color = Color.FromHtml(Autoloads.enemyHexColor);
-                break;
+            textureRect.Visible = false;
+            textureRect.Texture = null;
+            characterDisplayMap.Remove(characterData);
         }
-        foreach (TextureRect textureRect in allCharacterPointArray)
+        else
         {
-            if(textureRect.Visible == true && textureRect.SelfModulate == color)
-            {
-                textureRect.Visible = false;
-                removed = true;
-                break;
-            }
+            GD.PrintErr("RemoveCharacterDisplay Error: 角色未找到");
         }
-        if (removed == false)
-        {
-            GD.PrintErr("RemoveCharacterDisplay Error");
-        }
-        //allCharacterPointArray[characterIdx].Visible = false;
-        //currentCharacterNum--;
     }
+
     public void AddCharacterDisplay(CharacterData characterData)
     {
-        Color color = Color.Color8(0,0,0);
-        bool added = false;
-        if (characterData is PlayerData)
+        if (characterDisplayMap.ContainsKey(characterData))
         {
-            color = Color.FromHtml(Autoloads.playerHexColor);
+            GD.PrintErr("AddCharacterDisplay Error: 角色已存在");
+            return;
         }
-        else if (characterData is EnemyData)
-        {
-            color = Color.FromHtml(Autoloads.enemyHexColor);
-        }
+
         foreach (TextureRect textureRect in allCharacterPointArray)
         {
             if (textureRect.Visible == false)
             {
                 textureRect.Visible = true;
-
-                textureRect.SelfModulate = color;
-                //currentCharacterNum++;
-                added = true;
-                break;
+                textureRect.Texture = characterData.characterHeadImage;
+                characterDisplayMap[characterData] = textureRect;
+                return;
             }
         }
-        if (added == false)
-        {
-            GD.PrintErr("AddCharacterDisplay Error");
-        }
+        GD.PrintErr("AddCharacterDisplay Error: 无可用显示位置");
     }
 }

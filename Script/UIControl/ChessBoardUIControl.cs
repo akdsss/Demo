@@ -11,6 +11,20 @@ public partial class ChessBoardUIControl : Sprite2D
 		// 注册到全局单例
 		Autoloads.gd_ChessBoard.chessBoardUIControl = this;
 	}
+	public void ShowAllChessCellButton()
+	{
+		foreach (var chessCellUIControl in chessCellUIControlArray)
+		{
+			chessCellUIControl.chessCellButton.Disabled = false;
+		}
+	}
+	public void HideAllChessCellButton()
+	{
+		foreach (var chessCellUIControl in chessCellUIControlArray)
+		{
+			chessCellUIControl.chessCellButton.Disabled = true;
+		}
+	}
 	//public void AddCharacterToChessCell(CharacterData characterData, Vector2I coord)
 	//{
 	//	Initialize();
