@@ -18,10 +18,15 @@ config/icon="res://icon.svg"
 [autoload]
 
 gd_ChessBoard="*uid://rekx4h2h8rlx"
+MCPRuntimeProbe="*res://addons/godot_mcp/runtime/mcp_runtime_probe.gd"
 
 [dotnet]
 
 project/assembly_name="Demo"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/godot_mcp/plugin.cfg")
 
 [physics]
 
