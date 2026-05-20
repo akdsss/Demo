@@ -21,6 +21,7 @@ public partial class PlayerCharacterHeadListUIControl : Node
             AddChild(characterHeadButton);
             characterHeadButtonControlList.Add((CharacterHeadButtonControl)characterHeadButton);
         }
+        UpdateAllUIDisplay();
     }
     public void ResetUIDisplay()
     {
@@ -29,5 +30,19 @@ public partial class PlayerCharacterHeadListUIControl : Node
             characterHeadButtonControl.ResetUIDisplay();
         }
         Autoloads.sceneSingleton.playerActionChoseList.Visible = false;
+    }
+    public void RecoverForPrepare()
+    {
+        foreach (CharacterHeadButtonControl characterHeadButtonControl in characterHeadButtonControlList)
+        {
+            characterHeadButtonControl.ChangeToActionReadyDisplay();
+        }
+    }
+    public void UpdateAllUIDisplay()
+    {
+        foreach (CharacterHeadButtonControl characterHeadButtonControl in characterHeadButtonControlList)
+        {
+            characterHeadButtonControl.UpdateUIDisplay();
+        }
     }
 }

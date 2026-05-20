@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public partial class CommandItemUIControl : Control
 {
+	private static CommandItemUIControl currentSelected;
+	public static CommandItemUIControl CurrentSelected => currentSelected;
 	[Export] public Label label;
 	[Export] public ColorRect colorRect;
 	public int cmdIdxInQueue;
@@ -74,26 +76,38 @@ public partial class CommandItemUIControl : Control
 	{
 		if (isOnset == true)
 		{
+			currentSelected = this;
 			SceneSingleton sS = Autoloads.sceneSingleton;
-
-			// 更新UI显示
-			sS.cmdQueueUIControl.cmdQueueState = CmdQueueState.NORMAL;
-			commandItemState = CommandItemState.LOCKED;
-			sS.cmdQueueUIControl.SwitchOffPlayerCommandSet();
-			label.Text = sS.battleManager.eventManager.currentMainPlayerCommand.commandName;
-			Autoloads.sceneSingleton.playerCharacterHeadListUIControl.ResetUIDisplay();
 
 			// 设置角色指令序列
 			CommandExecuteInfo cei = new()
 			{
 				commandData = sS.battleManager.eventManager.currentMainPlayerCommand,
-				sourceCharacterData = sS.battleManager.eventManager.moveEventInfo.moveSourceCharacter,
-				targetCoord = sS.battleManager.eventManager.moveEventInfo.moveTargetCoord
+				sourceCharacterData = sS.battleManager.eventManager.moveEventInfo?.moveSourceCharacter,
+				targetCoord = sS.battleManager.eventManager.moveEventInfo?.moveTargetCoord ?? new Vector2I(),
+				targetCharacterData = sS.battleManager.eventManager.damageEventInfo?.damageTargetCharacter,
 			};
-			sS.battleManager.eventManager.currentMainPlayer.commandQueue[cmdIdxInQueue] = cei;
+			sS.battleManager.eventManager.currentMainPlayer.SetCommand(1, CharacterHeadButtonControl.CurrentSelectedPlayerHead, cmdIdxInQueue, cei);// 逻辑更新+UI更新
+
+			// // 更新UI显示
+			// // sS.cmdQueueUIControl.cmdQueueState = CmdQueueState.NORMAL;
+			// commandItemState = CommandItemState.LOCKED;
+			// sS.cmdQueueUIControl.SwitchOffPlayerCommandSet();
+			// label.Text = sS.battleManager.eventManager.currentMainPlayerCommand.commandName;
+			// Autoloads.sceneSingleton.playerCharacterHeadListUIControl.ResetUIDisplay();
+			
 			// sS.battleManager.eventManager.currentMainPlayer.commandQueue[cmdIdxInQueue];
 		}
 
+	}
+	public void SetCommandToQueue(CommandData commandData)
+	{
+		// 更新自身UI
+		commandItemState = CommandItemState.LOCKED;
+		label.Text = commandData.commandName;
+		// 更新外部UI
+		Autoloads.sceneSingleton.cmdQueueUIControl.SwitchOffPlayerCommandSet();
+		Autoloads.sceneSingleton.playerCharacterHeadListUIControl.ResetUIDisplay();
 	}
 }
 

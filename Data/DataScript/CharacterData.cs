@@ -10,6 +10,7 @@ public partial class CharacterData : Resource
 	[Export] public string characterDescription;
 	[Export] public Texture2D characterHeadImage;
     [Export] public float hp;
+    [Export] public float maxHp;
     [Export] public float atk;
     public Vector2I coord;
 	public CharacterBattleState characterBattleState;
@@ -25,6 +26,21 @@ public partial class CharacterData : Resource
 		{
             commandQueue.Add(new CommandExecuteInfo());
 		}
+		hp = maxHp;
+		currentRestActionTimes = turnInitialActionTimes;
+	}
+	public void SetCommand(int actionPointCost, CharacterHeadButtonControl characterHeadButtonControl, int ccmdQueueIdx, CommandExecuteInfo commandExecuteInfo)
+	{
+		currentRestActionTimes -= actionPointCost;
+		characterHeadButtonControl.UpdateUIDisplay();
+		characterHeadButtonControl.ChangeToActionOverDisplay();
+		commandQueue[ccmdQueueIdx] = commandExecuteInfo;
+		CommandItemUIControl.CurrentSelected.SetCommandToQueue(commandExecuteInfo.commandData);
+	}
+	public void MakeDamage(CharacterData targetCharacterData, float damageValue)
+	{
+		targetCharacterData.hp = Math.Max(0, targetCharacterData.hp - damageValue);
+		Autoloads.sceneSingleton.enemyCharacterHeadListUIControl.UpdateAllUIDisplay();
 	}
 }
 

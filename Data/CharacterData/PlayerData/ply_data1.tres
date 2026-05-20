@@ -13,6 +13,7 @@ characterName = "测试玩家B"
 characterDescription = "测试玩家B的描述略有不同"
 characterHeadImage = ExtResource("1_rk4s4")
 hp = 120.0
+maxHp = 100.0
 atk = 8.0
 turnInitialActionTimes = 3
 metadata/_custom_type_script = "uid://bw07j5wfv22k0"

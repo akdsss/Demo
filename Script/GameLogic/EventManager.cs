@@ -7,6 +7,7 @@ public class EventManager
     public PlayerCommandData currentMainPlayerCommand;
     public EnemyData currentMainEnemy;
     public MoveEventInfo moveEventInfo;
+    public DamageEventInfo damageEventInfo;
 }
 
 public class DamageEventManager
@@ -47,6 +48,7 @@ public class DamageEventInfo
     public CharacterData damageSourceCharacter;
     public CharacterData damageTargetCharacter;
     public float damageValue;
+    public CharacterHeadButtonControl damageTargetCharacterHeadButtonControl;
 }
 public class MoveEventInfo
 {

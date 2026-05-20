@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://djpa8kwcyf6yt" path="res://Asset/character/characterA01_head.png" id="1_qaosv"]
 [ext_resource type="Script" uid="uid://cplr3kd26bm2p" path="res://Script/UIControl/CharacterHeadButtonControl.cs" id="1_vy6d6"]
 [ext_resource type="Texture2D" uid="uid://b54n2m4nrjgn3" path="res://Asset/ui image/trangle.png" id="3_h4qj3"]
+[ext_resource type="Texture2D" uid="uid://cstark6dbaykr" path="res://Asset/ui image/rectangle.png" id="4_1m8ul"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_vy6d6"]
 load_path = "res://.godot/imported/rectangle.png-1d62f6ac2d0bc525f2a8983978cdca99.ctex"
@@ -35,9 +36,9 @@ texture_margin_left = 10.0
 texture_margin_top = 10.0
 texture_margin_right = 10.0
 texture_margin_bottom = 10.0
-modulate_color = Color(0.4296875, 0.24169922, 0.24169922, 1)
+modulate_color = Color(0.58203125, 0.4501648, 0.4501648, 1)
 
-[node name="CharacterHeadButton" type="Control" unique_id=1517803722 node_paths=PackedStringArray("characterHeadTextureRect", "actionStateLabel", "actionTimesArray", "button", "focusTrangle")]
+[node name="CharacterHeadButton" type="Control" unique_id=1517803722 node_paths=PackedStringArray("characterHeadTextureRect", "actionStateLabel", "actionTimesArray", "button", "focusTrangle", "hpBar", "hpLabel")]
 custom_minimum_size = Vector2(127.505, 40.605)
 layout_mode = 3
 anchors_preset = 15
@@ -51,6 +52,8 @@ actionStateLabel = NodePath("Button/HBoxContainer/Label")
 actionTimesArray = [NodePath("Button/HBoxContainer/VBoxContainer/ColorRect2"), NodePath("Button/HBoxContainer/VBoxContainer/ColorRect3"), NodePath("Button/HBoxContainer/VBoxContainer/ColorRect4"), NodePath("Button/HBoxContainer/VBoxContainer/ColorRect5")]
 button = NodePath("Button")
 focusTrangle = NodePath("Button/FocusTrangle")
+hpBar = NodePath("Button/HBoxContainer/TextureProgressBar")
+hpLabel = NodePath("Button/HBoxContainer/TextureProgressBar/Label")
 
 [node name="Button" type="Button" parent="." unique_id=1713320923]
 layout_mode = 0
@@ -128,6 +131,30 @@ size_flags_vertical = 1
 size_flags_stretch_ratio = 0.7
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "行动"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TextureProgressBar" type="TextureProgressBar" parent="Button/HBoxContainer" unique_id=421928065]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.2
+value = 46.0
+fill_mode = 3
+nine_patch_stretch = true
+texture_under = ExtResource("4_1m8ul")
+texture_progress = ExtResource("4_1m8ul")
+tint_under = Color(0.31640625, 0.31640625, 0.31640625, 1)
+tint_progress = Color(1, 0.17578125, 0.17578125, 1)
+
+[node name="Label" type="Label" parent="Button/HBoxContainer/TextureProgressBar" unique_id=179839292]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 7
+text = "100"
 horizontal_alignment = 1
 vertical_alignment = 1
 

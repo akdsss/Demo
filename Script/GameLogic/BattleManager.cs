@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 public partial class BattleManager : Node
 {
 	public BattleState battleState = BattleState.NOT_INITIALIZED;
+	public GameResult gameResult;
 	//private TurnManager turnManager;
 	private List<CharacterData> battleCharacterDataList;
 	public List<PlayerData> battlePlayerDataList;
@@ -27,16 +28,17 @@ public partial class BattleManager : Node
 		while (battleState != BattleState.OVER)
 		{
 			await TurnStart();
-			if(PubTool.instance.gameMode == GameMode.Test)
+			if (PubTool.instance.gameMode == GameMode.Test)
 			{
-				PubTool.instance.PrintToCmdAndTitle("测试：仅进行一回合");
-				battleState = BattleState.OVER;
+				// PubTool.instance.PrintToCmdAndTitle("测试：仅进行一回合");
+				// battleState = BattleState.OVER;
+
 			}
 			else
 			{
 				await ToSignal(this, nameof(MainTS));
 			}
-		   
+
 		}
 		BattleEnd();
 	}
@@ -78,7 +80,8 @@ public partial class BattleManager : Node
 	}
 	public void BattleEnd()
 	{
-		PubTool.instance.PrintToCmdAndTitle("战斗结束");
+		string result = gameResult == GameResult.Win ? "玩家胜利" : "玩家失败";
+		PubTool.instance.PrintToCmdAndTitle("战斗结束：" + result);
 		battleState = BattleState.END;
 	}
 	//private partial class TurnManager : Node
@@ -114,6 +117,8 @@ public partial class BattleManager : Node
 	{
 		PubTool.instance.PrintToCmdAndTitle("回合结束");
 		mainTurnState = MainTurnState.END;
+		// 检查是否游戏结束
+		CheckGameEnd();
 	}
 	public async Task PrepareTurn()
 	{
@@ -127,36 +132,78 @@ public partial class BattleManager : Node
 		while (prepareTurnState != PrepareTurnState.PRE_OVER)
 		{
 			// 敌人准备
-			prepareTurnState = PrepareTurnState.ENEMY_PRE;
-			while (prepareTurnState != PrepareTurnState.ENEMY_PRE_OVER)
+			bool enemyHasRemainingAction = false;
+			foreach (var enemyData in battleEnemyDataList)
 			{
-				PubTool.instance.PrintToCmdAndTitle("敌人准备中……");
-				for (int i = 0; i < battleEnemyDataList.Count; i++)
+				if (enemyData.currentRestActionTimes > 0)
 				{
-					EnemyData enemyData = battleEnemyDataList[i];
-					CommandExecuteInfo commandExecuteInfo = new();
-					commandExecuteInfo.sourceCharacterData = enemyData;
-					commandExecuteInfo.commandData = enemyData.enemyCommandDataArray[0];
-					enemyData.commandQueue[0] = commandExecuteInfo;
-
+					enemyHasRemainingAction = true;
+					break;
 				}
-				await ToSignal(this, nameof(PreTS));
 			}
-			// 玩家准备
-			prepareTurnState = PrepareTurnState.PLAYER_PRE;
-			while (prepareTurnState != PrepareTurnState.PLAYER_PRE_OVER)
+			if (enemyHasRemainingAction == false)
 			{
-				PubTool.instance.PrintToCmdAndTitle("玩家准备中……");
-				await ToSignal(this, nameof(PreTS));
-			}
-			if (PubTool.instance.gameMode == GameMode.Test)
-			{
-				PubTool.instance.PrintToCmdAndTitle("测试：仅准备一轮");
-				prepareTurnState = PrepareTurnState.PRE_OVER;
+
 			}
 			else
 			{
-				await ToSignal(this, nameof(PreTS));
+				prepareTurnState = PrepareTurnState.ENEMY_PRE;
+				while (prepareTurnState != PrepareTurnState.ENEMY_PRE_OVER)
+				{
+					PubTool.instance.PrintToCmdAndTitle("敌人准备中……");
+					for (int i = 0; i < battleEnemyDataList.Count; i++)
+					{
+						EnemyData enemyData = battleEnemyDataList[i];
+						CommandExecuteInfo commandExecuteInfo = new();
+						commandExecuteInfo.sourceCharacterData = enemyData;
+						commandExecuteInfo.commandData = enemyData.enemyCommandDataArray[0];
+						enemyData.commandQueue[0] = commandExecuteInfo;
+
+					}
+					await ToSignal(this, nameof(PreTS));
+				}
+			}
+
+
+			// 玩家准备
+			// 更新UI显示
+			Autoloads.sceneSingleton.playerCharacterHeadListUIControl.RecoverForPrepare();
+			// 判断是否还有剩余行动次数
+			bool playerHasRemainingAction = false;
+			foreach (var characterData in battlePlayerDataList)
+			{
+				if (characterData.currentRestActionTimes > 0)
+				{
+					playerHasRemainingAction = true;
+					break;
+				}
+			}
+			if (playerHasRemainingAction == false)
+			{
+
+			}
+			else
+			{
+				prepareTurnState = PrepareTurnState.PLAYER_PRE;
+				while (prepareTurnState != PrepareTurnState.PLAYER_PRE_OVER)
+				{
+					PubTool.instance.PrintToCmdAndTitle("玩家准备中……");
+					await ToSignal(this, nameof(PreTS));
+				}
+				if (PubTool.instance.gameMode == GameMode.Test)
+				{
+					PubTool.instance.PrintToCmdAndTitle("测试：仅准备一轮");
+					prepareTurnState = PrepareTurnState.PRE_OVER;
+				}
+				else
+				{
+					await ToSignal(this, nameof(PreTS));
+				}
+			}
+
+			if (enemyHasRemainingAction == false && playerHasRemainingAction == false)
+			{
+				prepareTurnState = PrepareTurnState.PRE_OVER;
 			}
 		}
 		PrepareTurnEnd();
@@ -173,48 +220,65 @@ public partial class BattleManager : Node
 	{
 		PubTool.instance.PrintToCmdAndTitle("演出阶段");
 		PlayTurnInitialize();
-		while (playTurnState != PlayTurnState.PLAY_OVER)
+		for (int i = 0; i < Autoloads.gameQueueLength; i++)
 		{
-			// 敌人行动
-			while (playTurnState != PlayTurnState.ENEMY_PLAY_OVER)
+			foreach (var characterData in battleCharacterDataList)
 			{
-				PubTool.instance.PrintToCmdAndTitle("敌人行动中……");
-				if (PubTool.instance.gameMode == GameMode.Test)
+				if (characterData.commandQueue[i] != null)
 				{
-					PubTool.instance.PrintToCmdAndTitle("敌人自动行动");
-					playTurnState = PlayTurnState.ENEMY_PLAY_OVER;
+					characterData.commandQueue[i].ExecuteInPlay();
+					// 短暂暂停，等待下一个命令
+					await Task.Delay(100);
 				}
 				else
 				{
-					await ToSignal(this, nameof(PlayTS));
-				}
-
-			}
-			// 玩家行动
-			while (playTurnState != PlayTurnState.PLAYER_PLAY_OVER)
-			{
-				PubTool.instance.PrintToCmdAndTitle("玩家行动中……");
-				if (PubTool.instance.gameMode == GameMode.Test)
-				{
-					PubTool.instance.PrintToCmdAndTitle("玩家自动行动");
-					playTurnState = PlayTurnState.PLAYER_PLAY_OVER;
-				}
-				else
-				{
-					await ToSignal(this, nameof(PlayTS));
+					PubTool.instance.PrintToCmdAndTitle("无命令");
+					// 筭待下一个命令
+					await Task.Delay(10);
 				}
 			}
-			if (PubTool.instance.gameMode == GameMode.Test)
-			{
-				PubTool.instance.PrintToCmdAndTitle("测试：仅行动一轮");
-				playTurnState = PlayTurnState.PLAY_OVER;
-			}
-			else
-			{
-				await ToSignal(this, nameof(PlayTS));
-			}
-				
 		}
+		// while (playTurnState != PlayTurnState.PLAY_OVER)
+		// {
+		//     // // 敌人行动
+		//     // while (playTurnState != PlayTurnState.ENEMY_PLAY_OVER)
+		//     // {
+		//     // 	PubTool.instance.PrintToCmdAndTitle("敌人行动中……");
+		//     // 	if (PubTool.instance.gameMode == GameMode.Test)
+		//     // 	{
+		//     // 		PubTool.instance.PrintToCmdAndTitle("敌人自动行动");
+		//     // 		playTurnState = PlayTurnState.ENEMY_PLAY_OVER;
+		//     // 	}
+		//     // 	else
+		//     // 	{
+		//     // 		await ToSignal(this, nameof(PlayTS));
+		//     // 	}
+
+		//     // }
+		//     // // 玩家行动
+		//     // while (playTurnState != PlayTurnState.PLAYER_PLAY_OVER)
+		//     // {
+		//     // 	PubTool.instance.PrintToCmdAndTitle("玩家行动中……");
+		//     // 	if (PubTool.instance.gameMode == GameMode.Test)
+		//     // 	{
+		//     // 		PubTool.instance.PrintToCmdAndTitle("玩家自动行动");
+		//     // 		playTurnState = PlayTurnState.PLAYER_PLAY_OVER;
+		//     // 	}
+		//     // 	else
+		//     // 	{
+		//     // 		await ToSignal(this, nameof(PlayTS));
+		//     // 	}
+		//     // }
+		//     if (PubTool.instance.gameMode == GameMode.Test)
+		//     {
+		//         PubTool.instance.PrintToCmdAndTitle("测试：仅行动一轮");
+		//         playTurnState = PlayTurnState.PLAY_OVER;
+		//     }
+		//     else
+		//     {
+		//         await ToSignal(this, nameof(PlayTS));
+		//     }
+		// }
 		PlayTurnEnd();
 	}
 	public void PlayTurnInitialize()
@@ -225,7 +289,40 @@ public partial class BattleManager : Node
 	{
 		playTurnState = PlayTurnState.AFTER_PLAY;
 	}
-
+	public void CheckGameEnd()
+	{
+		bool allPlayersDead = true;
+		foreach (var playerData in battlePlayerDataList)
+		{
+			if (playerData.characterBattleState == CharacterBattleState.ALIVE)
+			{
+				allPlayersDead = false;
+				break;
+			}
+		}
+		if (allPlayersDead)
+		{
+			battleState = BattleState.OVER;
+			gameResult = GameResult.Lose;
+		}
+		else
+		{
+			bool allEnemiesDead = true;
+			foreach (var enemyData in battleEnemyDataList)
+			{
+				if (enemyData.characterBattleState == CharacterBattleState.ALIVE)
+				{
+					allEnemiesDead = false;
+					break;
+				}
+			}
+			if (allEnemiesDead)
+			{
+				battleState = BattleState.OVER;
+				gameResult = GameResult.Win;
+			}
+		}
+	}
 	public void SetManagerState(BattleState _battleState)
 	{
 		battleState = _battleState;
@@ -291,4 +388,10 @@ public enum MainTurnState
 	PLY_TURN,
 	OVER,
 	END
+}
+
+public enum GameResult
+{
+	Win,
+	Lose
 }
