@@ -8,5 +8,7 @@ public partial class ChessCellButtonControl : Button
     {
         Autoloads.gd_ChessBoard.chessBoardUIControl.HideAllChessCellButton();
         Autoloads.sceneSingleton.battleManager.eventManager.moveEventInfo.moveTargetCoord = coord;
+        // Autoloads.sceneSingleton.cmdQueueUIControl.cmdQueueState = CmdQueueState.CMDSET;
+        Autoloads.sceneSingleton.cmdQueueUIControl.SwitchOnPlayerCommandSet();
     }
 }

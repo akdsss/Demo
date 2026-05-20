@@ -1,8 +1,11 @@
 using Godot;
+using System;
+using System.Collections.Generic;
 
 public partial class PlayerCharacterHeadListUIControl : Node
 {
     [Export] public PackedScene playerHeadButtonPrefab;
+    public List<CharacterHeadButtonControl> characterHeadButtonControlList = new();
     public override void _Ready()
     {
         // 注册到场景单例
@@ -11,11 +14,20 @@ public partial class PlayerCharacterHeadListUIControl : Node
     public void Initialize()
     {
         PubTool.instance.ClearChildren(this);
-        foreach(PlayerData playerData in Autoloads.sceneSingleton.battleManager.battlePlayerDataList)
+        foreach (PlayerData playerData in Autoloads.sceneSingleton.battleManager.battlePlayerDataList)
         {
             Node characterHeadButton = playerHeadButtonPrefab.Instantiate();
             ((CharacterHeadButtonControl)characterHeadButton).characterData = playerData;
             AddChild(characterHeadButton);
+            characterHeadButtonControlList.Add((CharacterHeadButtonControl)characterHeadButton);
         }
+    }
+    public void ResetUIDisplay()
+    {
+        foreach (CharacterHeadButtonControl characterHeadButtonControl in characterHeadButtonControlList)
+        {
+            characterHeadButtonControl.ResetUIDisplay();
+        }
+        Autoloads.sceneSingleton.playerActionChoseList.Visible = false;
     }
 }

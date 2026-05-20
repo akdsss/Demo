@@ -30,3 +30,5 @@ theme_override_styles/normal = SubResource("StyleBoxTexture_e6avr")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_kbry0")
 theme_override_styles/disabled = SubResource("StyleBoxTexture_sp335")
 script = ExtResource("2_e6avr")
+
+[connection signal="pressed" from="." to="." method="ChessCellButtonClick"]

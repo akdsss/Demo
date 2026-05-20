@@ -4,6 +4,7 @@ using System;
 public class EventManager
 {
     public PlayerData currentMainPlayer;
+    public PlayerCommandData currentMainPlayerCommand;
     public EnemyData currentMainEnemy;
     public MoveEventInfo moveEventInfo;
 }

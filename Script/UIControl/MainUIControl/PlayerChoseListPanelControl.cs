@@ -13,6 +13,7 @@ public partial class PlayerChoseListPanelControl : Panel
             Button choseButton = (Button)choseButtonPrefab.Instantiate();
             allChoseContent.AddChild(choseButton);
             choseButton.Text = playerCommandData.commandName;
+            ((PlayerActionButtonControl)choseButton).playerCommandData = playerCommandData;
         }
     }
 }

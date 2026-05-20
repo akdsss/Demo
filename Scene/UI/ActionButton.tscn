@@ -1,6 +1,11 @@
 [gd_scene format=3 uid="uid://b0mnse4n3h5if"]
 
+[ext_resource type="Script" uid="uid://dtbwk2qsbrus3" path="res://Script/UIControl/MainUIControl/PlayerActionButtonControl.cs" id="1_4hvo7"]
+
 [node name="ActionButton" type="Button" unique_id=1430029491]
 offset_right = 117.0
 offset_bottom = 31.0
 text = "攻击"
+script = ExtResource("1_4hvo7")
+
+[connection signal="pressed" from="." to="." method="PlayerActionButtonClick"]

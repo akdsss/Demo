@@ -125,4 +125,9 @@ public partial class CharacterHeadButtonControl : Node
             actionStateLabel.Text = "行动";
         }
     }
+    public void ResetUIDisplay()
+    {
+        focusTrangle.Visible = false;
+        button.ButtonPressed = false;
+    }
 }
