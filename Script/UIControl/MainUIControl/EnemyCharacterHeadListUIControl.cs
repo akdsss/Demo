@@ -4,7 +4,7 @@ using Godot;
 public partial class EnemyCharacterHeadListUIControl : Node
 {
     [Export] public PackedScene enemyHeadButtonPrefab;
-    private List<CharacterHeadButtonControl> enemyHeadButtonList = new List<CharacterHeadButtonControl>();
+    public List<CharacterHeadButtonControl> enemyHeadButtonList = new List<CharacterHeadButtonControl>();
     public override void _Ready()
     {
         // 注册到场景单例
@@ -21,10 +21,18 @@ public partial class EnemyCharacterHeadListUIControl : Node
             enemyHeadButtonList.Add((CharacterHeadButtonControl)characterHeadButton);
         }
     }
+    public void ResetUIDisplay()
+    {
+        foreach (CharacterHeadButtonControl enemyHeadButton in enemyHeadButtonList)
+        {
+            enemyHeadButton.UpdateUIDisplay();
+        }
+    }
     public void ChangeToInteractable()
     {
         foreach (CharacterHeadButtonControl enemyHeadButton in enemyHeadButtonList)
         {
+            enemyHeadButton.button.Disabled = false;
             enemyHeadButton.button.MouseFilter = Control.MouseFilterEnum.Stop;
         }
     }
@@ -32,6 +40,7 @@ public partial class EnemyCharacterHeadListUIControl : Node
     {
         foreach (CharacterHeadButtonControl enemyHeadButton in enemyHeadButtonList)
         {
+            enemyHeadButton.button.ButtonPressed = false;
             enemyHeadButton.button.MouseFilter = Control.MouseFilterEnum.Ignore;
         }
     }

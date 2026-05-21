@@ -6,6 +6,7 @@ public partial class CharacterHeadButtonControl : Node
 {
     private static CharacterHeadButtonControl currentSelectedPlayerHead;
     public static CharacterHeadButtonControl CurrentSelectedPlayerHead => currentSelectedPlayerHead;
+
     Color actPointHexColor = Color.FromHtml("#d8a543");
     [Export] public TextureRect characterHeadTextureRect;
     [Export] public Label actionStateLabel;
@@ -15,7 +16,7 @@ public partial class CharacterHeadButtonControl : Node
     [Export] public TextureProgressBar hpBar;
     [Export] public Label hpLabel;
     public CharacterData characterData;
-    public bool hasAct = false;
+    // public bool hasPrepared = false;
 
     string playerButtonGroupAddress = "res://Data/other/character_head_button_group.tres";
     string enemyButtonGroupAddress = "res://Data/other/enemy_character_head_button_group.tres";
@@ -106,7 +107,7 @@ public partial class CharacterHeadButtonControl : Node
         {
             if (toggled == false)
             {
-                if (hasAct == true) return;
+                if (characterData.hasPrepared == true) return;
                 //GD.Print("取消点击状态");
                 // 取消选中角色
                 Autoloads.sceneSingleton.playerActionChoseList.Visible = false;
@@ -193,14 +194,16 @@ public partial class CharacterHeadButtonControl : Node
     {
         actionStateLabel.Text = "已行动";
         button.Disabled = true;
-        hasAct = true;
+        // characterData.hasPrepared = true;
     }
     public void ChangeToActionReadyDisplay()
     {
+        actionStateLabel.Text = "待命";
+        button.Disabled = false;
         focusTrangle.Visible = false;
         Autoloads.sceneSingleton.playerActionChoseList.Visible = false;
-        actionStateLabel.Text = "待命";
-        hasAct = false;
+
+        // characterData.hasPrepared = false;
     }
     public void UpdateHPDisplay()
     {

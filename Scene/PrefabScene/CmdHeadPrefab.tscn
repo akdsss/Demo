@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://rs5vkilc7d4m"]
+
+[ext_resource type="Texture2D" uid="uid://djpa8kwcyf6yt" path="res://Asset/character/characterA01_head.png" id="1_xlcud"]
+
+[node name="TextureRect" type="TextureRect" unique_id=537360649]
+offset_right = 100.0
+offset_bottom = 100.0
+size_flags_vertical = 3
+texture = ExtResource("1_xlcud")
+expand_mode = 1
+stretch_mode = 5
+flip_h = true

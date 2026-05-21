@@ -5,7 +5,10 @@ using System.Collections.Generic;
 public partial class CommandItemUIControl : Control
 {
 	private static CommandItemUIControl currentSelected;
-	public static CommandItemUIControl CurrentSelected => currentSelected;
+	public static CommandItemUIControl CurrentSelected
+	{
+		get => currentSelected;
+	}
 	[Export] public Label label;
 	[Export] public ColorRect colorRect;
 	public int cmdIdxInQueue;
@@ -52,7 +55,12 @@ public partial class CommandItemUIControl : Control
 			colorRect.Color = new(colorDict[commandItemState]);
 		}
 	}
-
+	// public void ResetCmdItem()
+	// {
+	// 	commandItemState = CommandItemState.NORMAL;
+	// 	label.Text = Autoloads.sceneSingleton.cmdQueueUIControl.defaultCmdName;
+	// 	cmdIdxInQueue = 0;
+	// }
 	public void MouseEnter()
 	{
 		if (isOnset == true)
@@ -82,12 +90,17 @@ public partial class CommandItemUIControl : Control
 			// 设置角色指令序列
 			CommandExecuteInfo cei = new()
 			{
+				isDefault = false,
 				commandData = sS.battleManager.eventManager.currentMainPlayerCommand,
-				sourceCharacterData = sS.battleManager.eventManager.moveEventInfo?.moveSourceCharacter,
+				sourceCharacterData = sS.battleManager.eventManager.currentMainPlayer,
 				targetCoord = sS.battleManager.eventManager.moveEventInfo?.moveTargetCoord ?? new Vector2I(),
 				targetCharacterData = sS.battleManager.eventManager.damageEventInfo?.damageTargetCharacter,
 			};
 			sS.battleManager.eventManager.currentMainPlayer.SetCommand(1, CharacterHeadButtonControl.CurrentSelectedPlayerHead, cmdIdxInQueue, cei);// 逻辑更新+UI更新
+			Autoloads.sceneSingleton.enemyCharacterHeadListUIControl.ChangeToUninteractable();
+
+			// 调用战斗管理器，检查玩家准备轮次是否结束
+			sS.battleManager.CheckPlayerReadyOver();
 
 			// // 更新UI显示
 			// // sS.cmdQueueUIControl.cmdQueueState = CmdQueueState.NORMAL;
@@ -95,7 +108,7 @@ public partial class CommandItemUIControl : Control
 			// sS.cmdQueueUIControl.SwitchOffPlayerCommandSet();
 			// label.Text = sS.battleManager.eventManager.currentMainPlayerCommand.commandName;
 			// Autoloads.sceneSingleton.playerCharacterHeadListUIControl.ResetUIDisplay();
-			
+
 			// sS.battleManager.eventManager.currentMainPlayer.commandQueue[cmdIdxInQueue];
 		}
 
@@ -108,6 +121,7 @@ public partial class CommandItemUIControl : Control
 		// 更新外部UI
 		Autoloads.sceneSingleton.cmdQueueUIControl.SwitchOffPlayerCommandSet();
 		Autoloads.sceneSingleton.playerCharacterHeadListUIControl.ResetUIDisplay();
+		Autoloads.sceneSingleton.enemyCharacterHeadListUIControl.ResetUIDisplay();
 	}
 }
 

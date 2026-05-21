@@ -17,11 +17,12 @@ public partial class CharacterData : Resource
     [Export] public int turnInitialActionTimes;
     public int currentRestActionTimes;
 	public List<CommandExecuteInfo> commandQueue;
+	public bool hasPrepared;
 
 	public void CharacterInitialize()
 	{
 		commandQueue = new List<CommandExecuteInfo>();
-		int targetQueueLength = Autoloads.gameQueueLength;
+		int targetQueueLength = Autoloads.sceneSingleton.gameQueueLength;
 		for (int i = 0; i < targetQueueLength; i++)
 		{
             commandQueue.Add(new CommandExecuteInfo());
@@ -31,11 +32,21 @@ public partial class CharacterData : Resource
 	}
 	public void SetCommand(int actionPointCost, CharacterHeadButtonControl characterHeadButtonControl, int ccmdQueueIdx, CommandExecuteInfo commandExecuteInfo)
 	{
+		hasPrepared = true;
 		currentRestActionTimes -= actionPointCost;
+		GD.Print($"玩家{characterName}设定了指令{commandExecuteInfo.commandData.commandName}，消耗行动次数{actionPointCost}");
 		characterHeadButtonControl.UpdateUIDisplay();
 		characterHeadButtonControl.ChangeToActionOverDisplay();
 		commandQueue[ccmdQueueIdx] = commandExecuteInfo;
 		CommandItemUIControl.CurrentSelected.SetCommandToQueue(commandExecuteInfo.commandData);
+	}
+	public void SetCommand(int actionPointCost, CharacterHeadButtonControl characterHeadButtonControl, int cmdQueueIdx, CommandExecuteInfo commandExecuteInfo, CommandItemUIControl cmdItemUIControl)
+	{
+		currentRestActionTimes -= actionPointCost;
+		characterHeadButtonControl.UpdateUIDisplay();
+		characterHeadButtonControl.ChangeToActionOverDisplay();
+		commandQueue[cmdQueueIdx] = commandExecuteInfo;
+		cmdItemUIControl.SetCommandToQueue(commandExecuteInfo.commandData);
 	}
 	public void MakeDamage(CharacterData targetCharacterData, float damageValue)
 	{

@@ -11,6 +11,7 @@
 
 [node name="MainScene" type="Node2D" unique_id=197655870]
 script = ExtResource("1_hcm6b")
+levelData = ExtResource("3_ly247")
 
 [node name="SceneSingleton" type="Node" parent="." unique_id=1711598913 node_paths=PackedStringArray("gameStateLable", "playerActionChoseList")]
 script = ExtResource("7_nr04c")

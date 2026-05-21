@@ -3,6 +3,8 @@ using System;
 
 public partial class GameMain : Node
 {
+	[Export] LevelData levelData;
+	
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
@@ -19,6 +21,9 @@ public partial class GameMain : Node
 
 		// 关闭玩家选项面板
 		Autoloads.sceneSingleton.playerActionChoseList.Visible = false;
+
+		// 开始游戏
+		StartGame();
     }
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -28,6 +33,9 @@ public partial class GameMain : Node
 
 	public void StartGame()
 	{ 
+		PubTool.instance.gameMode = GameMode.Normal;
+		levelData.LevelInitialize();
+		Autoloads.sceneSingleton.battleManager.BattleStart(levelData);
 	}
 	public void ExitGame()
 	{

@@ -10,6 +10,9 @@ public partial class SceneSingleton : Node
 	public PlayerCharacterHeadListUIControl playerCharacterHeadListUIControl;
 	public EnemyCharacterHeadListUIControl enemyCharacterHeadListUIControl;
 	public CmdQueueUIControl cmdQueueUIControl;
+	public CommandHeadListUIControl commandHeadListUIControl;
+	public int gameQueueLength = 6;
+	public int gameCharacterNum = 7;
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{

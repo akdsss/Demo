@@ -11,7 +11,7 @@ public partial class ActionListUIControl : ColorRect
 	public override void _Ready()
 	{
 		PubTool.instance.ClearChildren(VBoxActionItemContent);
-		for(int i = 0; i < 6; i++)
+		for(int i = 0; i < Autoloads.sceneSingleton.gameCharacterNum; i++)
 		{
 			Node actionItem = actionItemPrefab.Instantiate();
 			actionItemUIControlList.Add(actionItem as CommandItemUIControl);

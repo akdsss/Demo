@@ -13,5 +13,5 @@ characterHeadImage = ExtResource("1_e3q43")
 hp = 110.0
 maxHp = 110.0
 atk = 10.0
-turnInitialActionTimes = 4
+turnInitialActionTimes = 2
 metadata/_custom_type_script = "uid://di57v3n6x1ras"

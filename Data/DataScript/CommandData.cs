@@ -9,6 +9,7 @@ public partial class CommandData : Resource
     [Export] public string commandName;
     [Export] public string commandDescription;
     [Export] public float[] allCommandParams;
+    [Export] public int priority = 0;
     public CommandData()
     {
         commandId = -1;
@@ -20,7 +21,7 @@ public partial class CommandData : Resource
 
 public class CommandExecuteInfo
 {
-    public bool isDefault;
+    public bool isDefault = false;
     public CharacterData sourceCharacterData;
     public CommandData commandData;
     // public int targetCharacterNum;
@@ -37,6 +38,7 @@ public class CommandExecuteInfo
         // GD.Print("默认指令执行");
         if (isDefault)
         {
+            GD.Print("默认指令执行");
             return;
         }
         
@@ -45,14 +47,19 @@ public class CommandExecuteInfo
             switch (commandData.commandId)
             {
                 case 0:// 测试
+                    GD.Print($"玩家 {sourceCharacterData.characterName} 执行指令 {commandData.commandName}：{commandData.commandDescription}");
                     break;
                 case 1:// 攻击
+                    GD.Print($"玩家 {sourceCharacterData.characterName} 执行指令 {commandData.commandName}：{commandData.commandDescription}");
                     sourceCharacterData.MakeDamage(targetCharacterData, sourceCharacterData.atk);
                     break;
                 case 2:// 移动
+                    GD.Print($"玩家 {sourceCharacterData.characterName} 执行指令 {commandData.commandName}：{commandData.commandDescription}");
                     Autoloads.gd_ChessBoard.MoveCharacter(sourceCharacterData, targetCoord);
                     break;
                 case 3:// 防御
+                    GD.Print($"玩家 {sourceCharacterData.characterName} 执行指令 {commandData.commandName}：{commandData.commandDescription}");
+                    GD.PrintErr("该指令暂未实现!");
                     break;
                 default:
                     break;
@@ -63,13 +70,18 @@ public class CommandExecuteInfo
             switch (commandData.commandId)
             {
                 case 0:// 测试
+                    GD.Print($"敌人 {sourceCharacterData.characterName} 执行指令 {commandData.commandName}：{commandData.commandDescription}");
                     break;
                 case 1:// 移动
+                    GD.Print($"敌人 {sourceCharacterData.characterName} 执行指令 {commandData.commandName}：{commandData.commandDescription}");
                     Autoloads.gd_ChessBoard.MoveCharacter(sourceCharacterData, targetCoord);
                     break;
                 case 2:// 跳过
+                    GD.Print($"敌人 {sourceCharacterData.characterName} 执行指令 {commandData.commandName}：{commandData.commandDescription}");
                     break;
                 case 3:// 攻击
+                    GD.Print($"敌人 {sourceCharacterData.characterName} 执行指令 {commandData.commandName}：{commandData.commandDescription}");
+                    sourceCharacterData.MakeDamage(targetCharacterData, sourceCharacterData.atk);
                     break;
                 default:
                     break;
