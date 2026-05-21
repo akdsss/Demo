@@ -29,28 +29,33 @@ public partial class CommandHeadListUIControl : VBoxContainer
 	}
 	public void SetCharacterHead(LevelData levelData)
 	{
+		PubTool.instance.ClearChildren(this);
+		allCharacterHeadList.Clear();
+
 		int idx = 0;
 		for (int i = 0; i < levelData.playerInfoInLevelArray.Length; i++)
 		{
 			PlayerInfoInLevel playerInfoInLevel = levelData.playerInfoInLevelArray[i];
-			if (idx >= allCharacterHeadList.Count)
-			{
-				GD.PrintErr("头像列表赋值错误，超出最大上限");
-				return;
-			}
-			allCharacterHeadList[idx].Texture = playerInfoInLevel.playerData.characterHeadImage;
+			TextureRect headItem = CreateCharacterHeadItem();
+			headItem.Texture = playerInfoInLevel.playerData.characterHeadImage;
 			idx++;
 		}
 		for (int i = 0; i < levelData.enemyInfoInLevelArray.Length; i++)
 		{
 			EnemyInfoInLevel enemyInfoInLevel = levelData.enemyInfoInLevelArray[i];
-			if (idx >= allCharacterHeadList.Count)
-			{
-				GD.PrintErr("头像列表赋值错误，超出最大上限");
-				return;
-			}
-			allCharacterHeadList[idx].Texture = enemyInfoInLevel.enemyData.characterHeadImage;
+			TextureRect headItem = CreateCharacterHeadItem();
+			headItem.Texture = enemyInfoInLevel.enemyData.characterHeadImage;
 			idx++;
 		}
+	}
+
+	private TextureRect CreateCharacterHeadItem()
+	{
+		Node characterHeadItem = characterHeadPrefab.Instantiate();
+		AddChild(characterHeadItem);
+		TextureRect textureRect = (TextureRect)characterHeadItem;
+		textureRect.Texture = Autoloads.sceneSingleton.defaultCharacterImage;
+		allCharacterHeadList.Add(textureRect);
+		return textureRect;
 	}
 }

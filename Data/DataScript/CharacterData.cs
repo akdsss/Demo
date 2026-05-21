@@ -21,14 +21,18 @@ public partial class CharacterData : Resource
 
 	public void CharacterInitialize()
 	{
+		ResetCommandQueue();
+		hp = maxHp;
+		currentRestActionTimes = turnInitialActionTimes;
+	}
+	public void ResetCommandQueue()
+	{
 		commandQueue = new List<CommandExecuteInfo>();
 		int targetQueueLength = Autoloads.sceneSingleton.gameQueueLength;
 		for (int i = 0; i < targetQueueLength; i++)
 		{
-            commandQueue.Add(new CommandExecuteInfo());
+			commandQueue.Add(new CommandExecuteInfo());
 		}
-		hp = maxHp;
-		currentRestActionTimes = turnInitialActionTimes;
 	}
 	public void SetCommand(int actionPointCost, CharacterHeadButtonControl characterHeadButtonControl, int ccmdQueueIdx, CommandExecuteInfo commandExecuteInfo)
 	{

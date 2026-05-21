@@ -7,6 +7,8 @@ public partial class PlayerActionButtonControl : Button
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		MouseEntered += OnSkillMouseEntered;
+		MouseExited += OnSkillMouseExited;
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -17,5 +19,17 @@ public partial class PlayerActionButtonControl : Button
 	{
 		playerCommandData.UIButtonClick();
 		Autoloads.sceneSingleton.battleManager.eventManager.currentMainPlayerCommand = playerCommandData;
+		Autoloads.sceneSingleton.cmdQueueUIControl?.ShowSkillDetail(playerCommandData, Autoloads.sceneSingleton.battleManager.eventManager.currentMainPlayer);
+	}
+
+	private void OnSkillMouseEntered()
+	{
+		Scale = new Vector2(1.04f, 1.04f);
+		Autoloads.sceneSingleton.cmdQueueUIControl?.ShowSkillDetail(playerCommandData, Autoloads.sceneSingleton.battleManager.eventManager.currentMainPlayer);
+	}
+
+	private void OnSkillMouseExited()
+	{
+		Scale = Vector2.One;
 	}
 }

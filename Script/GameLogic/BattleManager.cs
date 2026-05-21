@@ -10,6 +10,8 @@ public partial class BattleManager : Node
 	private List<CharacterData> battleCharacterDataList;
 	public List<PlayerData> battlePlayerDataList;
 	public List<EnemyData> battleEnemyDataList;
+	private List<CombatEvent> pendingCombatEvents = new();
+	private bool startSettlementRequested;
 
 	// 事件管理
 	public EventManager eventManager = new();
@@ -64,6 +66,7 @@ public partial class BattleManager : Node
 
 		battleCharacterDataList.AddRange(battlePlayerDataList);
 		battleCharacterDataList.AddRange(battleEnemyDataList);
+		Autoloads.sceneSingleton.gameCharacterNum = battleCharacterDataList.Count;
 
 		// 角色初始化
 		foreach (var characterData in battleCharacterDataList)
@@ -151,6 +154,7 @@ public partial class BattleManager : Node
 			{
 				prepareTurnState = PrepareTurnState.ENEMY_PRE;
 				PubTool.instance.PrintToCmdAndTitle("敌人准备中……");
+				Autoloads.sceneSingleton.enemyCharacterHeadListUIControl.ShowAllThinking();
 				for (int i = 0; i < battleEnemyDataList.Count; i++)
 				{
 					EnemyData enemyData = battleEnemyDataList[i];
@@ -162,6 +166,7 @@ public partial class BattleManager : Node
 					CharacterHeadButtonControl target = Autoloads.sceneSingleton.enemyCharacterHeadListUIControl.enemyHeadButtonList[i];
 					enemyData.SetCommand(1, target, 0, commandExecuteInfo, cmdItemUIControl);
 				}
+				Autoloads.sceneSingleton.enemyCharacterHeadListUIControl.UpdateEnemyPrepareDisplays();
 				// while (prepareTurnState != PrepareTurnState.ENEMY_PRE_OVER)
 				// {
 				//     PubTool.instance.PrintToCmdAndTitle("敌人准备中……");
@@ -238,6 +243,9 @@ public partial class BattleManager : Node
 				SetManagerState(PrepareTurnState.PRE_OVER);
 			}
 		}
+		ResolvePreparedActions();
+		Autoloads.sceneSingleton.cmdQueueUIControl.RevealEnemyActions();
+		await WaitForStartSettlement();
 		PrepareTurnEnd();
 	}
 	public void PrepareTurnInitialize()
@@ -247,11 +255,13 @@ public partial class BattleManager : Node
 		{
 			characterData.hasPrepared = false;
 			characterData.currentRestActionTimes = characterData.turnInitialActionTimes;
+			characterData.ResetCommandQueue();
 		}
 		// 更新指令矩阵UI显示
 		Autoloads.sceneSingleton.cmdQueueUIControl.UpdateCmdMatrix();
 		// 更新玩家头像列表UI显示
 		Autoloads.sceneSingleton.playerCharacterHeadListUIControl.RecoverForPrepare();
+		Autoloads.sceneSingleton.enemyCharacterHeadListUIControl.UpdateEnemyPrepareDisplays();
 		prepareTurnState = PrepareTurnState.BEFORE_PRE;
 	}
 	public void PrepareTurnEnd()
@@ -282,23 +292,13 @@ public partial class BattleManager : Node
 	{
 		PubTool.instance.PrintToCmdAndTitle("演出阶段");
 		PlayTurnInitialize();
-		for (int i = 0; i < Autoloads.sceneSingleton.gameQueueLength; i++)
+		if (pendingCombatEvents == null || pendingCombatEvents.Count == 0)
 		{
-			foreach (var characterData in battleCharacterDataList)
-			{
-				if (characterData.commandQueue[i].isDefault == false)
-				{
-					characterData.commandQueue[i].ExecuteInPlay();
-					// 短暂暂停，等待下一个命令
-					await Task.Delay(100);
-				}
-				else
-				{
-					PubTool.instance.PrintToCmdAndTitle("无命令");
-					// 筭待下一个命令
-					await Task.Delay(10);
-				}
-			}
+			ResolvePreparedActions();
+		}
+		foreach (CombatEvent combatEvent in pendingCombatEvents)
+		{
+			await PlayCombatEvent(combatEvent);
 		}
 		// while (playTurnState != PlayTurnState.PLAY_OVER)
 		// {
@@ -342,6 +342,51 @@ public partial class BattleManager : Node
 		//     }
 		// }
 		PlayTurnEnd();
+	}
+	private void ResolvePreparedActions()
+	{
+		List<PlannedAction> plannedActions = LegacyCommandAdapter.ToPlannedActions(battleCharacterDataList);
+		CombatResolver resolver = new();
+		pendingCombatEvents = resolver.ResolveRound(plannedActions, turnNum);
+		PubTool.instance.PrintToCmdAndTitle($"后台结算完成：{pendingCombatEvents.Count} 个事件");
+	}
+	private async Task WaitForStartSettlement()
+	{
+		startSettlementRequested = false;
+		Autoloads.sceneSingleton.cmdQueueUIControl.ShowStartSettlementButton(true);
+		PubTool.instance.PrintToCmdAndTitle("怪物行动已揭示，请点击开始结算");
+		while (!startSettlementRequested)
+		{
+			await ToSignal(this, nameof(PreTS));
+		}
+		Autoloads.sceneSingleton.cmdQueueUIControl.ShowStartSettlementButton(false);
+	}
+	public void RequestStartSettlement()
+	{
+		startSettlementRequested = true;
+		EmitSignal(nameof(PreTS));
+	}
+	private async Task PlayCombatEvent(CombatEvent combatEvent)
+	{
+		string logText = CombatEventLogFormatter.Format(combatEvent);
+		if (!string.IsNullOrEmpty(logText))
+		{
+			PubTool.instance.PrintToCmdAndTitle(logText);
+		}
+
+		await PlayCombatEventPresentationPlaceholder(combatEvent);
+		CombatEventApplier.ApplyToLegacyState(combatEvent);
+		await Task.Delay(IsMetaEvent(combatEvent) ? 10 : 100);
+	}
+	private Task PlayCombatEventPresentationPlaceholder(CombatEvent combatEvent)
+	{
+		return Task.CompletedTask;
+	}
+	private static bool IsMetaEvent(CombatEvent combatEvent)
+	{
+		return combatEvent == null ||
+			combatEvent.EventType == CombatEventType.RoundStarted ||
+			combatEvent.EventType == CombatEventType.RoundEnded;
 	}
 	public void PlayTurnInitialize()
 	{

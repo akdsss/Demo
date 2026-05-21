@@ -210,4 +210,8 @@ public partial class CharacterHeadButtonControl : Node
         hpBar.Value = characterData.hp / characterData.maxHp * 100;
         hpLabel.Text = $"{characterData.hp}";
     }
+    public void SetActionStateText(string text)
+    {
+        actionStateLabel.Text = text;
+    }
 }

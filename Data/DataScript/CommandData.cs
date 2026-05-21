@@ -35,61 +35,23 @@ public class CommandExecuteInfo
     }
     public virtual void ExecuteInPlay()
     {
-        // GD.Print("默认指令执行");
         if (isDefault)
         {
             GD.Print("默认指令执行");
             return;
         }
-        
-        if (commandData is PlayerCommandData)
+
+        CombatResolver resolver = new();
+        List<CombatEvent> combatEvents = resolver.ResolveSingleLegacyCommand(this);
+        GD.Print("兼容入口 ExecuteInPlay 已通过 CombatResolver 生成 CombatEvent。后续流程应直接消费 CombatEvent。");
+        foreach (CombatEvent combatEvent in combatEvents)
         {
-            switch (commandData.commandId)
+            string logText = CombatEventLogFormatter.Format(combatEvent);
+            if (!string.IsNullOrEmpty(logText))
             {
-                case 0:// 测试
-                    GD.Print($"玩家 {sourceCharacterData.characterName} 执行指令 {commandData.commandName}：{commandData.commandDescription}");
-                    break;
-                case 1:// 攻击
-                    GD.Print($"玩家 {sourceCharacterData.characterName} 执行指令 {commandData.commandName}：{commandData.commandDescription}");
-                    sourceCharacterData.MakeDamage(targetCharacterData, sourceCharacterData.atk);
-                    break;
-                case 2:// 移动
-                    GD.Print($"玩家 {sourceCharacterData.characterName} 执行指令 {commandData.commandName}：{commandData.commandDescription}");
-                    Autoloads.gd_ChessBoard.MoveCharacter(sourceCharacterData, targetCoord);
-                    break;
-                case 3:// 防御
-                    GD.Print($"玩家 {sourceCharacterData.characterName} 执行指令 {commandData.commandName}：{commandData.commandDescription}");
-                    GD.PrintErr("该指令暂未实现!");
-                    break;
-                default:
-                    break;
+                GD.Print(logText);
             }
-        }
-        else if (commandData is EnemyCommandData)
-        {
-            switch (commandData.commandId)
-            {
-                case 0:// 测试
-                    GD.Print($"敌人 {sourceCharacterData.characterName} 执行指令 {commandData.commandName}：{commandData.commandDescription}");
-                    break;
-                case 1:// 移动
-                    GD.Print($"敌人 {sourceCharacterData.characterName} 执行指令 {commandData.commandName}：{commandData.commandDescription}");
-                    Autoloads.gd_ChessBoard.MoveCharacter(sourceCharacterData, targetCoord);
-                    break;
-                case 2:// 跳过
-                    GD.Print($"敌人 {sourceCharacterData.characterName} 执行指令 {commandData.commandName}：{commandData.commandDescription}");
-                    break;
-                case 3:// 攻击
-                    GD.Print($"敌人 {sourceCharacterData.characterName} 执行指令 {commandData.commandName}：{commandData.commandDescription}");
-                    sourceCharacterData.MakeDamage(targetCharacterData, sourceCharacterData.atk);
-                    break;
-                default:
-                    break;
-            }
-        }
-        else
-        {
-            GD.PrintErr("错误：未知的命令子类!");
+            CombatEventApplier.ApplyToLegacyState(combatEvent);
         }
     }
     // public void Execute()
