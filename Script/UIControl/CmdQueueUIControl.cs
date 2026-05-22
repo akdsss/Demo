@@ -164,6 +164,7 @@ public partial class CmdQueueUIControl : Node
 			}
 		}
 		ShowCommandDetail("怪物行动揭示", "怪物行动已揭示，可检视优先级、描述和目标。");
+		Autoloads.sceneSingleton.tutorialOverlayControl?.Notify(TutorialWaitCondition.EnemyActionsRevealed);
 	}
 
 	public void ShowStartSettlementButton(bool visible)
@@ -202,9 +203,12 @@ public partial class CmdQueueUIControl : Node
 
 		SkillDefinition skill = SkillDefinition.FromCommandData(commandData);
 		string title = revealed ? commandData.commandName : "未揭示怪物行动";
+		string areaText = source == null
+			? "未知"
+			: AreaDefinition.FromLegacyCoord(source.coord).DisplayName;
 		string detail = revealed
-			? $"来源：{source?.characterName ?? "未知"}\n优先级：{skill.Priority}\nMP：{skill.MpCost}\n目标：{FormatTargetType(skill.TargetType)}\n标签：{FormatSkillTags(skill.Tags)}\n效果：{commandData.commandDescription}"
-			: $"来源：{source?.characterName ?? "怪物"}\n标签：{FormatSkillTags(skill.Tags)}\n怪物行动尚未揭示。";
+			? $"来源：{source?.characterName ?? "未知"}\n当前区域：{areaText}\n优先级：{skill.Priority}（区域修正后：{FormatAdjustedPriority(skill, source)}）\nMP：{skill.MpCost}\n目标：{FormatTargetType(skill.TargetType)}\n标签：{FormatSkillTags(skill.Tags)}\n效果：{commandData.commandDescription}"
+			: $"来源：{source?.characterName ?? "怪物"}\n当前区域：{areaText}\n标签：{FormatSkillTags(skill.Tags)}\n怪物行动尚未揭示。";
 		ShowCommandDetail(title, detail);
 	}
 
@@ -253,6 +257,9 @@ public partial class CmdQueueUIControl : Node
 		setCommandButton.Pressed += OnSetCommandPressed;
 		inspectButton.Pressed += OnInspectPressed;
 		startSettlementButton.Pressed += OnStartSettlementPressed;
+		Autoloads.sceneSingleton?.uiSfxRouter?.RegisterButton(setCommandButton);
+		Autoloads.sceneSingleton?.uiSfxRouter?.RegisterButton(inspectButton);
+		Autoloads.sceneSingleton?.uiSfxRouter?.RegisterButton(startSettlementButton);
 	}
 
 	private Button CreateOrGetButton(string nodeName, string text)
@@ -287,8 +294,20 @@ public partial class CmdQueueUIControl : Node
 
 	private void OnStartSettlementPressed()
 	{
+		Autoloads.sceneSingleton.tutorialOverlayControl?.Notify(TutorialWaitCondition.StartSettlement);
 		Autoloads.sceneSingleton.battleManager?.RequestStartSettlement();
 		ShowStartSettlementButton(false);
+	}
+
+	public Control GetTutorialHighlightControl(TutorialHighlightTarget target)
+	{
+		return target switch
+		{
+			TutorialHighlightTarget.InspectButton => inspectButton,
+			TutorialHighlightTarget.StartSettlementButton => startSettlementButton,
+			TutorialHighlightTarget.BattleLog => timelineDetailLabel,
+			_ => null
+		};
 	}
 
 	private void SetControlMode(bool inspectMode)
@@ -366,6 +385,20 @@ public partial class CmdQueueUIControl : Node
 		if ((tags & SkillTag.SingleTarget) != 0) names.Add("单体");
 		if ((tags & SkillTag.Special) != 0) names.Add("特殊");
 		return string.Join(" / ", names);
+	}
+
+	private static int FormatAdjustedPriority(SkillDefinition skill, CharacterData source)
+	{
+		if (source == null || skill == null)
+		{
+			return skill?.Priority ?? 0;
+		}
+
+		return CombatAreaRules.GetAdjustedPriority(new PlannedAction
+		{
+			Source = CharacterState.FromCharacterData(source),
+			Skill = skill
+		});
 	}
 }
 

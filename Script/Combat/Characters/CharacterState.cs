@@ -1,4 +1,5 @@
 using Godot;
+using System;
 using System.Collections.Generic;
 
 public class CharacterState
@@ -15,6 +16,7 @@ public class CharacterState
     public int MaxMp { get; set; }
     public int ActionsPerRound { get; set; }
     public int RemainingActions { get; set; }
+    public float ShieldValue { get; set; }
     public Vector2I LegacyCoord { get; set; }
     public AreaDefinition CurrentArea { get; set; }
     public CharacterBattleState BattleState { get; set; } = CharacterBattleState.ALIVE;
@@ -50,9 +52,11 @@ public class CharacterState
         state.Attack = characterData.atk;
         state.ActionsPerRound = characterData.turnInitialActionTimes;
         state.RemainingActions = characterData.currentRestActionTimes;
+        state.ShieldValue = characterData.runtimeShieldValue;
         state.LegacyCoord = characterData.coord;
         state.CurrentArea = AreaDefinition.FromLegacyCoord(characterData.coord);
         state.BattleState = characterData.characterBattleState;
+        state.LoadRuntimeStatuses(characterData);
         return state;
     }
 
@@ -74,9 +78,12 @@ public class CharacterState
         Attack = refreshed.Attack;
         ActionsPerRound = refreshed.ActionsPerRound;
         RemainingActions = refreshed.RemainingActions;
+        ShieldValue = refreshed.ShieldValue;
         LegacyCoord = refreshed.LegacyCoord;
         CurrentArea = refreshed.CurrentArea;
         BattleState = refreshed.BattleState;
+        Statuses.Clear();
+        LoadRuntimeStatuses(LegacyCharacterData);
     }
 
     public bool HasBlockedTag(SkillTag skillTags)
@@ -97,6 +104,69 @@ public class CharacterState
         return false;
     }
 
+    public bool HasStatus(string statusId)
+    {
+        return GetStatus(statusId) != null;
+    }
+
+    public StatusInstance GetStatus(string statusId)
+    {
+        if (string.IsNullOrEmpty(statusId))
+        {
+            return null;
+        }
+
+        foreach (StatusInstance status in Statuses)
+        {
+            if (status?.Definition?.Id == statusId && !status.IsExpired)
+            {
+                return status;
+            }
+        }
+
+        return null;
+    }
+
+    public StatusInstance AddOrRefreshStatus(StatusDefinition definition, CharacterState source = null)
+    {
+        if (definition == null)
+        {
+            return null;
+        }
+
+        StatusInstance existing = GetStatus(definition.Id);
+        if (existing != null)
+        {
+            switch (definition.StackMode)
+            {
+                case StatusStackMode.RefreshDuration:
+                    existing.RemainingDuration = definition.DurationValue;
+                    break;
+                case StatusStackMode.StackCount:
+                    existing.StackCount++;
+                    existing.RemainingDuration = definition.DurationValue;
+                    break;
+            }
+            return existing;
+        }
+
+        StatusInstance status = definition.CreateInstance(this, source);
+        Statuses.Add(status);
+        return status;
+    }
+
+    public bool RemoveStatus(string statusId)
+    {
+        StatusInstance status = GetStatus(statusId);
+        if (status == null)
+        {
+            return false;
+        }
+
+        Statuses.Remove(status);
+        return true;
+    }
+
     private static CombatFaction InferFaction(CharacterData characterData)
     {
         return characterData switch
@@ -105,5 +175,34 @@ public class CharacterState
             EnemyData => CombatFaction.Enemy,
             _ => CombatFaction.Unknown
         };
+    }
+
+    private void LoadRuntimeStatuses(CharacterData characterData)
+    {
+        if (characterData.runtimeStatusIds == null)
+        {
+            characterData.runtimeStatusIds = new List<string>();
+        }
+
+        if (characterData.runtimeStatusStacks == null)
+        {
+            characterData.runtimeStatusStacks = new List<int>();
+        }
+
+        for (int i = 0; i < characterData.runtimeStatusIds.Count; i++)
+        {
+            string statusId = characterData.runtimeStatusIds[i];
+            if (string.IsNullOrEmpty(statusId))
+            {
+                continue;
+            }
+
+            StatusInstance status = StatusCatalog.Create(statusId).CreateInstance(this);
+            if (i < characterData.runtimeStatusStacks.Count)
+            {
+                status.StackCount = Math.Max(1, characterData.runtimeStatusStacks[i]);
+            }
+            Statuses.Add(status);
+        }
     }
 }

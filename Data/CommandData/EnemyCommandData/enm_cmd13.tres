@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="EnemyCommandData" format=3 uid="uid://m5reliteyang01"]
+
+[ext_resource type="Script" uid="uid://c4mec8i6hyxs7" path="res://Data/DataScript/EnemyCommandData.cs" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+commandId = 13
+commandName = "至阳"
+commandDescription = "持续4个时点，沿至阳路径移动并造成范围近战伤害。当前兼容层先按1倍范围近战伤害展示和结算。"
+priority = 10
+metadata/_custom_type_script = "uid://c4mec8i6hyxs7"

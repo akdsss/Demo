@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="TutorialStepData" format=3]
+
+[ext_resource type="Script" path="res://Data/DataScript/TutorialStepData.cs" id="1_step"]
+
+[resource]
+script = ExtResource("1_step")
+stepId = "tutorial_04_encyclopedia"
+orderIndex = 4
+title = "打开百科"
+promptText = "右上角的百科会解释区域修正、状态效果和基础战斗规则。先打开百科并查看一个区域条目。"
+highlightTarget = 8
+waitCondition = 1
+requiredTargetId = "area_modifiers"
+blocksOtherInput = true

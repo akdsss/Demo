@@ -14,6 +14,7 @@ public partial class PlayerChoseListPanelControl : Panel
             allChoseContent.AddChild(choseButton);
             choseButton.Text = playerCommandData.commandName;
             ((PlayerActionButtonControl)choseButton).playerCommandData = playerCommandData;
+            Autoloads.sceneSingleton?.uiSfxRouter?.RegisterButton(choseButton);
         }
     }
 }

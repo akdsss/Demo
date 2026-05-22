@@ -20,6 +20,7 @@ public partial class PlayerActionButtonControl : Button
 		playerCommandData.UIButtonClick();
 		Autoloads.sceneSingleton.battleManager.eventManager.currentMainPlayerCommand = playerCommandData;
 		Autoloads.sceneSingleton.cmdQueueUIControl?.ShowSkillDetail(playerCommandData, Autoloads.sceneSingleton.battleManager.eventManager.currentMainPlayer);
+		Autoloads.sceneSingleton.tutorialOverlayControl?.Notify(TutorialWaitCondition.SelectSkill);
 	}
 
 	private void OnSkillMouseEntered()

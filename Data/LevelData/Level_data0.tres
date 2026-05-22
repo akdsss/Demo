@@ -5,10 +5,27 @@
 [ext_resource type="Resource" uid="uid://c8kh3h20d0t6q" path="res://Data/LevelData/EnemyInfoInlevel/enm_info_level1.tres" id="2_t8lyu"]
 [ext_resource type="Resource" uid="uid://k50keva7c6i" path="res://Data/LevelData/PlayerInfoInLevel/ply_info_level1.tres" id="3_i8usa"]
 [ext_resource type="Script" uid="uid://b4odp0seqjtt0" path="res://Data/DataScript/LevelData.cs" id="3_jkkqq"]
+[ext_resource type="Resource" path="res://Data/Tutorials/TutorialStepData/tutorial_step_01.tres" id="4_step01"]
+[ext_resource type="Resource" path="res://Data/Tutorials/TutorialStepData/tutorial_step_02.tres" id="5_step02"]
+[ext_resource type="Resource" path="res://Data/Tutorials/TutorialStepData/tutorial_step_03.tres" id="6_step03"]
+[ext_resource type="Resource" path="res://Data/Tutorials/TutorialStepData/tutorial_step_04.tres" id="7_step04"]
+[ext_resource type="Resource" path="res://Data/Tutorials/TutorialStepData/tutorial_step_05.tres" id="8_step05"]
+[ext_resource type="Resource" path="res://Data/Tutorials/TutorialStepData/tutorial_step_06.tres" id="9_step06"]
+[ext_resource type="Resource" path="res://Data/Tutorials/TutorialStepData/tutorial_step_07.tres" id="10_step07"]
+[ext_resource type="Resource" path="res://Data/Tutorials/TutorialStepData/tutorial_step_08.tres" id="11_step08"]
+[ext_resource type="Resource" path="res://Data/Tutorials/TutorialStepData/tutorial_step_09.tres" id="12_step09"]
+[ext_resource type="Resource" path="res://Data/Tutorials/TutorialStepData/tutorial_step_10.tres" id="13_step10"]
+[ext_resource type="Resource" path="res://Data/Tutorials/TutorialStepData/tutorial_step_11.tres" id="14_step11"]
+[ext_resource type="Resource" path="res://Data/Tutorials/TutorialStepData/tutorial_step_12.tres" id="15_step12"]
+[ext_resource type="Resource" path="res://Data/GrowthRewards/growth_reward_tutorial.tres" id="16_reward"]
 
 [resource]
 script = ExtResource("3_jkkqq")
-levelName = "测试关"
-enemyInfoInLevelArray = Array[Object]([ExtResource("1_pclwo"), ExtResource("2_t8lyu")])
+levelId = 1
+levelName = "教学关"
+levelType = 2
+enemyInfoInLevelArray = Array[Object]([ExtResource("1_pclwo")])
 playerInfoInLevelArray = Array[Object]([ExtResource("2_i8usa"), ExtResource("3_i8usa")])
+tutorialStepDataArray = Array[Object]([ExtResource("4_step01"), ExtResource("5_step02"), ExtResource("6_step03"), ExtResource("7_step04"), ExtResource("8_step05"), ExtResource("9_step06"), ExtResource("10_step07"), ExtResource("11_step08"), ExtResource("12_step09"), ExtResource("13_step10"), ExtResource("14_step11"), ExtResource("15_step12")])
+growthRewardData = ExtResource("16_reward")
 metadata/_custom_type_script = "uid://b4odp0seqjtt0"

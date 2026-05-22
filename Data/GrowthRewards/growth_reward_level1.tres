@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="GrowthRewardData" format=3 uid="uid://m5rrewardlevel1"]
+
+[ext_resource type="Script" path="res://Data/DataScript/GrowthRewardData.cs" id="1_reward"]
+[ext_resource type="Resource" uid="uid://grtxmchfk7wy" path="res://Data/CharacterData/PlayerData/ply_data0.tres" id="2_player_a"]
+[ext_resource type="Resource" uid="uid://dxesp6pjxwnm3" path="res://Data/CharacterData/PlayerData/ply_data1.tres" id="3_player_b"]
+[ext_resource type="Resource" uid="uid://df1sfcfb7s1am" path="res://Data/CharacterData/PlayerData/ply_data2.tres" id="4_player_c"]
+[ext_resource type="Resource" uid="uid://m5rplyheal001" path="res://Data/CommandData/PlayerCommandData/ply_cmd5.tres" id="5_heal"]
+[ext_resource type="Resource" uid="uid://blo0ajilvr0vb" path="res://Data/CommandData/PlayerCommandData/ply_cmd1.tres" id="6_attack"]
+
+[resource]
+script = ExtResource("1_reward")
+rewardId = "level_2_clear_reward"
+uiSummaryText = "小型敌方团体已击破。队伍获得治疗手段，并强化基础攻击。"
+characterDataArray = Array[Object]([ExtResource("2_player_a"), ExtResource("3_player_b"), ExtResource("4_player_c")])
+statChangeTextArray = PackedStringArray("最大生命 +12", "攻击 +2", "最大生命 +8")
+unlockSkillTextArray = PackedStringArray("技能升级：攻击", "解锁：治疗", "战术储备提升")
+maxHpChangeArray = PackedInt32Array(12, 0, 8)
+attackChangeArray = PackedFloat32Array(0, 2, 0)
+unlockSkillDataArray = Array[Object]([ExtResource("5_heal")])
+upgradeSkillDataArray = Array[Object]([ExtResource("6_attack")])
+upgradePriorityDeltaArray = PackedInt32Array(5)
+upgradedDescriptionArray = PackedStringArray("对1个近战目标进行强化攻击。")

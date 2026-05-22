@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="TutorialStepData" format=3]
+
+[ext_resource type="Script" path="res://Data/DataScript/TutorialStepData.cs" id="1_step"]
+
+[resource]
+script = ExtResource("1_step")
+stepId = "tutorial_01_core"
+orderIndex = 1
+title = "时间点与区域"
+promptText = "战斗的核心是时间点和区域：你先在时间轴上安排指令，再根据结算时敌我所在区域决定效果。"
+highlightTarget = 1
+waitCondition = 0
+blocksOtherInput = true

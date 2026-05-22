@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="TutorialStepData" format=3]
+
+[ext_resource type="Script" path="res://Data/DataScript/TutorialStepData.cs" id="1_step"]
+
+[resource]
+script = ExtResource("1_step")
+stepId = "tutorial_10_battle_log"
+orderIndex = 10
+title = "战斗记录"
+promptText = "战斗记录会展示行动开始、伤害、治疗、移动、战败和失败原因。它来自后台 CombatEvent。"
+highlightTarget = 9
+waitCondition = 7
+blocksOtherInput = true

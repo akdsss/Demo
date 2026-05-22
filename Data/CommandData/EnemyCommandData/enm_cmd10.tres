@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="EnemyCommandData" format=3 uid="uid://m5reliterage01"]
+
+[ext_resource type="Script" uid="uid://c4mec8i6hyxs7" path="res://Data/DataScript/EnemyCommandData.cs" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+commandId = 10
+commandName = "狂怒"
+commandDescription = "进入狂怒状态，持续至战斗结束。当前仅配置为可展示技能，触发与行动逻辑留给后续 M5R。"
+priority = 60
+metadata/_custom_type_script = "uid://c4mec8i6hyxs7"

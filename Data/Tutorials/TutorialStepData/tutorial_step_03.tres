@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="TutorialStepData" format=3]
+
+[ext_resource type="Script" path="res://Data/DataScript/TutorialStepData.cs" id="1_step"]
+
+[resource]
+script = ExtResource("1_step")
+stepId = "tutorial_03_area_modifiers"
+orderIndex = 3
+title = "八卦区域修正"
+promptText = "区域会影响伤害、治疗、状态和优先级。当前 Demo 先用棋盘坐标兼容区域，后续会替换为完整八卦区域。"
+highlightTarget = 1
+waitCondition = 0
+blocksOtherInput = true

@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="TutorialStepData" format=3]
+
+[ext_resource type="Script" path="res://Data/DataScript/TutorialStepData.cs" id="1_step"]
+
+[resource]
+script = ExtResource("1_step")
+stepId = "tutorial_06_hold_to_place"
+orderIndex = 6
+title = "长按放置指令"
+promptText = "把目标选好后，在空白时点长按 2 秒放置指令。确认后的指令不可撤回，也不可覆盖。"
+highlightTarget = 4
+waitCondition = 3
+blocksOtherInput = true

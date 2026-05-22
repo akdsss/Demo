@@ -1,15 +1,17 @@
 [gd_resource type="Resource" script_class="EnemyData" format=3 uid="uid://d3dp20y6xhorw"]
 
-[ext_resource type="Texture2D" uid="uid://cs2w8ffvm4mqi" path="res://Asset/character/enemyB01_head.png" id="1_esboh"]
-[ext_resource type="Resource" uid="uid://drsextpc1i58u" path="res://Data/CommandData/EnemyCommandData/enm_cmd0.tres" id="2_3dei7"]
+[ext_resource type="Texture2D" path="res://Asset/Generated/EnemyPortraits/enemy_common_soldier.png" id="1_esboh"]
 [ext_resource type="Script" uid="uid://di57v3n6x1ras" path="res://Data/DataScript/EnemyData.cs" id="3_hhxjn"]
+[ext_resource type="Resource" uid="uid://qinongqwiyl6" path="res://Data/CommandData/EnemyCommandData/enm_cmd1.tres" id="4_move"]
+[ext_resource type="Resource" uid="uid://boap4niecmhwa" path="res://Data/CommandData/EnemyCommandData/enm_cmd3.tres" id="5_attack"]
+[ext_resource type="Resource" uid="uid://dp1ltok4008ow" path="res://Data/CommandData/EnemyCommandData/enm_cmd2.tres" id="6_skip"]
 
 [resource]
 script = ExtResource("3_hhxjn")
-enemyCommandDataArray = Array[Object]([ExtResource("2_3dei7")])
+enemyCommandDataArray = Array[Object]([ExtResource("4_move"), ExtResource("5_attack"), ExtResource("6_skip")])
 characterId = 2
 characterName = "测试敌人"
-characterDescription = "用于测试的敌人"
+characterDescription = "用于后续关卡测试的基础敌人，会在移动、攻击和跳过之间生成行动。"
 characterHeadImage = ExtResource("1_esboh")
 hp = 100.0
 maxHp = 100.0

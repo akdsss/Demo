@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="TutorialStepData" format=3]
+
+[ext_resource type="Script" path="res://Data/DataScript/TutorialStepData.cs" id="1_step"]
+
+[resource]
+script = ExtResource("1_step")
+stepId = "tutorial_09_start_settlement"
+orderIndex = 9
+title = "开始结算"
+promptText = "点击开始结算后进入演出阶段。此时战斗结果已经由后台事件列表决定，界面只负责播放。"
+highlightTarget = 7
+waitCondition = 6
+blocksOtherInput = true

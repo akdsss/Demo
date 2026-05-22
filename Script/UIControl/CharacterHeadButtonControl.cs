@@ -16,6 +16,7 @@ public partial class CharacterHeadButtonControl : Node
     [Export] public TextureProgressBar hpBar;
     [Export] public Label hpLabel;
     public CharacterData characterData;
+    private HBoxContainer statusIconContainer;
     // public bool hasPrepared = false;
 
     string playerButtonGroupAddress = "res://Data/other/character_head_button_group.tres";
@@ -50,6 +51,7 @@ public partial class CharacterHeadButtonControl : Node
 
         // 设置开关类型
         button.ToggleMode = true;
+        Autoloads.sceneSingleton?.uiSfxRouter?.RegisterButton(button);
         // 重置按钮状态
         button.ButtonPressed = false;
         focusTrangle.Visible = false;
@@ -77,11 +79,14 @@ public partial class CharacterHeadButtonControl : Node
         hpLabel.Text = characterData.hp.ToString();
         hpLabel.Visible = true;
         hpBar.Visible = true;
+        EnsureStatusIconContainer();
+        UpdateStatusIcons();
     }
     public void UpdateUIDisplay()
     {
         SetActionTimes(characterData.currentRestActionTimes);
         UpdateHPDisplay();
+        UpdateStatusIcons();
     }
     public void SetActionTimes(int actionTimes)
     {
@@ -213,5 +218,71 @@ public partial class CharacterHeadButtonControl : Node
     public void SetActionStateText(string text)
     {
         actionStateLabel.Text = text;
+    }
+
+    private void EnsureStatusIconContainer()
+    {
+        if (statusIconContainer != null && statusIconContainer.GetParent() != null)
+        {
+            return;
+        }
+
+        statusIconContainer = button.GetNodeOrNull<HBoxContainer>("StatusIconContainer");
+        if (statusIconContainer == null)
+        {
+            statusIconContainer = new HBoxContainer
+            {
+                Name = "StatusIconContainer",
+                MouseFilter = Control.MouseFilterEnum.Ignore
+            };
+            statusIconContainer.AnchorLeft = 1;
+            statusIconContainer.AnchorRight = 1;
+            statusIconContainer.AnchorTop = 0;
+            statusIconContainer.AnchorBottom = 0;
+            statusIconContainer.OffsetLeft = -74;
+            statusIconContainer.OffsetRight = -4;
+            statusIconContainer.OffsetTop = 4;
+            statusIconContainer.OffsetBottom = 22;
+            button.AddChild(statusIconContainer);
+        }
+    }
+
+    private void UpdateStatusIcons()
+    {
+        EnsureStatusIconContainer();
+        foreach (Node child in statusIconContainer.GetChildren())
+        {
+            child.QueueFree();
+        }
+
+        if (characterData?.runtimeStatusIds == null)
+        {
+            return;
+        }
+
+        int shownCount = 0;
+        foreach (string statusId in characterData.runtimeStatusIds)
+        {
+            Texture2D icon = BattleAssetCatalog.GetStatusIconTexture(statusId);
+            if (icon == null)
+            {
+                continue;
+            }
+
+            TextureRect iconRect = new()
+            {
+                Texture = icon,
+                CustomMinimumSize = new Vector2(16, 16),
+                StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered,
+                MouseFilter = Control.MouseFilterEnum.Ignore,
+                TooltipText = statusId
+            };
+            statusIconContainer.AddChild(iconRect);
+            shownCount++;
+            if (shownCount >= 4)
+            {
+                break;
+            }
+        }
     }
 }

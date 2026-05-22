@@ -9,6 +9,8 @@ public partial class LevelData : Resource
 	[Export] public LevelType levelType;
 	[Export] public EnemyInfoInLevel[] enemyInfoInLevelArray;
 	[Export] public PlayerInfoInLevel[] playerInfoInLevelArray;
+	[Export] public TutorialStepData[] tutorialStepDataArray;
+	[Export] public GrowthRewardData growthRewardData;
 
 	public void LevelInitialize()
 	{
@@ -33,5 +35,6 @@ public partial class LevelData : Resource
 public enum LevelType
 {
 	NORMAL,
-	BOSS
+	BOSS,
+	TUTORIAL
 }

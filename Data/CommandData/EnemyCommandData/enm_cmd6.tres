@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="EnemyCommandData" format=3 uid="uid://m5rambushcmd01"]
+
+[ext_resource type="Script" uid="uid://c4mec8i6hyxs7" path="res://Data/DataScript/EnemyCommandData.cs" id="1_ambush"]
+
+[resource]
+script = ExtResource("1_ambush")
+commandId = 6
+commandName = "突袭"
+commandDescription = "移动至指定目标所在区域，获得闪避，持续2时点。当前兼容层先按移动结算。"
+priority = 30
+metadata/_custom_type_script = "uid://c4mec8i6hyxs7"

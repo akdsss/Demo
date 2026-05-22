@@ -18,12 +18,19 @@ public partial class CharacterData : Resource
     public int currentRestActionTimes;
 	public List<CommandExecuteInfo> commandQueue;
 	public bool hasPrepared;
+	public List<string> runtimeStatusIds = new();
+	public List<int> runtimeStatusStacks = new();
+	public float runtimeShieldValue;
 
-	public void CharacterInitialize()
+	public virtual void CharacterInitialize()
 	{
 		ResetCommandQueue();
 		hp = maxHp;
+		characterBattleState = CharacterBattleState.ALIVE;
 		currentRestActionTimes = turnInitialActionTimes;
+		runtimeStatusIds.Clear();
+		runtimeStatusStacks.Clear();
+		runtimeShieldValue = 0;
 	}
 	public void ResetCommandQueue()
 	{

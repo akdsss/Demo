@@ -8,4 +8,5 @@ enemyCommandName = 3
 commandId = 2
 commandName = "跳过"
 commandDescription = "不执行任何行动"
+priority = -100
 metadata/_custom_type_script = "uid://c4mec8i6hyxs7"

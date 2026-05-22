@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="LevelData" format=3 uid="uid://m5rleveldata01"]
+
+[ext_resource type="Script" uid="uid://b4odp0seqjtt0" path="res://Data/DataScript/LevelData.cs" id="1_script"]
+[ext_resource type="Resource" uid="uid://m5rlevel1melee" path="res://Data/LevelData/EnemyInfoInlevel/enm_info_level1_melee.tres" id="2_melee"]
+[ext_resource type="Resource" uid="uid://m5rlevel1range" path="res://Data/LevelData/EnemyInfoInlevel/enm_info_level1_ranged.tres" id="3_ranged"]
+[ext_resource type="Resource" uid="uid://m5rlevel1assin" path="res://Data/LevelData/EnemyInfoInlevel/enm_info_level1_assassin.tres" id="4_assassin"]
+[ext_resource type="Resource" uid="uid://m5rlevel1healr" path="res://Data/LevelData/EnemyInfoInlevel/enm_info_level1_healer.tres" id="5_healer"]
+[ext_resource type="Resource" uid="uid://ck8g1j4en3sq8" path="res://Data/LevelData/PlayerInfoInLevel/ply_info_level0.tres" id="6_player0"]
+[ext_resource type="Resource" uid="uid://k50keva7c6i" path="res://Data/LevelData/PlayerInfoInLevel/ply_info_level1.tres" id="7_player1"]
+[ext_resource type="Resource" uid="uid://cwi34lb5hv5c1" path="res://Data/LevelData/PlayerInfoInLevel/ply_info_level2.tres" id="8_player2"]
+[ext_resource type="Resource" uid="uid://m5rrewardlevel1" path="res://Data/GrowthRewards/growth_reward_level1.tres" id="9_reward"]
+
+[resource]
+script = ExtResource("1_script")
+levelId = 2
+levelName = "小型敌方团体"
+levelType = 0
+enemyInfoInLevelArray = Array[Object]([ExtResource("2_melee"), ExtResource("3_ranged"), ExtResource("4_assassin"), ExtResource("5_healer")])
+playerInfoInLevelArray = Array[Object]([ExtResource("6_player0"), ExtResource("7_player1"), ExtResource("8_player2")])
+tutorialStepDataArray = Array[Object]([])
+growthRewardData = ExtResource("9_reward")
+metadata/_custom_type_script = "uid://b4odp0seqjtt0"

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="EnemyInfoInLevel" format=3 uid="uid://m5rlevel2melee"]
+
+[ext_resource type="Script" uid="uid://samwqn81hmy3" path="res://Data/DataScript/EnemyInfoInLevel.cs" id="1_script"]
+[ext_resource type="Resource" uid="uid://m5relitemelee1" path="res://Data/CharacterData/EnemyData/enm_data6.tres" id="2_enemy"]
+
+[resource]
+script = ExtResource("1_script")
+enemyData = ExtResource("2_enemy")
+coord = Vector2i(2, 2)
+metadata/_custom_type_script = "uid://samwqn81hmy3"

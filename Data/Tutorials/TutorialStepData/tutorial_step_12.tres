@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="TutorialStepData" format=3]
+
+[ext_resource type="Script" path="res://Data/DataScript/TutorialStepData.cs" id="1_step"]
+
+[resource]
+script = ExtResource("1_step")
+stepId = "tutorial_12_growth"
+orderIndex = 12
+title = "胜利后的成长"
+promptText = "击败教学敌人后，将展示角色属性变化和新技能提示。成长数据后续会从奖励配置读取。"
+highlightTarget = 10
+waitCondition = 9
+blocksOtherInput = true

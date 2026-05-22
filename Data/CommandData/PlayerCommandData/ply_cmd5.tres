@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="PlayerCommandData" format=3 uid="uid://m5rplyheal001"]
+
+[ext_resource type="Script" uid="uid://bjb2y4dhdh5gg" path="res://Data/DataScript/PlayerCommandData.cs" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+commandId = 5
+commandName = "治疗"
+commandDescription = "为目标恢复（1.0）攻击力的生命。"
+priority = 50
+metadata/_custom_type_script = "uid://bjb2y4dhdh5gg"

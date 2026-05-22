@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="TutorialStepData" format=3]
+
+[ext_resource type="Script" path="res://Data/DataScript/TutorialStepData.cs" id="1_step"]
+
+[resource]
+script = ExtResource("1_step")
+stepId = "tutorial_05_select_skill"
+orderIndex = 5
+title = "选择技能"
+promptText = "选择一名角色，再从技能列表中选择移动或攻击。悬停技能可以查看优先级、MP、目标和效果。"
+highlightTarget = 5
+waitCondition = 2
+blocksOtherInput = true

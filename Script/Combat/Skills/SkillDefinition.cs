@@ -96,6 +96,21 @@ public class SkillDefinition
                 definition.Tags = SkillTag.Defense;
                 definition.Effects.Add(SkillEffectDefinition.Defend());
                 break;
+            case 4:
+                definition.TargetType = SkillTargetType.Enemy;
+                definition.Tags = SkillTag.Ranged | SkillTag.SingleTarget;
+                definition.Effects.Add(SkillEffectDefinition.Damage(1.0f));
+                break;
+            case 5:
+                definition.TargetType = SkillTargetType.Ally;
+                definition.Tags = SkillTag.Heal | SkillTag.Special;
+                definition.Effects.Add(SkillEffectDefinition.Heal(1.0f));
+                break;
+            case 6:
+                definition.TargetType = SkillTargetType.Enemy;
+                definition.Tags = SkillTag.Melee | SkillTag.SingleTarget;
+                definition.Effects.Add(SkillEffectDefinition.Damage(1.5f));
+                break;
             default:
                 definition.TargetType = SkillTargetType.None;
                 definition.Tags = SkillTag.Special;
@@ -115,6 +130,67 @@ public class SkillDefinition
             case 3:
                 definition.TargetType = SkillTargetType.Enemy;
                 definition.Tags = SkillTag.Melee | SkillTag.SingleTarget;
+                definition.Effects.Add(SkillEffectDefinition.Damage(1.0f));
+                break;
+            case 4:
+                definition.TargetType = SkillTargetType.Enemy;
+                definition.Tags = SkillTag.Melee | SkillTag.SingleTarget;
+                definition.DurationSlots = 2;
+                definition.Effects.Add(SkillEffectDefinition.Damage(2.0f));
+                break;
+            case 5:
+                definition.TargetType = SkillTargetType.Enemy;
+                definition.Tags = SkillTag.Ranged | SkillTag.SingleTarget;
+                definition.Effects.Add(SkillEffectDefinition.Damage(1.0f));
+                break;
+            case 6:
+                definition.TargetType = SkillTargetType.Area;
+                definition.Tags = SkillTag.Move | SkillTag.Special;
+                definition.Effects.Add(SkillEffectDefinition.Move());
+                break;
+            case 7:
+                definition.TargetType = SkillTargetType.Ally;
+                definition.Tags = SkillTag.Heal | SkillTag.Special;
+                definition.Effects.Add(SkillEffectDefinition.Heal(1.0f));
+                break;
+            case 8:
+                definition.TargetType = SkillTargetType.Enemy;
+                definition.Tags = SkillTag.Melee | SkillTag.Area;
+                definition.DurationSlots = 2;
+                definition.Effects.Add(SkillEffectDefinition.Damage(1.5f));
+                break;
+            case 9:
+                definition.TargetType = SkillTargetType.Enemy;
+                definition.Tags = SkillTag.Melee | SkillTag.SingleTarget;
+                definition.Effects.Add(SkillEffectDefinition.Damage(1.0f));
+                break;
+            case 10:
+                definition.TargetType = SkillTargetType.Self;
+                definition.Tags = SkillTag.Special;
+                definition.Effects.Add(SkillEffectDefinition.ApplyStatus(StatusCatalog.Rage));
+                break;
+            case 11:
+                definition.TargetType = SkillTargetType.Enemy;
+                definition.Tags = SkillTag.Move | SkillTag.Melee | SkillTag.SingleTarget;
+                definition.Effects.Add(SkillEffectDefinition.Move());
+                definition.Effects.Add(SkillEffectDefinition.Damage(0.5f));
+                break;
+            case 12:
+                definition.TargetType = SkillTargetType.Enemy;
+                definition.Tags = SkillTag.Melee | SkillTag.Area | SkillTag.Special;
+                definition.DurationSlots = 4;
+                definition.Effects.Add(SkillEffectDefinition.Damage(1.0f));
+                break;
+            case 13:
+                definition.TargetType = SkillTargetType.Enemy;
+                definition.Tags = SkillTag.Melee | SkillTag.Area | SkillTag.Special;
+                definition.DurationSlots = 4;
+                definition.Effects.Add(SkillEffectDefinition.Damage(1.0f));
+                break;
+            case 14:
+                definition.TargetType = SkillTargetType.Enemy;
+                definition.Tags = SkillTag.Ranged | SkillTag.Area | SkillTag.Special;
+                definition.DurationSlots = 4;
                 definition.Effects.Add(SkillEffectDefinition.Damage(1.0f));
                 break;
             default:
@@ -164,6 +240,15 @@ public class SkillEffectDefinition
         return new SkillEffectDefinition
         {
             EffectType = SkillEffectType.Defend
+        };
+    }
+
+    public static SkillEffectDefinition ApplyStatus(string statusId)
+    {
+        return new SkillEffectDefinition
+        {
+            EffectType = SkillEffectType.ApplyStatus,
+            StatusId = statusId
         };
     }
 }

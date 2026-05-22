@@ -76,7 +76,8 @@ public enum SkillFailReason
     MoveTargetAlreadyCurrentArea,
     RushTargetMustBeInDifferentArea,
     TimelineSlotUnavailable,
-    BlockedByStatus
+    BlockedByStatus,
+    TargetEvaded
 }
 
 public enum TimelineSlotState

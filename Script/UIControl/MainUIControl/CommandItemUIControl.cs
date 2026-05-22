@@ -47,6 +47,7 @@ public partial class CommandItemUIControl : Control
 		{
 			slotButton.ButtonDown += OnSlotButtonDown;
 			slotButton.ButtonUp += OnSlotButtonUp;
+			Autoloads.sceneSingleton?.uiSfxRouter?.RegisterButton(slotButton);
 		}
 		EnsureHoldProgressBar();
 	}
@@ -183,7 +184,7 @@ public partial class CommandItemUIControl : Control
 		}
 
 		isEnemyActionRevealed = revealed;
-		label.Text = revealed ? BuildRevealedCommandText(assignedCommandData) : BuildHiddenEnemyText(assignedCommandData);
+		label.Text = revealed ? BuildRevealedCommandText(assignedCommandData, ownerCharacterData) : BuildHiddenEnemyText(assignedCommandData);
 	}
 
 	public void RevealEnemyAction()
@@ -276,6 +277,7 @@ public partial class CommandItemUIControl : Control
 		sS.battleManager.eventManager.currentMainPlayer.SetCommand(1, CharacterHeadButtonControl.CurrentSelectedPlayerHead, cmdIdxInQueue, cei);
 		sS.enemyCharacterHeadListUIControl.ChangeToUninteractable();
 		sS.cmdQueueUIControl?.ShowSkillDetail(cei.commandData, cei.sourceCharacterData);
+		sS.tutorialOverlayControl?.Notify(TutorialWaitCondition.HoldPlaceCommand);
 		sS.battleManager.CheckPlayerReadyOver();
 	}
 
@@ -289,10 +291,12 @@ public partial class CommandItemUIControl : Control
 		if (assignedCommandData is EnemyCommandData && !isEnemyActionRevealed)
 		{
 			Autoloads.sceneSingleton.cmdQueueUIControl?.ShowSkillDetail(assignedCommandData, ownerCharacterData, false);
+			Autoloads.sceneSingleton.tutorialOverlayControl?.Notify(TutorialWaitCondition.InspectCommand);
 			return;
 		}
 
 		Autoloads.sceneSingleton.cmdQueueUIControl?.ShowSkillDetail(assignedCommandData, ownerCharacterData);
+		Autoloads.sceneSingleton.tutorialOverlayControl?.Notify(TutorialWaitCondition.InspectCommand);
 	}
 
 	private void EnsureHoldProgressBar()
@@ -370,10 +374,15 @@ public partial class CommandItemUIControl : Control
 		return string.IsNullOrEmpty(tagText) ? "意图？" : tagText;
 	}
 
-	private static string BuildRevealedCommandText(CommandData commandData)
+	private static string BuildRevealedCommandText(CommandData commandData, CharacterData owner)
 	{
 		SkillDefinition skill = SkillDefinition.FromCommandData(commandData);
-		return $"{commandData.commandName}\nP{skill.Priority}";
+		int adjustedPriority = CombatAreaRules.GetAdjustedPriority(new PlannedAction
+		{
+			Source = CharacterState.FromCharacterData(owner),
+			Skill = skill
+		});
+		return $"{commandData.commandName}\nP{adjustedPriority}";
 	}
 
 	private static string FormatSkillTags(SkillTag tags)

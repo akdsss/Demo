@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="EnemyCommandData" format=3 uid="uid://m5relitesingle"]
+
+[ext_resource type="Script" uid="uid://c4mec8i6hyxs7" path="res://Data/DataScript/EnemyCommandData.cs" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+commandId = 9
+commandName = "单体"
+commandDescription = "对目标造成（1.0）攻击力的单体近战伤害。"
+priority = 40
+metadata/_custom_type_script = "uid://c4mec8i6hyxs7"

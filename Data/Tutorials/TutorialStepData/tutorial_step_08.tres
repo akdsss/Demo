@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="TutorialStepData" format=3]
+
+[ext_resource type="Script" path="res://Data/DataScript/TutorialStepData.cs" id="1_step"]
+
+[resource]
+script = ExtResource("1_step")
+stepId = "tutorial_08_enemy_reveal"
+orderIndex = 8
+title = "怪物行动与优先级"
+promptText = "当场上没有可行动角色后，怪物行动会全部揭示。相同时点内，优先级更高的行动先执行。"
+highlightTarget = 3
+waitCondition = 5
+blocksOtherInput = true

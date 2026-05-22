@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="EnemyCommandData" format=3 uid="uid://m5rchargecmd01"]
+
+[ext_resource type="Script" uid="uid://c4mec8i6hyxs7" path="res://Data/DataScript/EnemyCommandData.cs" id="1_charge"]
+
+[resource]
+script = ExtResource("1_charge")
+commandId = 4
+commandName = "蓄力"
+commandDescription = "蓄力1个时点后，对目标造成（2.0）攻击力的单体近战伤害。当前兼容层先按2倍近战伤害结算。"
+priority = 40
+metadata/_custom_type_script = "uid://c4mec8i6hyxs7"
