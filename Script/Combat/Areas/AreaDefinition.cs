@@ -45,18 +45,23 @@ public class AreaDefinition
 
     public static List<AreaDefinition> CreateBaguaDefaults()
     {
-        return new List<AreaDefinition>
+        return GetDefaultAreaOrder().Select(areaId => FromKnownArea(areaId)).ToList();
+    }
+
+    public static CombatAreaId[] GetDefaultAreaOrder()
+    {
+        return new[]
         {
-            FromKnownArea(CombatAreaId.Qian),
-            FromKnownArea(CombatAreaId.Dui),
-            FromKnownArea(CombatAreaId.Li),
-            FromKnownArea(CombatAreaId.Zhen),
-            FromKnownArea(CombatAreaId.Xun),
-            FromKnownArea(CombatAreaId.Kan),
-            FromKnownArea(CombatAreaId.Gen),
-            FromKnownArea(CombatAreaId.Kun),
-            FromKnownArea(CombatAreaId.Yin),
-            FromKnownArea(CombatAreaId.Yang)
+            CombatAreaId.Qian,
+            CombatAreaId.Dui,
+            CombatAreaId.Li,
+            CombatAreaId.Zhen,
+            CombatAreaId.Xun,
+            CombatAreaId.Kan,
+            CombatAreaId.Gen,
+            CombatAreaId.Kun,
+            CombatAreaId.Yin,
+            CombatAreaId.Yang
         };
     }
 
@@ -97,6 +102,38 @@ public class AreaDefinition
         };
 
         return areaId != CombatAreaId.Unknown;
+    }
+
+    public static CombatAreaId GetAreaIdForLegacyCoord(Vector2I coord)
+    {
+        return TryGetAreaIdForLegacyCoord(coord, out CombatAreaId areaId)
+            ? areaId
+            : CombatAreaId.Unknown;
+    }
+
+    public static Vector2I GetLegacyCoordForAreaId(CombatAreaId areaId)
+    {
+        return areaId switch
+        {
+            CombatAreaId.Qian => new Vector2I(0, 0),
+            CombatAreaId.Dui => new Vector2I(0, 1),
+            CombatAreaId.Li => new Vector2I(0, 2),
+            CombatAreaId.Zhen => new Vector2I(1, 0),
+            CombatAreaId.Xun => new Vector2I(1, 1),
+            CombatAreaId.Kan => new Vector2I(1, 2),
+            CombatAreaId.Gen => new Vector2I(1, 3),
+            CombatAreaId.Kun => new Vector2I(2, 0),
+            CombatAreaId.Yin => new Vector2I(2, 1),
+            CombatAreaId.Yang => new Vector2I(2, 2),
+            _ => Vector2I.Zero
+        };
+    }
+
+    public static string FormatAreaId(CombatAreaId areaId)
+    {
+        return areaId == CombatAreaId.Unknown || areaId == CombatAreaId.LegacyCoord
+            ? "未知区域"
+            : GetDisplayName(areaId);
     }
 
     public static string FormatLegacyCoord(Vector2I? coord)
@@ -142,8 +179,8 @@ public class AreaDefinition
             CombatAreaId.Kan => "甘霖：治疗+40%；湍扼：受近战伤害后本回合移动失效。",
             CombatAreaId.Gen => "峦障：进入或回合开始获得护盾；压顶：近战伤害+30%。",
             CombatAreaId.Kun => "厚德：回合结束回血；丰壤：近战伤害吸血。",
-            CombatAreaId.Yin => "阴区域：当前作为至阴/至阳路径与教程区域使用。",
-            CombatAreaId.Yang => "阳区域：当前作为至阴/至阳路径与教程区域使用。",
+            CombatAreaId.Yin => "柔：造成伤害与受到伤害均减少15%。",
+            CombatAreaId.Yang => "刚：造成伤害与受到伤害均增加15%。",
             _ => string.Empty
         };
     }
@@ -154,14 +191,14 @@ public class AreaDefinition
         {
             CombatAreaId.Qian => "霄痕：造成伤害时加刻印，持续6个时点（刻印：克制闪避）。乾覆：造成的范围伤害+30%。",
             CombatAreaId.Dui => "潭蓁：远程攻击恢复伤害量10%的生命值与MP。利镞：远程攻击+20%伤害。",
-            CombatAreaId.Li => "焚炙：造成伤害时额外施加燃烧。熔锋：对乾、兑区域造成的伤害+50%。",
+            CombatAreaId.Li => "焚炙：造成伤害时额外施加燃烧（燃烧：回合结束时，受到最大生命值6%的伤害。特别的，若位于坎，移除该状态；若位于乾、兑，则受到最大生命值12%的伤害。）熔锋：对乾、兑区域造成的伤害+50%。",
             CombatAreaId.Zhen => "电掣：移动类技能的优先级+1。惊蛰：对艮、坤区域造成的伤害+50%。",
-            CombatAreaId.Xun => "飒踏：获得闪避。罡风：回合结束时，获得1层罡风；叠加至3层时受到最大生命值40%的伤害，触发后免疫罡风。",
+            CombatAreaId.Xun => "飒踏：获得闪避。（闪避：闪避单体远程攻击。若自身被施加刻印，则失效。）罡风：回合结束时，获得1层罡风。（罡风：叠加至3层时，受到最大生命值40%的伤害。触发后，免疫罡风。）",
             CombatAreaId.Kan => "甘霖：位于该区域时，施加的治疗增加40%。湍扼：若受到近战伤害，则本回合移动类技能失效。",
-            CombatAreaId.Gen => "峦障：进入该区域或回合开始时，获得12%最大生命值的护盾。压顶：近战攻击+30%伤害。离开该区域后，该加成可持续一次近战攻击。",
-            CombatAreaId.Kun => "厚德：回合结束时，回复6%生命值。丰壤：近战攻击恢复伤害量15%的生命值。离开该区域后，该加成可持续一次近战攻击。",
-            CombatAreaId.Yin => "阴区域当前用于完整十区域站位和至阴路径，后续随至阴/至阳技能补齐特殊规则。",
-            CombatAreaId.Yang => "阳区域当前用于完整十区域站位和至阳路径，后续随至阴/至阳技能补齐特殊规则。",
+            CombatAreaId.Gen => "峦障：进入该区域或回合开始时，获得12%最大生命值的护盾。（注：回合开始时，先移除所有护盾，然后进行回合开始触发的效果的结算）压顶：近战攻击+30%伤害。离开该区域后，该加成可持续一次近战攻击。（如果是技能“至阳”这种多个时点的多次近战攻击，只对下一次生效，而非整个后续攻击）",
+            CombatAreaId.Kun => "厚德：回合结束时，回复6%生命值。丰壤：近战攻击恢复伤害量15%的生命值。离开该区域后，该加成可持续一次近战攻击（如果是技能“至阳”这种多个时点的多次近战攻击，只对下一次生效，而非整个后续攻击）",
+            CombatAreaId.Yin => "柔：造成伤害与受到伤害均减少15%。",
+            CombatAreaId.Yang => "刚：造成伤害与受到伤害均增加15%。",
             _ => string.Empty
         };
     }

@@ -6,6 +6,7 @@ public class EventManager
     public PlayerData currentMainPlayer;
     public PlayerCommandData currentMainPlayerCommand;
     public EnemyData currentMainEnemy;
+    public CombatAreaId currentTargetAreaId = CombatAreaId.Unknown;
     public MoveEventInfo moveEventInfo;
     public DamageEventInfo damageEventInfo;
 }
@@ -48,10 +49,10 @@ public class DamageEventInfo
     public CharacterData damageSourceCharacter;
     public CharacterData damageTargetCharacter;
     public float damageValue;
-    public CharacterHeadButtonControl damageTargetCharacterHeadButtonControl;
 }
 public class MoveEventInfo
 {
     public CharacterData moveSourceCharacter;
     public Vector2I moveTargetCoord;
+    public CombatAreaId moveTargetAreaId = CombatAreaId.Unknown;
 }

@@ -1,28 +1,20 @@
 [gd_scene format=3 uid="uid://ba60nq45wqe81"]
 
 [ext_resource type="Script" uid="uid://bs2iuk2fyrsgp" path="res://Script/UIControl/MainUIControl.cs" id="1_ht100"]
-[ext_resource type="PackedScene" uid="uid://rnxjw7f23gom" path="res://Scene/UI/CharacterHeadButton.tscn" id="1_pmoct"]
-[ext_resource type="Texture2D" uid="uid://benwjl4bfqpdj" path="res://Asset/character/characterB01_head.png" id="2_kvsts"]
 [ext_resource type="Texture2D" uid="uid://bwvtee5brsh66" path="res://Asset/ui image/set_gear.png" id="2_mtny8"]
-[ext_resource type="Script" uid="uid://bkxj0aq52ecx8" path="res://Script/GameLogic/GameTest.cs" id="3_2t8ok"]
-[ext_resource type="Script" uid="uid://rwyevad4f08e" path="res://Script/UIControl/MainUIControl/PlayerCharacterHeadListUIControl.cs" id="4_6xff3"]
 [ext_resource type="Texture2D" uid="uid://dfwhei5sjmw88" path="res://Asset/ui image/close.png" id="5_a6gju"]
-[ext_resource type="Texture2D" uid="uid://bkh4vcqood6bm" path="res://Asset/ui image/play.png" id="5_m4gcn"]
 [ext_resource type="PackedScene" uid="uid://b0mnse4n3h5if" path="res://Scene/UI/ActionButton.tscn" id="5_ttkx3"]
-[ext_resource type="Texture2D" uid="uid://djpa8kwcyf6yt" path="res://Asset/character/characterA01_head.png" id="6_ttkx3"]
+[ext_resource type="Texture2D" path="res://Asset/character/unknown.png" id="6_ttkx3"]
 [ext_resource type="Script" uid="uid://ddlv0r2f80vpr" path="res://Script/UIControl/ChessBoardUIControl.cs" id="7_75wr5"]
 [ext_resource type="Script" uid="uid://dqsb87iv6fw7w" path="res://Script/UIControl/MainUIControl/PlayerChoseListPanelControl.cs" id="7_jcthh"]
 [ext_resource type="Script" uid="uid://2nbdi3uv4fnb" path="res://Script/UIControl/ChessCellUIControl.cs" id="8_00qq1"]
 [ext_resource type="Texture2D" uid="uid://cvtqa2ueu1hyq" path="res://Asset/ui image/character_point.png" id="9_6xff3"]
 [ext_resource type="Script" uid="uid://b813vfid8ni6k" path="res://Script/UIControl/CmdQueueUIControl.cs" id="9_a6bpp"]
 [ext_resource type="Texture2D" uid="uid://b0whbr340bjsm" path="res://Asset/map.png" id="9_ffrsf"]
-[ext_resource type="PackedScene" uid="uid://dtswcstgg5vrr" path="res://Scene/PrefabScene/action_listt.tscn" id="10_yy3k1"]
 [ext_resource type="Script" uid="uid://dm1c2kh5s4yqr" path="res://Script/UIControl/MainUIControl/EnemyCharacterHeadListUIControl.cs" id="12_6xff3"]
 [ext_resource type="PackedScene" uid="uid://dser138is3qmi" path="res://Scene/PrefabScene/ChessCellButton.tscn" id="12_jcthh"]
-[ext_resource type="Texture2D" uid="uid://cs2w8ffvm4mqi" path="res://Asset/character/enemyB01_head.png" id="13_e46wd"]
+[ext_resource type="Texture2D" uid="uid://b7v76ut3xvubf" path="res://Asset/character/enemyB01.png" id="13_e46wd"]
 [ext_resource type="PackedScene" uid="uid://dpv5jprlrbrrn" path="res://Scene/PrefabScene/enemy_character_head_button.tscn" id="13_jcthh"]
-[ext_resource type="Script" uid="uid://cghk400htxvdy" path="res://Script/UIControl/MainUIControl/CommandHeadListUIControl.cs" id="20_cvhyf"]
-[ext_resource type="PackedScene" uid="uid://rs5vkilc7d4m" path="res://Scene/PrefabScene/CmdHeadPrefab.tscn" id="21_rdlvx"]
 
 [node name="MainUi" type="CanvasLayer" unique_id=1092813157 node_paths=PackedStringArray("SetPanel")]
 script = ExtResource("1_ht100")
@@ -70,25 +62,8 @@ grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("2_mtny8")
 
-[node name="GameTest" type="MenuButton" parent="Panel/VBoxContainer/TopPanel" unique_id=1918287508]
-layout_mode = 0
-offset_left = 938.0
-offset_top = 14.0
-offset_right = 1061.0
-offset_bottom = 64.0
-text = "测试项"
-item_count = 4
-popup/item_0/text = "加载关卡"
-popup/item_0/id = 0
-popup/item_1/text = "退出游戏"
-popup/item_1/id = 1
-popup/item_2/text = "测试 - 敌方准备结束"
-popup/item_2/id = 2
-popup/item_3/text = "测试 - 玩家准备结束"
-popup/item_3/id = 3
-script = ExtResource("3_2t8ok")
-
 [node name="Label" type="Label" parent="Panel/VBoxContainer/TopPanel" unique_id=1815430504]
+visible = false
 layout_mode = 1
 anchors_preset = 13
 anchor_left = 0.5
@@ -99,9 +74,20 @@ offset_right = 164.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_font_sizes/font_size = 39
-text = "游戏状态"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="EnemyTimelineHost" type="VBoxContainer" parent="Panel/VBoxContainer/TopPanel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -435.0
+offset_top = 8.0
+offset_right = 435.0
+offset_bottom = 148.0
+grow_horizontal = 2
+theme_override_constants/separation = 5
 
 [node name="MidPanel" type="Panel" parent="Panel/VBoxContainer" unique_id=958133218]
 self_modulate = Color(1, 1, 1, 0)
@@ -122,40 +108,57 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.7
 
-[node name="PlayerCHContainer" type="VBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion" unique_id=948980234]
+[node name="BattleInteractionPanel" type="VBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.043
-anchor_top = 0.056
-anchor_right = 0.722
-anchor_bottom = 0.859
-offset_right = 38.574005
+anchor_left = 0.04
+anchor_top = 0.05
+anchor_right = 0.94
+anchor_bottom = 0.94
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 10
-script = ExtResource("4_6xff3")
-playerHeadButtonPrefab = ExtResource("1_pmoct")
+theme_override_constants/separation = 8
+script = ExtResource("9_a6bpp")
+defaultCmdName = "-"
 
-[node name="CharacterHeadButton" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion/PlayerCHContainer" unique_id=1517803722 instance=ExtResource("1_pmoct")]
+[node name="TimelineControlBar" type="VBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion/BattleInteractionPanel"]
 layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
 
-[node name="CharacterHeadButton2" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion/PlayerCHContainer" unique_id=39835073 instance=ExtResource("1_pmoct")]
+[node name="SetCommandButton" type="Button" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion/BattleInteractionPanel/TimelineControlBar"]
+visible = false
 layout_mode = 2
+toggle_mode = true
+text = "设置指令"
 
-[node name="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion/PlayerCHContainer/CharacterHeadButton2/Button/HBoxContainer" parent_id_path=PackedInt32Array(39835073, 771626670) index="0" unique_id=1416145245]
-texture = ExtResource("2_kvsts")
+[node name="InspectButton" type="Button" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion/BattleInteractionPanel/TimelineControlBar"]
+visible = false
+layout_mode = 2
+toggle_mode = true
+text = "检视详情"
 
-[node name="ChoseListPanel" type="Panel" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion" unique_id=1861581180 node_paths=PackedStringArray("allChoseContent")]
-layout_mode = 0
-offset_left = 174.0
-offset_top = 16.631996
-offset_right = 277.0
-offset_bottom = 292.632
+[node name="StartSettlementButton" type="Button" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion/BattleInteractionPanel/TimelineControlBar"]
+visible = false
+layout_mode = 2
+text = "开始结算"
+
+[node name="DetailLabel" type="Label" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion/BattleInteractionPanel/TimelineControlBar"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 90)
+text = "时间轴"
+autowrap_mode = 3
+
+[node name="ChoseListPanel" type="Panel" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion/BattleInteractionPanel" unique_id=1861581180 node_paths=PackedStringArray("allChoseContent")]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 script = ExtResource("7_jcthh")
 choseButtonPrefab = ExtResource("5_ttkx3")
 allChoseContent = NodePath("ColorRect/VBoxContainer")
 
-[node name="ColorRect" type="ColorRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion/ChoseListPanel" unique_id=965169038]
+[node name="ColorRect" type="ColorRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion/BattleInteractionPanel/ChoseListPanel" unique_id=965169038]
 self_modulate = Color(0.6958008, 0.7204437, 0.7421875, 1)
 layout_mode = 1
 anchors_preset = 15
@@ -164,7 +167,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion/ChoseListPanel/ColorRect" unique_id=1221619310]
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion/BattleInteractionPanel/ChoseListPanel/ColorRect" unique_id=1221619310]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.1
@@ -175,14 +178,14 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 19
 
-[node name="ActionButton" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion/ChoseListPanel/ColorRect/VBoxContainer" unique_id=1430029491 instance=ExtResource("5_ttkx3")]
+[node name="ActionButton" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion/BattleInteractionPanel/ChoseListPanel/ColorRect/VBoxContainer" unique_id=1430029491 instance=ExtResource("5_ttkx3")]
 layout_mode = 2
 
-[node name="ActionButton2" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion/ChoseListPanel/ColorRect/VBoxContainer" unique_id=972303099 instance=ExtResource("5_ttkx3")]
+[node name="ActionButton2" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion/BattleInteractionPanel/ChoseListPanel/ColorRect/VBoxContainer" unique_id=972303099 instance=ExtResource("5_ttkx3")]
 layout_mode = 2
 text = "防御"
 
-[node name="ActionButton3" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion/ChoseListPanel/ColorRect/VBoxContainer" unique_id=2012313837 instance=ExtResource("5_ttkx3")]
+[node name="ActionButton3" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion/BattleInteractionPanel/ChoseListPanel/ColorRect/VBoxContainer" unique_id=2012313837 instance=ExtResource("5_ttkx3")]
 layout_mode = 2
 text = "移动"
 
@@ -1265,18 +1268,19 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.7
 
 [node name="EnemyCHContent" type="VBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/RightRegion" unique_id=208221730]
+visible = false
 layout_direction = 3
-layout_mode = 0
-offset_left = 35.0
-offset_top = 19.631996
-offset_right = 301.0
-offset_bottom = 307.632
-theme_override_constants/separation = 30
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.06
+anchor_top = 0.08
+anchor_right = 0.94
+anchor_bottom = 0.92
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
 script = ExtResource("12_6xff3")
 enemyHeadButtonPrefab = ExtResource("13_jcthh")
-
-[node name="CharacterHeadButton" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/RightRegion/EnemyCHContent" unique_id=129399693 instance=ExtResource("13_jcthh")]
-layout_mode = 2
 
 [node name="DownPanel" type="Panel" parent="Panel/VBoxContainer" unique_id=680743190]
 layout_mode = 2
@@ -1292,153 +1296,50 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.54296875, 0.46873474, 0.46873474, 1)
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/DownPanel" unique_id=1860273468]
+[node name="PlayerActionBanner" type="ColorRect" parent="Panel/VBoxContainer/DownPanel"]
+visible = false
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 5.0
+offset_bottom = 27.0
+grow_horizontal = 2
+color = Color(0.62, 0.86, 0.58, 1)
+
+[node name="Label" type="Label" parent="Panel/VBoxContainer/DownPanel/PlayerActionBanner"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+text = "我方行动"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="Control" type="Control" parent="Panel/VBoxContainer/DownPanel/HBoxContainer" unique_id=1766965952]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.07
-
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/DownPanel/HBoxContainer" unique_id=1787373257]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.7
-
-[node name="Control" type="Control" parent="Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer" unique_id=737441298]
-layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 0.1
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer" unique_id=519707947 node_paths=PackedStringArray("CommandQueueMatrix")]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-size_flags_stretch_ratio = 0.8
-theme_override_constants/separation = 22
-script = ExtResource("9_a6bpp")
-defaultCmdName = "-"
-CommandQueueMatrix = NodePath("CommandMatrix")
-commandListPrefab = ExtResource("10_yy3k1")
-
-[node name="HeadList" type="VBoxContainer" parent="Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer" unique_id=198364959]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.5
-script = ExtResource("20_cvhyf")
-characterHeadPrefab = ExtResource("21_rdlvx")
-
-[node name="TextureRect" parent="Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/HeadList" unique_id=537360649 instance=ExtResource("21_rdlvx")]
-layout_mode = 2
-
-[node name="TextureRect2" type="TextureRect" parent="Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/HeadList" unique_id=934504148]
-layout_mode = 2
-size_flags_vertical = 3
-texture = ExtResource("6_ttkx3")
-expand_mode = 1
-stretch_mode = 5
-flip_h = true
-
-[node name="TextureRect3" type="TextureRect" parent="Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/HeadList" unique_id=1790709377]
-layout_mode = 2
-size_flags_vertical = 3
-texture = ExtResource("6_ttkx3")
-expand_mode = 1
-stretch_mode = 5
-flip_h = true
-
-[node name="TextureRect4" type="TextureRect" parent="Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/HeadList" unique_id=1071035276]
-layout_mode = 2
-size_flags_vertical = 3
-texture = ExtResource("6_ttkx3")
-expand_mode = 1
-stretch_mode = 5
-flip_h = true
-
-[node name="TextureRect5" type="TextureRect" parent="Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/HeadList" unique_id=796726349]
-layout_mode = 2
-size_flags_vertical = 3
-texture = ExtResource("6_ttkx3")
-expand_mode = 1
-stretch_mode = 5
-flip_h = true
-
-[node name="TextureRect6" type="TextureRect" parent="Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/HeadList" unique_id=599911854]
-layout_mode = 2
-size_flags_vertical = 3
-texture = ExtResource("6_ttkx3")
-expand_mode = 1
-stretch_mode = 5
-flip_h = true
-
-[node name="TextureRect7" type="TextureRect" parent="Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/HeadList" unique_id=196123560]
-layout_mode = 2
-size_flags_vertical = 3
-texture = ExtResource("6_ttkx3")
-expand_mode = 1
-stretch_mode = 5
-flip_h = true
-
-[node name="CommandMatrix" type="HBoxContainer" parent="Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer" unique_id=1113779237]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 10.0
-
-[node name="CommandColumn" parent="Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/CommandMatrix" unique_id=914612584 instance=ExtResource("10_yy3k1")]
-layout_mode = 2
-
-[node name="CommandColumn2" parent="Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/CommandMatrix" unique_id=310962810 instance=ExtResource("10_yy3k1")]
-layout_mode = 2
-
-[node name="CommandColumn3" parent="Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/CommandMatrix" unique_id=725697678 instance=ExtResource("10_yy3k1")]
-layout_mode = 2
-
-[node name="CommandColumn4" parent="Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/CommandMatrix" unique_id=636706002 instance=ExtResource("10_yy3k1")]
-layout_mode = 2
-
-[node name="CommandColumn5" parent="Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/CommandMatrix" unique_id=918841380 instance=ExtResource("10_yy3k1")]
-layout_mode = 2
-
-[node name="CommandColumn6" parent="Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/CommandMatrix" unique_id=1233084330 instance=ExtResource("10_yy3k1")]
-layout_mode = 2
-
-[node name="Control2" type="Control" parent="Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer" unique_id=185341232]
-layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 0.1
-
-[node name="Control2" type="Control" parent="Panel/VBoxContainer/DownPanel/HBoxContainer" unique_id=1130004112]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.09
-
-[node name="TextureButton" type="TextureButton" parent="Panel/VBoxContainer/DownPanel/HBoxContainer/Control2" unique_id=1521475145]
+[node name="PlayerTimelineHost" type="VBoxContainer" parent="Panel/VBoxContainer/DownPanel"]
 layout_mode = 1
-anchors_preset = 8
+anchors_preset = 5
 anchor_left = 0.5
-anchor_top = 0.5
 anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -32.0
-offset_top = -32.0
-offset_right = 32.0
-offset_bottom = 32.0
+offset_left = -435.0
+offset_top = 34.0
+offset_right = 435.0
+offset_bottom = 184.0
 grow_horizontal = 2
-grow_vertical = 2
-texture_normal = ExtResource("5_m4gcn")
+theme_override_constants/separation = 5
 
 [node name="SetPanel" type="Panel" parent="Panel" unique_id=428333554]
 visible = false
-layout_mode = 0
-offset_left = 147.0
-offset_top = 65.0
-offset_right = 1010.0
-offset_bottom = 551.0
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -214.0
+offset_top = 78.0
+offset_right = -12.0
+offset_bottom = 252.0
+grow_horizontal = 0
 
 [node name="ColorRect" type="ColorRect" parent="Panel/SetPanel" unique_id=208453488]
 self_modulate = Color(0.7998047, 0.8493164, 0.9140625, 0.7176471)
@@ -1448,6 +1349,29 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/SetPanel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.08
+anchor_top = 0.12
+anchor_right = 0.78
+anchor_bottom = 0.9
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="TitleLabel" type="Label" parent="Panel/SetPanel/VBoxContainer"]
+layout_mode = 2
+text = "设置"
+
+[node name="EncyclopediaButton" type="Button" parent="Panel/SetPanel/VBoxContainer"]
+layout_mode = 2
+text = "百科"
+
+[node name="ExitGameButton" type="Button" parent="Panel/SetPanel/VBoxContainer"]
+layout_mode = 2
+text = "退出游戏"
 
 [node name="Button" type="Button" parent="Panel/SetPanel" unique_id=340455370]
 layout_mode = 1
@@ -1485,13 +1409,5 @@ texture = ExtResource("5_a6gju")
 
 [connection signal="pressed" from="Panel/VBoxContainer/TopPanel/Button" to="." method="SetPanelOpenButtonClicked"]
 [connection signal="pressed" from="Panel/SetPanel/Button" to="." method="SetPanelCloseButtonClicked"]
-
-[editable path="Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion/PlayerCHContainer/CharacterHeadButton"]
-[editable path="Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion/PlayerCHContainer/CharacterHeadButton2"]
-[editable path="Panel/VBoxContainer/MidPanel/HBoxContainer/RightRegion/EnemyCHContent/CharacterHeadButton"]
-[editable path="Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/CommandMatrix/CommandColumn"]
-[editable path="Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/CommandMatrix/CommandColumn2"]
-[editable path="Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/CommandMatrix/CommandColumn3"]
-[editable path="Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/CommandMatrix/CommandColumn4"]
-[editable path="Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/CommandMatrix/CommandColumn5"]
-[editable path="Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/CommandMatrix/CommandColumn6"]
+[connection signal="pressed" from="Panel/SetPanel/VBoxContainer/EncyclopediaButton" to="." method="EncyclopediaButtonClicked"]
+[connection signal="pressed" from="Panel/SetPanel/VBoxContainer/ExitGameButton" to="." method="ExitGameButtonClicked"]

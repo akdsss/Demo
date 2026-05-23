@@ -11,7 +11,12 @@ public partial class ChessCellUIControl : Control
     public override void _Ready()
     {
         RemoveAllCharacterDisplay();
-        chessCellButton.Disabled = true;
+        if (chessCellButton != null)
+        {
+            chessCellButton.Disabled = true;
+            chessCellButton.Visible = false;
+            chessCellButton.MouseFilter = Control.MouseFilterEnum.Ignore;
+        }
         // ((ChessCellButtonControl)chessCellButton).chessCellUIControl = this;
     }
     //public int currentCharacterNum;
@@ -42,9 +47,20 @@ public partial class ChessCellUIControl : Control
     //}
     public void RemoveAllCharacterDisplay()
     {
+        foreach (CharacterData characterData in characterDisplayMap.Keys)
+        {
+            if (characterData != null)
+            {
+                characterData.AreaAnchorIndex = -1;
+            }
+        }
         characterDisplayMap.Clear();
         foreach (TextureRect textureRect in allCharacterPointArray)
         {
+            if (textureRect == null)
+            {
+                continue;
+            }
             textureRect.Visible = false;
             textureRect.Texture = null;
         }
@@ -52,11 +68,20 @@ public partial class ChessCellUIControl : Control
 
     public void RemoveCharacterDisplay(CharacterData characterData)
     {
+        if (characterData == null)
+        {
+            return;
+        }
+
         if (characterDisplayMap.TryGetValue(characterData, out TextureRect textureRect))
         {
-            textureRect.Visible = false;
-            textureRect.Texture = null;
+            if (textureRect != null)
+            {
+                textureRect.Visible = false;
+                textureRect.Texture = null;
+            }
             characterDisplayMap.Remove(characterData);
+            characterData.AreaAnchorIndex = -1;
         }
         else
         {
@@ -64,24 +89,36 @@ public partial class ChessCellUIControl : Control
         }
     }
 
-    public void AddCharacterDisplay(CharacterData characterData)
+    public int AddCharacterDisplay(CharacterData characterData)
     {
+        if (characterData == null)
+        {
+            return -1;
+        }
+
         if (characterDisplayMap.ContainsKey(characterData))
         {
             GD.PrintErr("AddCharacterDisplay Error: 角色已存在");
-            return;
+            return characterData.AreaAnchorIndex;
         }
 
-        foreach (TextureRect textureRect in allCharacterPointArray)
+        for (int i = 0; i < allCharacterPointArray.Length; i++)
         {
+            TextureRect textureRect = allCharacterPointArray[i];
+            if (textureRect == null)
+            {
+                continue;
+            }
             if (textureRect.Visible == false)
             {
                 textureRect.Visible = true;
                 textureRect.Texture = characterData.characterHeadImage;
                 characterDisplayMap[characterData] = textureRect;
-                return;
+                characterData.AreaAnchorIndex = i;
+                return i;
             }
         }
         GD.PrintErr("AddCharacterDisplay Error: 无可用显示位置");
+        return -1;
     }
 }

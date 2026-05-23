@@ -1,19 +1,21 @@
 [gd_resource type="Resource" script_class="PlayerData" format=3 uid="uid://grtxmchfk7wy"]
 
-[ext_resource type="Texture2D" path="res://Asset/Generated/Portraits/player_melee.png" id="1_5xrfs"]
-[ext_resource type="Resource" uid="uid://d3a2nfknx88k6" path="res://Data/CommandData/PlayerCommandData/ply_cmd0.tres" id="1_cr8x0"]
+[ext_resource type="Resource" uid="uid://baoxeiy3g2dvl" path="res://Data/CommandData/PlayerCommandData/ply_cmd3.tres" id="1_cr8x0"]
 [ext_resource type="Script" uid="uid://bw07j5wfv22k0" path="res://Data/DataScript/PlayerData.cs" id="1_kqkx6"]
+[ext_resource type="Texture2D" path="res://Asset/character/character01.png" id="2_head"]
 [ext_resource type="Resource" uid="uid://blo0ajilvr0vb" path="res://Data/CommandData/PlayerCommandData/ply_cmd1.tres" id="3_1of5w"]
 [ext_resource type="Resource" uid="uid://djte3fnfk71y7" path="res://Data/CommandData/PlayerCommandData/ply_cmd2.tres" id="4_1of5w"]
 
 [resource]
 script = ExtResource("1_kqkx6")
-playerCommandDataList = Array[Object]([ExtResource("1_cr8x0"), ExtResource("3_1of5w"), ExtResource("4_1of5w")])
-characterName = "测试玩家A"
-characterDescription = "这是一个测试玩家A的描述"
-characterHeadImage = ExtResource("1_5xrfs")
-hp = 100.0
-maxHp = 100.0
-atk = 10.0
+playerCommandDataList = Array[Object]([ExtResource("4_1of5w"), ExtResource("1_cr8x0"), ExtResource("3_1of5w")])
+characterName = "我方近战"
+characterDescription = "教学关近战角色。初始生命26，攻击力12，每回合2次行动。"
+characterHeadImage = ExtResource("2_head")
+hp = 26.0
+maxHp = 26.0
+mp = 60
+maxMp = 60
+atk = 120.0
 turnInitialActionTimes = 2
 metadata/_custom_type_script = "uid://bw07j5wfv22k0"

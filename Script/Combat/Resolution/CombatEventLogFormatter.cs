@@ -21,7 +21,7 @@ public static class CombatEventLogFormatter
             CombatEventType.RoundEnded => combatEvent.Message,
             CombatEventType.ActionStarted => $"{combatEvent.SlotIndex} 时点：{sourceName} 使用 {skillName}",
             CombatEventType.SkillFailed => $"{combatEvent.SlotIndex} 时点：{sourceName} 的 {skillName} 失败（{combatEvent.FailReason}）",
-            CombatEventType.CharacterMoved => $"{sourceName} 从 {FormatCoord(combatEvent.FromCoord)} 移动到 {FormatCoord(combatEvent.ToCoord)}",
+            CombatEventType.CharacterMoved => $"{sourceName} 从 {FormatArea(combatEvent.FromAreaId, combatEvent.FromCoord)} 移动到 {FormatArea(combatEvent.ToAreaId, combatEvent.ToCoord)}",
             CombatEventType.DamageApplied => FormatDamage(combatEvent, sourceName, targetName),
             CombatEventType.HealApplied => $"{sourceName} 为 {targetName} 恢复 {combatEvent.Amount} 点生命",
             CombatEventType.MpChanged => $"{targetName} 恢复 {combatEvent.Amount} 点 MP",
@@ -37,6 +37,13 @@ public static class CombatEventLogFormatter
     private static string FormatCoord(Godot.Vector2I? coord)
     {
         return AreaDefinition.FormatLegacyCoord(coord);
+    }
+
+    private static string FormatArea(CombatAreaId areaId, Godot.Vector2I? fallbackCoord)
+    {
+        return areaId == CombatAreaId.Unknown
+            ? FormatCoord(fallbackCoord)
+            : AreaDefinition.FormatAreaId(areaId);
     }
 
     private static string FormatDamage(CombatEvent combatEvent, string sourceName, string targetName)

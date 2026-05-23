@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://rnxjw7f23gom"]
 
 [ext_resource type="StyleBox" uid="uid://bdkc5c3x7uxy5" path="res://Asset/ui image/button_image.tres" id="1_d8uoa"]
-[ext_resource type="Texture2D" uid="uid://djpa8kwcyf6yt" path="res://Asset/character/characterA01_head.png" id="1_qaosv"]
+[ext_resource type="Texture2D" path="res://Asset/character/unknown.png" id="1_qaosv"]
 [ext_resource type="Script" uid="uid://cplr3kd26bm2p" path="res://Script/UIControl/CharacterHeadButtonControl.cs" id="1_vy6d6"]
 [ext_resource type="Texture2D" uid="uid://b54n2m4nrjgn3" path="res://Asset/ui image/trangle.png" id="3_h4qj3"]
 [ext_resource type="Texture2D" uid="uid://cstark6dbaykr" path="res://Asset/ui image/rectangle.png" id="4_1m8ul"]

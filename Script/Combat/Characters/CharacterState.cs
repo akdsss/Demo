@@ -18,6 +18,7 @@ public class CharacterState
     public int RemainingActions { get; set; }
     public float ShieldValue { get; set; }
     public Vector2I LegacyCoord { get; set; }
+    public CombatAreaId CurrentAreaId { get; set; } = CombatAreaId.Unknown;
     public AreaDefinition CurrentArea { get; set; }
     public CharacterBattleState BattleState { get; set; } = CharacterBattleState.ALIVE;
     public CharacterData LegacyCharacterData { get; set; }
@@ -50,11 +51,14 @@ public class CharacterState
         state.Hp = characterData.hp;
         state.MaxHp = characterData.maxHp;
         state.Attack = characterData.atk;
+        state.CurrentMp = characterData.mp;
+        state.MaxMp = characterData.maxMp;
         state.ActionsPerRound = characterData.turnInitialActionTimes;
         state.RemainingActions = characterData.currentRestActionTimes;
         state.ShieldValue = characterData.runtimeShieldValue;
-        state.LegacyCoord = characterData.coord;
-        state.CurrentArea = AreaDefinition.FromLegacyCoord(characterData.coord);
+        state.CurrentAreaId = characterData.ResolveCurrentAreaId();
+        state.LegacyCoord = AreaDefinition.GetLegacyCoordForAreaId(state.CurrentAreaId);
+        state.CurrentArea = AreaDefinition.FromKnownArea(state.CurrentAreaId);
         state.BattleState = characterData.characterBattleState;
         state.LoadRuntimeStatuses(characterData);
         return state;
@@ -80,6 +84,7 @@ public class CharacterState
         RemainingActions = refreshed.RemainingActions;
         ShieldValue = refreshed.ShieldValue;
         LegacyCoord = refreshed.LegacyCoord;
+        CurrentAreaId = refreshed.CurrentAreaId;
         CurrentArea = refreshed.CurrentArea;
         BattleState = refreshed.BattleState;
         Statuses.Clear();

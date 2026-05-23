@@ -21,15 +21,26 @@ public partial class LevelData : Resource
 
         foreach (EnemyInfoInLevel enemyInfo in enemyInfoInLevelArray)
 		{
-			chessBoard.SetCharacterToChessCell(enemyInfo.enemyData, enemyInfo.coord);
+			CombatAreaId areaId = ResolveAreaId(enemyInfo.areaId, enemyInfo.coord);
+			enemyInfo.enemyData.initialAreaId = areaId;
+			chessBoard.SetCharacterToArea(enemyInfo.enemyData, areaId);
 		}
 		foreach(PlayerInfoInLevel playerInfo in playerInfoInLevelArray)
 		{
-			chessBoard.SetCharacterToChessCell(playerInfo.playerData, playerInfo.coord);
+			CombatAreaId areaId = ResolveAreaId(playerInfo.areaId, playerInfo.coord);
+			playerInfo.playerData.initialAreaId = areaId;
+			chessBoard.SetCharacterToArea(playerInfo.playerData, areaId);
 		}
 
         Autoloads.sceneSingleton.gameStateLable.Text = "关卡已加载";
     }
+
+	private static CombatAreaId ResolveAreaId(CombatAreaId configuredAreaId, Vector2I legacyCoord)
+	{
+		return configuredAreaId != CombatAreaId.Unknown
+			? configuredAreaId
+			: AreaDefinition.GetAreaIdForLegacyCoord(legacyCoord);
+	}
 }
 
 public enum LevelType

@@ -5,6 +5,7 @@
 [resource]
 script = ExtResource("1_tssbn")
 commandId = 2
-commandName = "移动"
-commandDescription = "移动到指定地点"
+commandName = "区域移动"
+commandDescription = "移动至目标区域。"
+priority = 30
 metadata/_custom_type_script = "uid://bjb2y4dhdh5gg"

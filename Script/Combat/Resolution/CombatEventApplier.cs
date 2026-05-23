@@ -25,7 +25,7 @@ public static class CombatEventApplier
                 RemoveStatus(combatEvent);
                 break;
             case CombatEventType.MpChanged:
-                UpdateCharacterDisplays();
+                ApplyMpChange(combatEvent);
                 break;
             case CombatEventType.CharacterDefeated:
                 ApplyDefeated(combatEvent);
@@ -33,9 +33,29 @@ public static class CombatEventApplier
         }
     }
 
+    private static void ApplyMpChange(CombatEvent combatEvent)
+    {
+        if (combatEvent.TargetLegacyCharacterData != null && combatEvent.Target != null)
+        {
+            combatEvent.TargetLegacyCharacterData.mp = combatEvent.Target.CurrentMp;
+        }
+
+        UpdateCharacterDisplays();
+    }
+
     private static void ApplyMove(CombatEvent combatEvent)
     {
-        if (combatEvent.SourceLegacyCharacterData == null || !combatEvent.ToCoord.HasValue)
+        if (combatEvent.SourceLegacyCharacterData == null)
+        {
+            return;
+        }
+
+        CombatAreaId targetAreaId = combatEvent.ToAreaId;
+        if (targetAreaId == CombatAreaId.Unknown && combatEvent.ToCoord.HasValue)
+        {
+            targetAreaId = AreaDefinition.GetAreaIdForLegacyCoord(combatEvent.ToCoord.Value);
+        }
+        if (targetAreaId == CombatAreaId.Unknown)
         {
             return;
         }
@@ -43,11 +63,11 @@ public static class CombatEventApplier
         ChessBoard chessBoard = Autoloads.gd_ChessBoard;
         if (chessBoard == null)
         {
-            combatEvent.SourceLegacyCharacterData.coord = combatEvent.ToCoord.Value;
+            combatEvent.SourceLegacyCharacterData.SetCurrentArea(targetAreaId);
             return;
         }
 
-        chessBoard.MoveCharacter(combatEvent.SourceLegacyCharacterData, combatEvent.ToCoord.Value);
+        chessBoard.MoveCharacterToArea(combatEvent.SourceLegacyCharacterData, targetAreaId);
     }
 
     private static void ApplyHpChange(CombatEvent combatEvent)
@@ -141,7 +161,7 @@ public static class CombatEventApplier
             return;
         }
 
-        Autoloads.sceneSingleton.playerCharacterHeadListUIControl?.UpdateAllUIDisplay();
         Autoloads.sceneSingleton.enemyCharacterHeadListUIControl?.UpdateAllUIDisplay();
+        Autoloads.sceneSingleton.cmdQueueUIControl?.RefreshTimelineUnitInfo();
     }
 }

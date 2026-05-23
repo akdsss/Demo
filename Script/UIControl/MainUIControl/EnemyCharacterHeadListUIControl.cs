@@ -1,14 +1,16 @@
 using System.Collections.Generic;
 using Godot;
 
-public partial class EnemyCharacterHeadListUIControl : Node
+public partial class EnemyCharacterHeadListUIControl : VBoxContainer
 {
     [Export] public PackedScene enemyHeadButtonPrefab;
     public List<CharacterHeadButtonControl> enemyHeadButtonList = new List<CharacterHeadButtonControl>();
     public override void _Ready()
     {
-        // 注册到场景单例
-        Autoloads.sceneSingleton.enemyCharacterHeadListUIControl = this;
+        if (Autoloads.sceneSingleton != null)
+        {
+            Autoloads.sceneSingleton.enemyCharacterHeadListUIControl = this;
+        }
     }
     public void Initialize()
     {
@@ -22,6 +24,7 @@ public partial class EnemyCharacterHeadListUIControl : Node
             enemyHeadButtonList.Add((CharacterHeadButtonControl)characterHeadButton);
         }
         UpdateEnemyPrepareDisplays();
+        Visible = false;
     }
     public void ResetUIDisplay()
     {
@@ -29,14 +32,7 @@ public partial class EnemyCharacterHeadListUIControl : Node
         {
             enemyHeadButton.UpdateUIDisplay();
         }
-    }
-    public void ChangeToInteractable()
-    {
-        foreach (CharacterHeadButtonControl enemyHeadButton in enemyHeadButtonList)
-        {
-            enemyHeadButton.button.Disabled = false;
-            enemyHeadButton.button.MouseFilter = Control.MouseFilterEnum.Stop;
-        }
+        Autoloads.sceneSingleton.cmdQueueUIControl?.RefreshTimelineUnitInfo();
     }
     public void ChangeToUninteractable()
     {
@@ -45,6 +41,7 @@ public partial class EnemyCharacterHeadListUIControl : Node
             enemyHeadButton.button.ButtonPressed = false;
             enemyHeadButton.button.MouseFilter = Control.MouseFilterEnum.Ignore;
         }
+        Visible = false;
     }
     public void UpdateAllUIDisplay()
     {
@@ -82,5 +79,6 @@ public partial class EnemyCharacterHeadListUIControl : Node
             }
             enemyHeadButton.UpdateUIDisplay();
         }
+        Autoloads.sceneSingleton.cmdQueueUIControl?.RefreshTimelineUnitInfo();
     }
 }

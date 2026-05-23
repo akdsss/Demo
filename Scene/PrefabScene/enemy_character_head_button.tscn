@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cplr3kd26bm2p" path="res://Script/UIControl/CharacterHeadButtonControl.cs" id="1_rlh3i"]
 [ext_resource type="Texture2D" uid="uid://cstark6dbaykr" path="res://Asset/ui image/rectangle.png" id="3_bj3dg"]
-[ext_resource type="Texture2D" uid="uid://cmmry41jr5po5" path="res://Asset/character/enemyA01_head.png" id="3_f7f14"]
+[ext_resource type="Texture2D" uid="uid://ccf03ra843i58" path="res://Asset/character/enemyA01.png" id="3_f7f14"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_bj3dg"]
 load_path = "res://.godot/imported/rectangle.png-1d62f6ac2d0bc525f2a8983978cdca99.ctex"

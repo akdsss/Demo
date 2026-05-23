@@ -3,10 +3,7 @@
 [ext_resource type="Script" uid="uid://d0wffnb1j2hio" path="res://Script/GameLogic/GameMain.cs" id="1_hcm6b"]
 [ext_resource type="PackedScene" uid="uid://ba60nq45wqe81" path="res://Scene/MainUI.tscn" id="1_uptpg"]
 [ext_resource type="Resource" uid="uid://q7ayp2akh3gx" path="res://Data/LevelData/Level_data0.tres" id="3_ly247"]
-[ext_resource type="Texture2D" uid="uid://benwjl4bfqpdj" path="res://Asset/character/characterB01_head.png" id="4_so1si"]
-[ext_resource type="Texture2D" uid="uid://cmmry41jr5po5" path="res://Asset/character/enemyA01_head.png" id="5_h4sd3"]
-[ext_resource type="Texture2D" uid="uid://cs2w8ffvm4mqi" path="res://Asset/character/enemyB01_head.png" id="6_fr17n"]
-[ext_resource type="Texture2D" uid="uid://kb5ad8pjvdeb" path="res://Asset/character/unknown_head.png" id="7_j5k17"]
+[ext_resource type="Texture2D" uid="uid://c2tfnkxtu4fbd" path="res://Asset/character/unknown.png" id="7_j5k17"]
 [ext_resource type="Script" uid="uid://cy354wtsdib1d" path="res://Script/GameLogic/SceneSingleton.cs" id="7_nr04c"]
 
 [node name="MainScene" type="Node2D" unique_id=197655870]
@@ -16,43 +13,15 @@ levelData = ExtResource("3_ly247")
 [node name="SceneSingleton" type="Node" parent="." unique_id=1711598913 node_paths=PackedStringArray("gameStateLable", "playerActionChoseList")]
 script = ExtResource("7_nr04c")
 gameStateLable = NodePath("../MainUi/Panel/VBoxContainer/TopPanel/Label")
-playerActionChoseList = NodePath("../MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion/ChoseListPanel")
+playerActionChoseList = NodePath("../MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion/BattleInteractionPanel/ChoseListPanel")
 defaultCharacterImage = ExtResource("7_j5k17")
 
 [node name="MainUi" parent="." unique_id=1092813157 instance=ExtResource("1_uptpg")]
 
-[node name="GameTest" parent="MainUi/Panel/VBoxContainer/TopPanel" parent_id_path=PackedInt32Array(1092813157, 1859375851) index="1" unique_id=1918287508 node_paths=PackedStringArray("gameMain")]
-gameMain = NodePath("../../../../..")
-levelData = ExtResource("3_ly247")
-
 [node name="EnemyCHContent" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/RightRegion" parent_id_path=PackedInt32Array(1092813157, 600154088) index="0" unique_id=208221730]
 theme_override_constants/separation = 10
-
-[node name="TextureRect2" parent="MainUi/Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/HeadList" parent_id_path=PackedInt32Array(1092813157, 198364959) index="1" unique_id=934504148]
-texture = ExtResource("4_so1si")
-
-[node name="TextureRect3" parent="MainUi/Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/HeadList" parent_id_path=PackedInt32Array(1092813157, 198364959) index="2" unique_id=1790709377]
-texture = ExtResource("5_h4sd3")
-
-[node name="TextureRect4" parent="MainUi/Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/HeadList" parent_id_path=PackedInt32Array(1092813157, 198364959) index="3" unique_id=1071035276]
-texture = ExtResource("6_fr17n")
-
-[node name="TextureRect5" parent="MainUi/Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/HeadList" parent_id_path=PackedInt32Array(1092813157, 198364959) index="4" unique_id=796726349]
-texture = ExtResource("6_fr17n")
-
-[node name="TextureRect6" parent="MainUi/Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/HeadList" parent_id_path=PackedInt32Array(1092813157, 198364959) index="5" unique_id=599911854]
-texture = ExtResource("7_j5k17")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=774191597]
 position = Vector2(576, 327)
 
 [editable path="MainUi"]
-[editable path="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion/PlayerCHContainer/CharacterHeadButton"]
-[editable path="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion/PlayerCHContainer/CharacterHeadButton2"]
-[editable path="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/RightRegion/EnemyCHContent/CharacterHeadButton"]
-[editable path="MainUi/Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/CommandMatrix/CommandColumn"]
-[editable path="MainUi/Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/CommandMatrix/CommandColumn2"]
-[editable path="MainUi/Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/CommandMatrix/CommandColumn3"]
-[editable path="MainUi/Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/CommandMatrix/CommandColumn4"]
-[editable path="MainUi/Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/CommandMatrix/CommandColumn5"]
-[editable path="MainUi/Panel/VBoxContainer/DownPanel/HBoxContainer/VBoxContainer/HBoxContainer/CommandMatrix/CommandColumn6"]

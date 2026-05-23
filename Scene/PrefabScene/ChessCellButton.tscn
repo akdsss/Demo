@@ -17,6 +17,7 @@ modulate_color = Color(0.5803922, 0.5764706, 0.40784314, 0.5372549)
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_sp335"]
 
 [node name="ChessCellButton" type="Button" unique_id=1986853642]
+visible = false
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
@@ -26,6 +27,8 @@ offset_left = -50.0
 offset_top = -50.0
 grow_horizontal = 2
 grow_vertical = 2
+disabled = true
+mouse_filter = 2
 theme_override_styles/normal = SubResource("StyleBoxTexture_e6avr")
 theme_override_styles/pressed = SubResource("StyleBoxTexture_kbry0")
 theme_override_styles/disabled = SubResource("StyleBoxTexture_sp335")

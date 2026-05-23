@@ -47,21 +47,6 @@ public class CombatResolver
         return events;
     }
 
-    public List<CombatEvent> ResolveSingleAction(PlannedAction action)
-    {
-        return ResolveRound(new[] { action }, action?.RoundIndex ?? 0)
-            .Where(combatEvent =>
-                combatEvent.EventType != CombatEventType.RoundStarted &&
-                combatEvent.EventType != CombatEventType.RoundEnded)
-            .ToList();
-    }
-
-    public List<CombatEvent> ResolveSingleLegacyCommand(CommandExecuteInfo commandExecuteInfo, int slotIndex = 1)
-    {
-        PlannedAction action = commandExecuteInfo.ToPlannedAction(slotIndex);
-        return ResolveSingleAction(action);
-    }
-
     private static Dictionary<CharacterData, CharacterState> BuildStateDictionary(IEnumerable<CharacterData> allCharacters)
     {
         Dictionary<CharacterData, CharacterState> statesByLegacyCharacter = new();
@@ -220,9 +205,11 @@ public class CombatResolver
 
     private static bool IsMeleeTargetInDifferentArea(PlannedAction action)
     {
-        AreaDefinition sourceArea = action.Source?.CurrentArea;
-        AreaDefinition targetArea = action.TargetCharacter?.CurrentArea;
-        return sourceArea != null && targetArea != null && !sourceArea.IsSameArea(targetArea);
+        CombatAreaId sourceAreaId = action.Source?.CurrentAreaId ?? CombatAreaId.Unknown;
+        CombatAreaId targetAreaId = action.TargetCharacter?.CurrentAreaId ?? CombatAreaId.Unknown;
+        return sourceAreaId != CombatAreaId.Unknown &&
+            targetAreaId != CombatAreaId.Unknown &&
+            sourceAreaId != targetAreaId;
     }
 
     private static bool IsMoveTargetSameAsSourceArea(PlannedAction action)
@@ -232,14 +219,20 @@ public class CombatResolver
             return false;
         }
 
-        if (action.TargetCoord.HasValue && action.TargetCoord.Value == action.Source.LegacyCoord)
+        if (action.TargetAreaId != CombatAreaId.Unknown)
         {
-            return true;
+            return action.TargetAreaId == action.Source.CurrentAreaId;
         }
 
         if (action.TargetArea != null && action.Source.CurrentArea != null)
         {
             return action.TargetArea.IsSameArea(action.Source.CurrentArea);
+        }
+
+        if (action.TargetCoord.HasValue &&
+            AreaDefinition.GetAreaIdForLegacyCoord(action.TargetCoord.Value) == action.Source.CurrentAreaId)
+        {
+            return true;
         }
 
         return false;
@@ -349,17 +342,22 @@ public class CombatResolver
         List<CombatEvent> events,
         IReadOnlyList<CharacterState> roundStates)
     {
-        AreaDefinition targetArea = action.TargetCharacter?.CurrentArea ??
-            action.TargetArea ??
-            action.Source?.CurrentArea;
+        CombatAreaId targetAreaId = action.TargetCharacter?.CurrentAreaId ?? CombatAreaId.Unknown;
+        if (targetAreaId == CombatAreaId.Unknown)
+        {
+            targetAreaId = action.TargetAreaId;
+        }
+        if (targetAreaId == CombatAreaId.Unknown)
+        {
+            targetAreaId = action.TargetArea?.AreaId ?? action.Source?.CurrentAreaId ?? CombatAreaId.Unknown;
+        }
         List<CharacterState> targets = roundStates?
             .Where(state =>
                 state != null &&
                 !state.IsDefeated &&
-                state != action.Source &&
-                targetArea != null &&
-                state.CurrentArea != null &&
-                state.CurrentArea.IsSameArea(targetArea))
+                (!effect.ExcludeSource || state != action.Source) &&
+                targetAreaId != CombatAreaId.Unknown &&
+                state.CurrentAreaId == targetAreaId)
             .ToList() ?? new List<CharacterState>();
 
         if (targets.Count == 0)
@@ -390,8 +388,16 @@ public class CombatResolver
 
     private static void ResolveMove(PlannedAction action, List<CombatEvent> events)
     {
-        Vector2I? targetCoord = action.TargetCoord ?? action.TargetArea?.LegacyCoord;
-        if (!targetCoord.HasValue)
+        CombatAreaId targetAreaId = action.TargetAreaId;
+        if (targetAreaId == CombatAreaId.Unknown)
+        {
+            targetAreaId = action.TargetArea?.AreaId ?? CombatAreaId.Unknown;
+        }
+        if (targetAreaId == CombatAreaId.Unknown && action.TargetCoord.HasValue)
+        {
+            targetAreaId = AreaDefinition.GetAreaIdForLegacyCoord(action.TargetCoord.Value);
+        }
+        if (targetAreaId == CombatAreaId.Unknown)
         {
             events.Add(BuildSkillFailedEvent(action, SkillFailReason.MissingTarget));
             return;
@@ -399,12 +405,16 @@ public class CombatResolver
 
         Vector2I fromCoord = action.Source.LegacyCoord;
         AreaDefinition fromArea = action.Source.CurrentArea;
-        action.Source.LegacyCoord = targetCoord.Value;
-        action.Source.CurrentArea = AreaDefinition.FromLegacyCoord(targetCoord.Value);
+        CombatAreaId fromAreaId = action.Source.CurrentAreaId;
+        action.Source.CurrentAreaId = targetAreaId;
+        action.Source.LegacyCoord = AreaDefinition.GetLegacyCoordForAreaId(targetAreaId);
+        action.Source.CurrentArea = AreaDefinition.FromKnownArea(targetAreaId);
 
         CombatEvent moveEvent = BuildEffectEvent(CombatEventType.CharacterMoved, SkillEffectType.Move, action);
         moveEvent.FromCoord = fromCoord;
-        moveEvent.ToCoord = targetCoord.Value;
+        moveEvent.ToCoord = action.Source.LegacyCoord;
+        moveEvent.FromAreaId = fromAreaId;
+        moveEvent.ToAreaId = targetAreaId;
         events.Add(moveEvent);
         CombatAreaRules.ApplyAfterMove(action, fromArea, action.Source.CurrentArea, action.RoundIndex, events);
     }

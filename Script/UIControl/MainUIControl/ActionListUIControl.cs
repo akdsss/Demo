@@ -16,9 +16,21 @@ public partial class ActionListUIControl : ColorRect
 
 	public void BuildActionItems()
 	{
+		if (VBoxActionItemContent == null || actionItemPrefab == null)
+		{
+			return;
+		}
+
 		PubTool.instance.ClearChildren(VBoxActionItemContent);
 		actionItemUIControlList.Clear();
-		int itemCount = ExpectedItemCount > 0 ? ExpectedItemCount : Autoloads.sceneSingleton.gameCharacterNum;
+		int itemCount = ExpectedItemCount > 0
+			? ExpectedItemCount
+			: Autoloads.sceneSingleton?.gameCharacterNum ?? 0;
+		if (itemCount <= 0)
+		{
+			return;
+		}
+
 		for(int i = 0; i < itemCount; i++)
 		{
 			Node actionItem = actionItemPrefab.Instantiate();

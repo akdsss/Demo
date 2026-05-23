@@ -1,18 +1,22 @@
 [gd_resource type="Resource" script_class="PlayerData" format=3 uid="uid://df1sfcfb7s1am"]
 
-[ext_resource type="Texture2D" path="res://Asset/Generated/Portraits/player_support.png" id="1_yjh85"]
-[ext_resource type="Resource" uid="uid://djte3fnfk71y7" path="res://Data/CommandData/PlayerCommandData/ply_cmd2.tres" id="3_8o4j3"]
+[ext_resource type="Resource" uid="uid://djte3fnfk71y7" path="res://Data/CommandData/PlayerCommandData/ply_cmd2.tres" id="1_move"]
+[ext_resource type="Texture2D" path="res://Asset/character/character03.png" id="1_head"]
+[ext_resource type="Resource" uid="uid://baoxeiy3g2dvl" path="res://Data/CommandData/PlayerCommandData/ply_cmd3.tres" id="2_defense"]
+[ext_resource type="Resource" uid="uid://m5rplyheal001" path="res://Data/CommandData/PlayerCommandData/ply_cmd5.tres" id="3_heal"]
 [ext_resource type="Script" uid="uid://bw07j5wfv22k0" path="res://Data/DataScript/PlayerData.cs" id="4_g50c1"]
 
 [resource]
 script = ExtResource("4_g50c1")
-playerCommandDataList = Array[Object]([ExtResource("3_8o4j3")])
+playerCommandDataList = Array[Object]([ExtResource("1_move"), ExtResource("2_defense"), ExtResource("3_heal")])
 characterId = 2
-characterName = "测试玩家C"
-characterDescription = "测试玩家C的描述会稍微长一些"
-characterHeadImage = ExtResource("1_yjh85")
-hp = 100.0
-maxHp = 100.0
+characterName = "我方支援"
+characterDescription = "教学关支援角色。初始生命22，攻击力10，每回合2次行动。"
+characterHeadImage = ExtResource("1_head")
+hp = 22.0
+maxHp = 22.0
+mp = 60
+maxMp = 60
 atk = 100.0
 turnInitialActionTimes = 2
 metadata/_custom_type_script = "uid://bw07j5wfv22k0"

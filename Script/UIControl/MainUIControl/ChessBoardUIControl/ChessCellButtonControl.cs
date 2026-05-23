@@ -7,7 +7,12 @@ public partial class ChessCellButtonControl : Button
     public void ChessCellButtonClick()
     {
         Autoloads.gd_ChessBoard.chessBoardUIControl.HideAllChessCellButton();
-        Autoloads.sceneSingleton.battleManager.eventManager.moveEventInfo.moveTargetCoord = coord;
+        CombatAreaId areaId = AreaDefinition.GetAreaIdForLegacyCoord(coord);
+        EventManager eventManager = Autoloads.sceneSingleton.battleManager.eventManager;
+        eventManager.currentTargetAreaId = areaId;
+        eventManager.moveEventInfo ??= new MoveEventInfo();
+        eventManager.moveEventInfo.moveTargetAreaId = areaId;
+        eventManager.moveEventInfo.moveTargetCoord = AreaDefinition.GetLegacyCoordForAreaId(areaId);
         // Autoloads.sceneSingleton.cmdQueueUIControl.cmdQueueState = CmdQueueState.CMDSET;
         Autoloads.sceneSingleton.cmdQueueUIControl.SwitchOnPlayerCommandSet();
     }

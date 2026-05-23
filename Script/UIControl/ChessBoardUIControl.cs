@@ -15,14 +15,26 @@ public partial class ChessBoardUIControl : Sprite2D
 	{
 		foreach (var chessCellUIControl in chessCellUIControlArray)
 		{
-			chessCellUIControl.chessCellButton.Disabled = false;
+			if (chessCellUIControl?.chessCellButton == null)
+			{
+				continue;
+			}
+			chessCellUIControl.chessCellButton.Disabled = true;
+			chessCellUIControl.chessCellButton.Visible = false;
+			chessCellUIControl.chessCellButton.MouseFilter = Control.MouseFilterEnum.Ignore;
 		}
 	}
 	public void HideAllChessCellButton()
 	{
 		foreach (var chessCellUIControl in chessCellUIControlArray)
 		{
+			if (chessCellUIControl?.chessCellButton == null)
+			{
+				continue;
+			}
 			chessCellUIControl.chessCellButton.Disabled = true;
+			chessCellUIControl.chessCellButton.Visible = false;
+			chessCellUIControl.chessCellButton.MouseFilter = Control.MouseFilterEnum.Ignore;
 		}
 	}
 	//public void AddCharacterToChessCell(CharacterData characterData, Vector2I coord)

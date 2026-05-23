@@ -205,7 +205,7 @@ public partial class TutorialOverlayControl : Control
     {
         rect = new Rect2();
         Control control = ResolveHighlightControl(target);
-        if (control != null && control.IsInsideTree() && control.Visible)
+        if (control != null && control.IsInsideTree() && control.IsVisibleInTree())
         {
             rect = control.GetGlobalRect();
             return true;
@@ -232,13 +232,14 @@ public partial class TutorialOverlayControl : Control
 
         return target switch
         {
-            TutorialHighlightTarget.PlayerTimeline => sceneSingleton.cmdQueueUIControl?.CommandQueueMatrix,
-            TutorialHighlightTarget.EnemyTimeline => sceneSingleton.cmdQueueUIControl?.CommandQueueMatrix,
-            TutorialHighlightTarget.TimelineSlot => sceneSingleton.cmdQueueUIControl?.CommandQueueMatrix,
+            TutorialHighlightTarget.PlayerTimeline => sceneSingleton.cmdQueueUIControl?.GetTutorialHighlightControl(target),
+            TutorialHighlightTarget.EnemyTimeline => sceneSingleton.cmdQueueUIControl?.GetTutorialHighlightControl(target),
+            TutorialHighlightTarget.TimelineSlot => sceneSingleton.cmdQueueUIControl?.GetTutorialHighlightControl(target),
             TutorialHighlightTarget.SkillList => sceneSingleton.playerActionChoseList,
             TutorialHighlightTarget.InspectButton => sceneSingleton.cmdQueueUIControl?.GetTutorialHighlightControl(target),
             TutorialHighlightTarget.StartSettlementButton => sceneSingleton.cmdQueueUIControl?.GetTutorialHighlightControl(target),
-            TutorialHighlightTarget.EncyclopediaButton => sceneSingleton.encyclopediaOverlayControl?.GetTutorialHighlightControl(target),
+            TutorialHighlightTarget.EncyclopediaButton => sceneSingleton.mainUIControl?.GetTutorialHighlightControl(target)
+                ?? sceneSingleton.encyclopediaOverlayControl?.GetTutorialHighlightControl(target),
             TutorialHighlightTarget.BattleLog => sceneSingleton.cmdQueueUIControl?.GetTutorialHighlightControl(target),
             TutorialHighlightTarget.GrowthPanel => sceneSingleton.growthRewardOverlayControl?.GetTutorialHighlightControl(target),
             _ => null

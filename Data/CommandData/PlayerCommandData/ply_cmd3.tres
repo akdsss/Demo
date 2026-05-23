@@ -5,6 +5,7 @@
 [resource]
 script = ExtResource("1_y3j4r")
 commandId = 3
-commandName = "跳过"
-commandDescription = "不执行任何行动"
+commandName = "防御"
+commandDescription = "该时点期间受到的伤害减半。"
+priority = 50
 metadata/_custom_type_script = "uid://bjb2y4dhdh5gg"

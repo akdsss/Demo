@@ -7,12 +7,16 @@ public partial class MainUIControl : CanvasLayer
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		if (Autoloads.sceneSingleton != null)
+		{
+			Autoloads.sceneSingleton.mainUIControl = this;
+		}
+		CallDeferred(nameof(RegisterMainUIControl));
 		EnsureBattleInputMap();
-		EnsureUiSfxRouter();
 		EnsureEncyclopediaOverlay();
 		EnsureGrowthRewardOverlay();
+		EnsureAreaTargetMenu();
 		EnsureTutorialOverlay();
-		EnsureBattlePresentationPlaceholder();
 	}
 
 	// Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -22,14 +26,39 @@ public partial class MainUIControl : CanvasLayer
 
 	public void SetPanelCloseButtonClicked()
 	{
-		Autoloads.sceneSingleton?.uiSfxRouter?.PlayClick();
 		SetPanel.Visible = false;
 	}
 
 	public void SetPanelOpenButtonClicked()
 	{
-		Autoloads.sceneSingleton?.uiSfxRouter?.PlayClick();
 		SetPanel.Visible = true;
+	}
+
+	public Control GetTutorialHighlightControl(TutorialHighlightTarget target)
+	{
+		if (target != TutorialHighlightTarget.EncyclopediaButton)
+		{
+			return null;
+		}
+
+		Button encyclopediaButton = SetPanel?.GetNodeOrNull<Button>("VBoxContainer/EncyclopediaButton");
+		if (SetPanel != null && SetPanel.Visible && encyclopediaButton != null)
+		{
+			return encyclopediaButton;
+		}
+
+		return GetNodeOrNull<Control>("Panel/VBoxContainer/TopPanel/Button");
+	}
+
+	public void EncyclopediaButtonClicked()
+	{
+		SetPanel.Visible = false;
+		Autoloads.sceneSingleton?.encyclopediaOverlayControl?.OpenEncyclopedia();
+	}
+
+	public void ExitGameButtonClicked()
+	{
+		GetTree().Quit();
 	}
 
 	public override void _UnhandledInput(InputEvent @event)
@@ -47,25 +76,6 @@ public partial class MainUIControl : CanvasLayer
 		EnsureMouseAction("place_action_hold", MouseButton.Left);
 		EnsureMouseAction("back", MouseButton.Right);
 		EnsureMouseAction("inspect", MouseButton.Middle);
-	}
-
-	private void EnsureUiSfxRouter()
-	{
-		UISfxRouter router = GetNodeOrNull<UISfxRouter>("UISfxRouter");
-		if (router == null)
-		{
-			router = new UISfxRouter
-			{
-				Name = "UISfxRouter"
-			};
-			AddChild(router);
-		}
-
-		if (Autoloads.sceneSingleton != null)
-		{
-			Autoloads.sceneSingleton.uiSfxRouter = router;
-		}
-		CallDeferred(nameof(RegisterUiSfxRouter));
 	}
 
 	private void EnsureTutorialOverlay()
@@ -125,31 +135,23 @@ public partial class MainUIControl : CanvasLayer
 		CallDeferred(nameof(RegisterGrowthRewardOverlay));
 	}
 
-	private void EnsureBattlePresentationPlaceholder()
+	private void EnsureAreaTargetMenu()
 	{
-		BattlePresentationPlaceholderControl overlay = GetNodeOrNull<BattlePresentationPlaceholderControl>("BattlePresentationPlaceholder");
-		if (overlay == null)
+		AreaTargetMenuControl menu = GetNodeOrNull<AreaTargetMenuControl>("AreaTargetMenu");
+		if (menu == null)
 		{
-			overlay = new BattlePresentationPlaceholderControl
+			menu = new AreaTargetMenuControl
 			{
-				Name = "BattlePresentationPlaceholder"
+				Name = "AreaTargetMenu"
 			};
-			AddChild(overlay);
+			AddChild(menu);
 		}
 
 		if (Autoloads.sceneSingleton != null)
 		{
-			Autoloads.sceneSingleton.battlePresentationPlaceholderControl = overlay;
+			Autoloads.sceneSingleton.areaTargetMenuControl = menu;
 		}
-		CallDeferred(nameof(RegisterBattlePresentationPlaceholder));
-	}
-
-	public void RegisterUiSfxRouter()
-	{
-		if (Autoloads.sceneSingleton != null)
-		{
-			Autoloads.sceneSingleton.uiSfxRouter = GetNodeOrNull<UISfxRouter>("UISfxRouter");
-		}
+		CallDeferred(nameof(RegisterAreaTargetMenu));
 	}
 
 	public void RegisterTutorialOverlay()
@@ -160,11 +162,21 @@ public partial class MainUIControl : CanvasLayer
 		}
 	}
 
+	public void RegisterMainUIControl()
+	{
+		if (Autoloads.sceneSingleton != null)
+		{
+			Autoloads.sceneSingleton.mainUIControl = this;
+		}
+	}
+
 	public void RegisterEncyclopediaOverlay()
 	{
 		if (Autoloads.sceneSingleton != null)
 		{
 			Autoloads.sceneSingleton.encyclopediaOverlayControl = GetNodeOrNull<EncyclopediaOverlayControl>("EncyclopediaOverlay");
+			Autoloads.sceneSingleton.encyclopediaOverlayControl?.SetExternalOpenButton(
+				SetPanel?.GetNodeOrNull<Button>("VBoxContainer/EncyclopediaButton"));
 		}
 	}
 
@@ -176,11 +188,11 @@ public partial class MainUIControl : CanvasLayer
 		}
 	}
 
-	public void RegisterBattlePresentationPlaceholder()
+	public void RegisterAreaTargetMenu()
 	{
 		if (Autoloads.sceneSingleton != null)
 		{
-			Autoloads.sceneSingleton.battlePresentationPlaceholderControl = GetNodeOrNull<BattlePresentationPlaceholderControl>("BattlePresentationPlaceholder");
+			Autoloads.sceneSingleton.areaTargetMenuControl = GetNodeOrNull<AreaTargetMenuControl>("AreaTargetMenu");
 		}
 	}
 

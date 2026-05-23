@@ -67,9 +67,9 @@ public class SkillValidator
 
         if (skill.HasTag(SkillTag.Melee) && context.TargetCharacter != null)
         {
-            AreaDefinition sourceArea = context.Source.CurrentArea;
-            AreaDefinition targetArea = context.TargetCharacter.CurrentArea;
-            if (sourceArea != null && targetArea != null && !sourceArea.IsSameArea(targetArea))
+            if (context.Source.CurrentAreaId != CombatAreaId.Unknown &&
+                context.TargetCharacter.CurrentAreaId != CombatAreaId.Unknown &&
+                context.Source.CurrentAreaId != context.TargetCharacter.CurrentAreaId)
             {
                 return SkillValidationResult.Fail(SkillFailReason.MeleeTargetNotInSameArea, skill.FailTextKey);
             }
@@ -84,16 +84,19 @@ public class SkillValidator
 
             if (context.RequiresDifferentTargetArea && context.TargetCharacter != null)
             {
-                AreaDefinition sourceArea = context.Source.CurrentArea;
-                AreaDefinition targetArea = context.TargetCharacter.CurrentArea;
-                if (sourceArea != null && targetArea != null && sourceArea.IsSameArea(targetArea))
+                if (context.Source.CurrentAreaId != CombatAreaId.Unknown &&
+                    context.TargetCharacter.CurrentAreaId != CombatAreaId.Unknown &&
+                    context.Source.CurrentAreaId == context.TargetCharacter.CurrentAreaId)
                 {
                     return SkillValidationResult.Fail(SkillFailReason.RushTargetMustBeInDifferentArea, skill.FailTextKey);
                 }
             }
         }
 
-        if (skill.TargetType == SkillTargetType.Area && context.TargetArea == null && !context.TargetCoord.HasValue)
+        if (skill.TargetType == SkillTargetType.Area &&
+            context.TargetAreaId == CombatAreaId.Unknown &&
+            context.TargetArea == null &&
+            !context.TargetCoord.HasValue)
         {
             return SkillValidationResult.Fail(SkillFailReason.MissingTarget, skill.FailTextKey);
         }
@@ -108,7 +111,13 @@ public class SkillValidator
             return false;
         }
 
-        if (context.TargetCoord.HasValue && context.TargetCoord.Value == context.Source.LegacyCoord)
+        if (context.TargetAreaId != CombatAreaId.Unknown)
+        {
+            return context.TargetAreaId == context.Source.CurrentAreaId;
+        }
+
+        if (context.TargetCoord.HasValue &&
+            AreaDefinition.GetAreaIdForLegacyCoord(context.TargetCoord.Value) == context.Source.CurrentAreaId)
         {
             return true;
         }

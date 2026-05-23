@@ -1,7 +1,5 @@
 using Godot;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 
 public partial class CharacterData : Resource
 {
@@ -11,8 +9,13 @@ public partial class CharacterData : Resource
 	[Export] public Texture2D characterHeadImage;
     [Export] public float hp;
     [Export] public float maxHp;
+    [Export] public int mp;
+    [Export] public int maxMp;
     [Export] public float atk;
     public Vector2I coord;
+    [Export] public CombatAreaId initialAreaId = CombatAreaId.Unknown;
+    public CombatAreaId CurrentAreaId = CombatAreaId.Unknown;
+    public int AreaAnchorIndex = -1;
 	public CharacterBattleState characterBattleState;
     [Export] public int turnInitialActionTimes;
     public int currentRestActionTimes;
@@ -26,11 +29,40 @@ public partial class CharacterData : Resource
 	{
 		ResetCommandQueue();
 		hp = maxHp;
+		mp = maxMp;
 		characterBattleState = CharacterBattleState.ALIVE;
 		currentRestActionTimes = turnInitialActionTimes;
 		runtimeStatusIds.Clear();
 		runtimeStatusStacks.Clear();
 		runtimeShieldValue = 0;
+		if (CurrentAreaId == CombatAreaId.Unknown)
+		{
+			CurrentAreaId = ResolveCurrentAreaId();
+		}
+	}
+
+	public CombatAreaId ResolveCurrentAreaId()
+	{
+		if (CurrentAreaId != CombatAreaId.Unknown)
+		{
+			return CurrentAreaId;
+		}
+
+		if (initialAreaId != CombatAreaId.Unknown)
+		{
+			return initialAreaId;
+		}
+
+		return AreaDefinition.GetAreaIdForLegacyCoord(coord);
+	}
+
+	public void SetCurrentArea(CombatAreaId areaId)
+	{
+		CurrentAreaId = areaId;
+		if (areaId != CombatAreaId.Unknown)
+		{
+			coord = AreaDefinition.GetLegacyCoordForAreaId(areaId);
+		}
 	}
 	public void ResetCommandQueue()
 	{
@@ -41,28 +73,26 @@ public partial class CharacterData : Resource
 			commandQueue.Add(new CommandExecuteInfo());
 		}
 	}
-	public void SetCommand(int actionPointCost, CharacterHeadButtonControl characterHeadButtonControl, int ccmdQueueIdx, CommandExecuteInfo commandExecuteInfo)
+	public void SetCommand(int actionPointCost, int ccmdQueueIdx, CommandExecuteInfo commandExecuteInfo)
 	{
 		hasPrepared = true;
 		currentRestActionTimes -= actionPointCost;
 		GD.Print($"玩家{characterName}设定了指令{commandExecuteInfo.commandData.commandName}，消耗行动次数{actionPointCost}");
-		characterHeadButtonControl.UpdateUIDisplay();
-		characterHeadButtonControl.ChangeToActionOverDisplay();
 		commandQueue[ccmdQueueIdx] = commandExecuteInfo;
 		CommandItemUIControl.CurrentSelected.SetCommandToQueue(commandExecuteInfo.commandData);
+		Autoloads.sceneSingleton.cmdQueueUIControl?.RefreshTimelineUnitInfo();
 	}
 	public void SetCommand(int actionPointCost, CharacterHeadButtonControl characterHeadButtonControl, int cmdQueueIdx, CommandExecuteInfo commandExecuteInfo, CommandItemUIControl cmdItemUIControl)
 	{
 		currentRestActionTimes -= actionPointCost;
-		characterHeadButtonControl.UpdateUIDisplay();
-		characterHeadButtonControl.ChangeToActionOverDisplay();
+		characterHeadButtonControl?.UpdateUIDisplay();
+		if (currentRestActionTimes <= 0)
+		{
+			characterHeadButtonControl?.ChangeToActionOverDisplay();
+		}
 		commandQueue[cmdQueueIdx] = commandExecuteInfo;
 		cmdItemUIControl.SetCommandToQueue(commandExecuteInfo.commandData);
-	}
-	public void MakeDamage(CharacterData targetCharacterData, float damageValue)
-	{
-		targetCharacterData.hp = Math.Max(0, targetCharacterData.hp - damageValue);
-		Autoloads.sceneSingleton.enemyCharacterHeadListUIControl.UpdateAllUIDisplay();
+		Autoloads.sceneSingleton.cmdQueueUIControl?.RefreshTimelineUnitInfo();
 	}
 }
 

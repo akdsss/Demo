@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3 uid="uid://m5relitesupport"]
+
+[ext_resource type="Texture2D" path="res://Asset/character/enemyC02.png" id="1_head"]
+[ext_resource type="Script" uid="uid://di57v3n6x1ras" path="res://Data/DataScript/EnemyData.cs" id="2_script"]
+[ext_resource type="Resource" uid="uid://qinongqwiyl6" path="res://Data/CommandData/EnemyCommandData/enm_cmd1.tres" id="3_move"]
+[ext_resource type="Resource" uid="uid://m5rhealcmd001" path="res://Data/CommandData/EnemyCommandData/enm_cmd7.tres" id="4_heal"]
+[ext_resource type="Resource" uid="uid://m5rrangedcmd01" path="res://Data/CommandData/EnemyCommandData/enm_cmd5.tres" id="5_ranged"]
+[ext_resource type="Resource" uid="uid://m5reliteaoerng" path="res://Data/CommandData/EnemyCommandData/enm_cmd14.tres" id="6_area_ranged"]
+[ext_resource type="Resource" uid="uid://dp1ltok4008ow" path="res://Data/CommandData/EnemyCommandData/enm_cmd2.tres" id="7_skip"]
+
+[resource]
+script = ExtResource("2_script")
+enemyCommandDataArray = Array[Object]([ExtResource("3_move"), ExtResource("4_heal"), ExtResource("5_ranged"), ExtResource("6_area_ranged"), ExtResource("7_skip")])
+aiProfile = 6
+useOddEvenActionPattern = true
+oddRoundActionTimes = 3
+evenRoundActionTimes = 2
+characterId = 202
+characterName = "远程支援精英"
+characterDescription = "第三关双精英战成员：会选取有加成的位置释放治疗、单体远程和范围远程。奇偶回合行动次数与优先级 AI 留给后续逻辑。"
+characterHeadImage = ExtResource("1_head")
+hp = 228.0
+maxHp = 228.0
+atk = 16.0
+turnInitialActionTimes = 3
+metadata/_custom_type_script = "uid://di57v3n6x1ras"

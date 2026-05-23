@@ -5,6 +5,7 @@ public class ValidationContext
     public CharacterState Source { get; set; }
     public CharacterState TargetCharacter { get; set; }
     public AreaDefinition TargetArea { get; set; }
+    public CombatAreaId TargetAreaId { get; set; } = CombatAreaId.Unknown;
     public Vector2I? TargetCoord { get; set; }
     public Timeline Timeline { get; set; }
     public int SlotIndex { get; set; } = Timeline.MinSlotIndex;

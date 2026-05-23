@@ -3,10 +3,9 @@ using System.Collections.Generic;
 
 public partial class EncyclopediaOverlayControl : Control
 {
-    private Button openButton;
+    private Control externalOpenButton;
     private PanelContainer panel;
     private VBoxContainer entryList;
-    private TextureRect detailIcon;
     private Label titleLabel;
     private Label bodyLabel;
     private readonly List<EncyclopediaEntry> entries = BuildEntries();
@@ -14,37 +13,25 @@ public partial class EncyclopediaOverlayControl : Control
     public override void _Ready()
     {
         BuildOverlay();
-        ShowEntry(entries[0]);
+        titleLabel.Text = string.Empty;
+        bodyLabel.Text = string.Empty;
         panel.Visible = false;
+    }
+
+    public void SetExternalOpenButton(Control control)
+    {
+        externalOpenButton = control;
     }
 
     public Control GetTutorialHighlightControl(TutorialHighlightTarget target)
     {
-        return target == TutorialHighlightTarget.EncyclopediaButton ? openButton : null;
+        return target == TutorialHighlightTarget.EncyclopediaButton ? externalOpenButton : null;
     }
 
     private void BuildOverlay()
     {
         SetAnchorsPreset(LayoutPreset.FullRect);
         MouseFilter = MouseFilterEnum.Ignore;
-
-        openButton = new Button
-        {
-            Name = "EncyclopediaButton",
-            Text = "百科",
-            MouseFilter = MouseFilterEnum.Stop
-        };
-        openButton.AnchorLeft = 1;
-        openButton.AnchorRight = 1;
-        openButton.AnchorTop = 0;
-        openButton.AnchorBottom = 0;
-        openButton.OffsetLeft = -92;
-        openButton.OffsetRight = -12;
-        openButton.OffsetTop = 12;
-        openButton.OffsetBottom = 44;
-        openButton.Pressed += OpenEncyclopedia;
-        AddChild(openButton);
-        Autoloads.sceneSingleton?.uiSfxRouter?.RegisterButton(openButton);
 
         panel = new PanelContainer
         {
@@ -81,7 +68,6 @@ public partial class EncyclopediaOverlayControl : Control
         };
         closeButton.Pressed += () => panel.Visible = false;
         header.AddChild(closeButton);
-        Autoloads.sceneSingleton?.uiSfxRouter?.RegisterButton(closeButton);
 
         HBoxContainer body = new()
         {
@@ -111,7 +97,6 @@ public partial class EncyclopediaOverlayControl : Control
             };
             entryButton.Pressed += () => ShowEntry(entry);
             entryList.AddChild(entryButton);
-            Autoloads.sceneSingleton?.uiSfxRouter?.RegisterButton(entryButton);
         }
 
         VBoxContainer detail = new()
@@ -120,14 +105,6 @@ public partial class EncyclopediaOverlayControl : Control
             CustomMinimumSize = new Vector2(260, 260)
         };
         body.AddChild(detail);
-
-        detailIcon = new TextureRect
-        {
-            Name = "Icon",
-            CustomMinimumSize = new Vector2(72, 72),
-            StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered
-        };
-        detail.AddChild(detailIcon);
 
         titleLabel = new Label
         {
@@ -153,7 +130,7 @@ public partial class EncyclopediaOverlayControl : Control
         detailScroll.AddChild(bodyLabel);
     }
 
-    private void OpenEncyclopedia()
+    public void OpenEncyclopedia()
     {
         panel.Visible = true;
         Autoloads.sceneSingleton.tutorialOverlayControl?.Notify(TutorialWaitCondition.OpenEncyclopedia);
@@ -163,8 +140,6 @@ public partial class EncyclopediaOverlayControl : Control
     {
         titleLabel.Text = $"{entry.Collection}：{entry.Title}";
         bodyLabel.Text = entry.Body;
-        detailIcon.Texture = string.IsNullOrEmpty(entry.IconPath) ? null : ResourceLoader.Load<Texture2D>(entry.IconPath);
-        detailIcon.Visible = detailIcon.Texture != null;
     }
 
     private readonly struct EncyclopediaEntry
@@ -172,46 +147,50 @@ public partial class EncyclopediaOverlayControl : Control
         public string Collection { get; }
         public string Title { get; }
         public string Body { get; }
-        public string IconPath { get; }
 
-        public EncyclopediaEntry(string collection, string title, string body, string iconPath = "")
+        public EncyclopediaEntry(string collection, string title, string body)
         {
             Collection = collection;
             Title = title;
             Body = body;
-            IconPath = iconPath;
         }
     }
 
     private static List<EncyclopediaEntry> BuildEntries()
     {
-        List<EncyclopediaEntry> builtEntries = new()
-        {
-            new("区域修正", "十区域映射", "当前 Demo 使用现有 10 个棋盘格承载十区域：乾、兑、离、震、巽、坎、艮、坤、阴、阳。移动到不同格子即进入对应区域。")
-        };
+        List<EncyclopediaEntry> builtEntries = new();
 
-        foreach (AreaDefinition area in AreaDefinition.CreateBaguaDefaults())
+        foreach (CombatAreaId areaId in new[]
         {
-            builtEntries.Add(new EncyclopediaEntry("区域修正", area.DisplayName, area.EncyclopediaText, BattleAssetCatalog.GetAreaIconPath(area.AreaId)));
+            CombatAreaId.Yang,
+            CombatAreaId.Yin,
+            CombatAreaId.Qian,
+            CombatAreaId.Dui,
+            CombatAreaId.Li,
+            CombatAreaId.Zhen,
+            CombatAreaId.Xun,
+            CombatAreaId.Kan,
+            CombatAreaId.Gen,
+            CombatAreaId.Kun
+        })
+        {
+            builtEntries.Add(new EncyclopediaEntry(
+                "区域修正",
+                AreaDefinition.GetDisplayName(areaId),
+                AreaDefinition.GetEncyclopediaText(areaId)));
         }
 
-        string[] statusIds =
+        foreach (string statusId in new[]
         {
             StatusCatalog.Dodge,
             StatusCatalog.Mark,
             StatusCatalog.Shield,
             StatusCatalog.Burn,
-            StatusCatalog.Gale,
-            StatusCatalog.MoveBlocked,
-            StatusCatalog.GenMeleeCarryover,
-            StatusCatalog.KunMeleeDrainCarryover,
-            StatusCatalog.Rage
-        };
-
-        foreach (string statusId in statusIds)
+            StatusCatalog.Gale
+        })
         {
             StatusDefinition status = StatusCatalog.Create(statusId);
-            builtEntries.Add(new EncyclopediaEntry("状态效果", status.DisplayName, status.Description, BattleAssetCatalog.GetStatusIconPath(status.Id)));
+            builtEntries.Add(new EncyclopediaEntry("状态效果", status.DisplayName, status.Description));
         }
 
         return builtEntries;

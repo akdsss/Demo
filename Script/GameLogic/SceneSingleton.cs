@@ -4,18 +4,16 @@ using System;
 public partial class SceneSingleton : Node
 {
 	public BattleManager battleManager;
+	public MainUIControl mainUIControl;
 	[Export] public Label gameStateLable;
 	[Export] public Panel playerActionChoseList;
 	[Export] public Texture2D defaultCharacterImage;
-	public PlayerCharacterHeadListUIControl playerCharacterHeadListUIControl;
 	public EnemyCharacterHeadListUIControl enemyCharacterHeadListUIControl;
 	public CmdQueueUIControl cmdQueueUIControl;
-	public CommandHeadListUIControl commandHeadListUIControl;
 	public TutorialOverlayControl tutorialOverlayControl;
 	public EncyclopediaOverlayControl encyclopediaOverlayControl;
 	public GrowthRewardOverlayControl growthRewardOverlayControl;
-	public BattlePresentationPlaceholderControl battlePresentationPlaceholderControl;
-	public UISfxRouter uiSfxRouter;
+	public AreaTargetMenuControl areaTargetMenuControl;
 	public int gameQueueLength = 6;
 	public int gameCharacterNum = 7;
 	// Called when the node enters the scene tree for the first time.

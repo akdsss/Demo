@@ -19,7 +19,7 @@ public static class StatusCatalog
             {
                 Id = Mark,
                 DisplayName = Mark,
-                Description = "克制闪避。",
+                Description = "无视闪避。",
                 DurationType = StatusDurationType.Slots,
                 DurationValue = 6,
                 StackMode = StatusStackMode.RefreshDuration
@@ -28,7 +28,7 @@ public static class StatusCatalog
             {
                 Id = Burn,
                 DisplayName = Burn,
-                Description = "回合结束时受到最大生命值百分比伤害；位于坎时移除，位于乾、兑时伤害加重。",
+                Description = "回合结束时，受到最大生命值6%的伤害。特别的，若位于坎，移除该状态；若位于乾、兑，则受到最大生命值12%的伤害。",
                 DurationType = StatusDurationType.Rounds,
                 DurationValue = 1,
                 StackMode = StatusStackMode.RefreshDuration
@@ -37,7 +37,7 @@ public static class StatusCatalog
             {
                 Id = Dodge,
                 DisplayName = Dodge,
-                Description = "闪避单体远程攻击；被刻印克制。",
+                Description = "闪避单体远程攻击。",
                 DurationType = StatusDurationType.Rounds,
                 DurationValue = 1,
                 StackMode = StatusStackMode.RefreshDuration
@@ -46,7 +46,7 @@ public static class StatusCatalog
             {
                 Id = Shield,
                 DisplayName = Shield,
-                Description = "吸收伤害的护盾。",
+                Description = "受伤时优先扣除护盾以代替生命值。回合开始时清零。",
                 DurationType = StatusDurationType.Rounds,
                 DurationValue = 1,
                 StackMode = StatusStackMode.RefreshDuration
@@ -55,7 +55,7 @@ public static class StatusCatalog
             {
                 Id = Gale,
                 DisplayName = Gale,
-                Description = "叠加至3层时受到最大生命值40%的伤害。",
+                Description = "叠加至3层时，受到最大生命值40%的伤害。触发后，免疫罡风。",
                 DurationType = StatusDurationType.UntilRemoved,
                 StackMode = StatusStackMode.StackCount
             },

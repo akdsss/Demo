@@ -1,8 +1,7 @@
 using Godot;
 using System.Linq;
-using System.Text.RegularExpressions;
 
-public partial class CharacterHeadButtonControl : Node
+public partial class CharacterHeadButtonControl : Control
 {
     private static CharacterHeadButtonControl currentSelectedPlayerHead;
     public static CharacterHeadButtonControl CurrentSelectedPlayerHead => currentSelectedPlayerHead;
@@ -16,7 +15,6 @@ public partial class CharacterHeadButtonControl : Node
     [Export] public TextureProgressBar hpBar;
     [Export] public Label hpLabel;
     public CharacterData characterData;
-    private HBoxContainer statusIconContainer;
     // public bool hasPrepared = false;
 
     string playerButtonGroupAddress = "res://Data/other/character_head_button_group.tres";
@@ -24,6 +22,16 @@ public partial class CharacterHeadButtonControl : Node
 
     public override void _Ready()
     {
+        if (characterData == null)
+        {
+            Visible = false;
+            if (button != null)
+            {
+                button.Disabled = true;
+            }
+            return;
+        }
+
         if (characterData is PlayerData)
         {
             // 注册按钮组
@@ -51,42 +59,36 @@ public partial class CharacterHeadButtonControl : Node
 
         // 设置开关类型
         button.ToggleMode = true;
-        Autoloads.sceneSingleton?.uiSfxRouter?.RegisterButton(button);
         // 重置按钮状态
         button.ButtonPressed = false;
         focusTrangle.Visible = false;
         actionStateLabel.Text = "待命";
 
         // 设置头像
-        if (characterData == null)
+        if (characterData.characterHeadImage == null)
         {
-            GD.PrintErr("错误：未设置角色数据，头像按钮初始化失败！");
+            GD.PrintErr($"角色ID{characterData.characterId}未设置头像，将使用默认头像!");
+            characterHeadTextureRect.Texture = Autoloads.sceneSingleton.defaultCharacterImage;
         }
         else
         {
-            if (characterData.characterHeadImage == null)
-            {
-                GD.PrintErr($"角色ID{characterData.characterId}未设置头像，将使用默认头像!");
-                characterHeadTextureRect.Texture = Autoloads.sceneSingleton.defaultCharacterImage;
-            }
-            else
-            {
-                characterHeadTextureRect.Texture = characterData.characterHeadImage;
-            }
+            characterHeadTextureRect.Texture = characterData.characterHeadImage;
         }
         // 设置血量
         hpBar.Value = characterData.hp / characterData.maxHp * 100;
         hpLabel.Text = characterData.hp.ToString();
         hpLabel.Visible = true;
         hpBar.Visible = true;
-        EnsureStatusIconContainer();
-        UpdateStatusIcons();
     }
     public void UpdateUIDisplay()
     {
+        if (characterData == null)
+        {
+            return;
+        }
+
         SetActionTimes(characterData.currentRestActionTimes);
         UpdateHPDisplay();
-        UpdateStatusIcons();
     }
     public void SetActionTimes(int actionTimes)
     {
@@ -182,11 +184,7 @@ public partial class CharacterHeadButtonControl : Node
                 // GD.Print($"当前选中角色：{Autoloads.sceneSingleton.battleManager.eventManager.currentMainEnemy.characterName}");
                 focusTrangle.Visible = true;
 
-                // 设置指令
-                Autoloads.sceneSingleton.battleManager.eventManager.damageEventInfo.damageTargetCharacter = enemyData;
-                Autoloads.sceneSingleton.battleManager.eventManager.damageEventInfo.damageTargetCharacterHeadButtonControl = this;
-                // Autoloads.sceneSingleton.cmdQueueUIControl.cmdQueueState = CmdQueueState.CMDSET;
-                Autoloads.sceneSingleton.cmdQueueUIControl.SwitchOnPlayerCommandSet();
+                Autoloads.sceneSingleton.cmdQueueUIControl?.ShowCommandDetail("目标选择", "请通过左侧目标列表选择角色目标。");
             }
         }
     }
@@ -212,77 +210,16 @@ public partial class CharacterHeadButtonControl : Node
     }
     public void UpdateHPDisplay()
     {
+        if (characterData == null)
+        {
+            return;
+        }
+
         hpBar.Value = characterData.hp / characterData.maxHp * 100;
         hpLabel.Text = $"{characterData.hp}";
     }
     public void SetActionStateText(string text)
     {
         actionStateLabel.Text = text;
-    }
-
-    private void EnsureStatusIconContainer()
-    {
-        if (statusIconContainer != null && statusIconContainer.GetParent() != null)
-        {
-            return;
-        }
-
-        statusIconContainer = button.GetNodeOrNull<HBoxContainer>("StatusIconContainer");
-        if (statusIconContainer == null)
-        {
-            statusIconContainer = new HBoxContainer
-            {
-                Name = "StatusIconContainer",
-                MouseFilter = Control.MouseFilterEnum.Ignore
-            };
-            statusIconContainer.AnchorLeft = 1;
-            statusIconContainer.AnchorRight = 1;
-            statusIconContainer.AnchorTop = 0;
-            statusIconContainer.AnchorBottom = 0;
-            statusIconContainer.OffsetLeft = -74;
-            statusIconContainer.OffsetRight = -4;
-            statusIconContainer.OffsetTop = 4;
-            statusIconContainer.OffsetBottom = 22;
-            button.AddChild(statusIconContainer);
-        }
-    }
-
-    private void UpdateStatusIcons()
-    {
-        EnsureStatusIconContainer();
-        foreach (Node child in statusIconContainer.GetChildren())
-        {
-            child.QueueFree();
-        }
-
-        if (characterData?.runtimeStatusIds == null)
-        {
-            return;
-        }
-
-        int shownCount = 0;
-        foreach (string statusId in characterData.runtimeStatusIds)
-        {
-            Texture2D icon = BattleAssetCatalog.GetStatusIconTexture(statusId);
-            if (icon == null)
-            {
-                continue;
-            }
-
-            TextureRect iconRect = new()
-            {
-                Texture = icon,
-                CustomMinimumSize = new Vector2(16, 16),
-                StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered,
-                MouseFilter = Control.MouseFilterEnum.Ignore,
-                TooltipText = statusId
-            };
-            statusIconContainer.AddChild(iconRect);
-            shownCount++;
-            if (shownCount >= 4)
-            {
-                break;
-            }
-        }
     }
 }

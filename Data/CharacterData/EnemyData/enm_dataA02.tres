@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3 uid="uid://d3dp20y6xhorw"]
+
+[ext_resource type="Texture2D" path="res://Asset/character/enemyA02.png" id="1_head"]
+[ext_resource type="Script" uid="uid://di57v3n6x1ras" path="res://Data/DataScript/EnemyData.cs" id="3_hhxjn"]
+[ext_resource type="Resource" uid="uid://qinongqwiyl6" path="res://Data/CommandData/EnemyCommandData/enm_cmd1.tres" id="4_move"]
+[ext_resource type="Resource" uid="uid://m5rrangedcmd01" path="res://Data/CommandData/EnemyCommandData/enm_cmd5.tres" id="5_attack"]
+[ext_resource type="Resource" uid="uid://dp1ltok4008ow" path="res://Data/CommandData/EnemyCommandData/enm_cmd2.tres" id="6_skip"]
+
+[resource]
+script = ExtResource("3_hhxjn")
+enemyCommandDataArray = Array[Object]([ExtResource("4_move"), ExtResource("5_attack"), ExtResource("6_skip")])
+characterId = 2
+characterName = "远程训练人偶"
+characterDescription = "教学关远程训练敌人。每回合2次行动机会，生命44，攻击力10。"
+characterHeadImage = ExtResource("1_head")
+hp = 44.0
+maxHp = 44.0
+atk = 10.0
+turnInitialActionTimes = 2
+aiProfile = 2
+metadata/_custom_type_script = "uid://di57v3n6x1ras"

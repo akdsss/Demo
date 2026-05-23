@@ -22,6 +22,9 @@ public class CombatEvent
     public float TargetHpAfter { get; set; }
     public Vector2I? FromCoord { get; set; }
     public Vector2I? ToCoord { get; set; }
+    public CombatAreaId FromAreaId { get; set; } = CombatAreaId.Unknown;
+    public CombatAreaId ToAreaId { get; set; } = CombatAreaId.Unknown;
+    public CombatAreaId TargetAreaId { get; set; } = CombatAreaId.Unknown;
     public string StatusId { get; set; } = string.Empty;
     public string Message { get; set; } = string.Empty;
 
@@ -40,6 +43,7 @@ public class CombatEvent
             SourceLegacyCharacterData = action?.Source?.LegacyCharacterData,
             TargetLegacyCharacterData = action?.TargetCharacter?.LegacyCharacterData,
             Skill = action?.Skill,
+            TargetAreaId = action?.TargetAreaId ?? CombatAreaId.Unknown,
             FailTextKey = action?.Skill?.FailTextKey ?? string.Empty
         };
     }

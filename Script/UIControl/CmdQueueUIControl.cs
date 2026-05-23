@@ -1,70 +1,92 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 public partial class CmdQueueUIControl : Node
 {
-	// [Export] public Texture defaultCharacterHead;
 	[Export] public string defaultCmdName;
-	// [Export] public TextureRect[] allCharacterHeadArray;
-	// [Export] public Label[] allCmdMatrix;
-	[Export] public HBoxContainer CommandQueueMatrix;
-	[Export] public PackedScene commandListPrefab;
-	List<ActionListUIControl> actionListUIControlList = new();
 	public List<List<CommandItemUIControl>> commandItemUIControlMatrix;
 	public CmdQueueState cmdQueueState = CmdQueueState.NORMAL;
 	public bool IsInspectMode { get; private set; }
+	private const float TimelineWidth = 420f;
+	private const float TimelineSlotHeight = 22f;
+	private const float TimelineInfoWidth = 210f;
+	private const float TimelineTailWidth = 78f;
+	private const float TimelineRowSeparation = 2f;
+	private const float TimelineTrackSeparation = 1f;
+	private const float TimelinePanelVerticalPadding = 3f;
+	private const int TimelineHostRowSeparation = 1;
+	private const float PlayerBannerHeight = 22f;
+	private const float TopPanelHeight = 92f;
+	private const float DownPanelHeight = 104f;
+	private PackedScene commandItemPrefab;
+	private VBoxContainer enemyTimelineHost;
+	private VBoxContainer playerTimelineHost;
+	private Control playerActionBanner;
 	private VBoxContainer timelineControlBar;
 	private Button setCommandButton;
 	private Button inspectButton;
 	private Button startSettlementButton;
-	private Label timelineDetailLabel;
+	private PanelContainer battleInfoPanel;
+	private Label battleInfoLabel;
+	private ConfirmationDialog startSettlementDialog;
+	private readonly Dictionary<CharacterData, TimelineUnitInfo> timelineUnitInfoMap = new();
+	private bool timelineControlSignalsConnected;
+
+	private sealed class TimelineUnitInfo
+	{
+		public Label HpLabel;
+		public Label MpLabel;
+		public Label ActionLabel;
+	}
+
+	private static float GetTimelineTotalWidth()
+	{
+		return TimelineInfoWidth + TimelineRowSeparation + TimelineWidth + TimelineRowSeparation + TimelineTailWidth;
+	}
+
+	private static float GetTimelineSlotWidth(int slotCount)
+	{
+		if (slotCount <= 0)
+		{
+			return TimelineWidth;
+		}
+
+		return (TimelineWidth - ((slotCount - 1) * TimelineTrackSeparation)) / slotCount;
+	}
+
 	public override void _Ready()
 	{
-		// 注册到场景单例
-		Autoloads.sceneSingleton.cmdQueueUIControl = this;
+		if (Autoloads.sceneSingleton != null)
+		{
+			Autoloads.sceneSingleton.cmdQueueUIControl = this;
+		}
 		EnsureTimelineControlBar();
-		// ResetAll();
-
-		// for (int i = 0; i < allCharacterHeadArray.Length; i++)
-		// {
-		//     allCharacterHeadArray[i].Texture = (Texture2D)defaultCharacterHead;
-		// }
-		// Initialize();
-
 	}
 	public void Initialize()
 	{
+		EnsureGddTimelineLayout();
 		EnsureTimelineControlBar();
-		// 初始化UI节点
-		PubTool.instance.ClearChildren(CommandQueueMatrix);
-		actionListUIControlList.Clear();
-		for (int i = 0; i < Autoloads.sceneSingleton.gameQueueLength; i++)
-		{
-			Node commandItemList = commandListPrefab.Instantiate();
-			ActionListUIControl actionListUIControl = commandItemList as ActionListUIControl;
-			actionListUIControl.ExpectedItemCount = GetTimelineRowCount();
-			actionListUIControlList.Add(actionListUIControl);
-			CommandQueueMatrix.AddChild(commandItemList);
-		}
-
-		// 初始化命令列表
-		commandItemUIControlMatrix = new List<List<CommandItemUIControl>>();
-		foreach (ActionListUIControl actionListUIControl in actionListUIControlList)
-		{
-			commandItemUIControlMatrix.Add(actionListUIControl.actionItemUIControlList);
-		}
-
-		// 初始化每个命令控制器
+		EnsureLeftInteractionHost();
+		BuildSeparatedTimelines();
 		ResetCmdQueueMatric();
 		SetControlMode(false);
 		ShowStartSettlementButton(false);
+		SetPrepareActionControlsVisible(false);
+		RefreshTimelineUnitInfo();
 	}
 	public void UpdateCmdMatrix(){
+		BuildSeparatedTimelines();
 		ResetCmdQueueMatric();
 	}
 	public void ResetCmdQueueMatric()
 	{
+		if (commandItemUIControlMatrix == null)
+		{
+			return;
+		}
+
 		for (int slotIdx = 0; slotIdx < commandItemUIControlMatrix.Count; slotIdx++)
 		{
 			List<CommandItemUIControl> commandItemUIControlList = commandItemUIControlMatrix[slotIdx];
@@ -75,49 +97,431 @@ public partial class CmdQueueUIControl : Node
 				commandItemUIControl.ConfigureTimelineSlot(slotIdx, rowIdx, owner, defaultCmdName);
 			}
 		}
-		ShowCommandDetail("时间轴", "我方与敌方共用六时点矩阵；蓝色为我方，红色为敌方。");
+		RefreshTimelineUnitInfo();
+		ShowCommandDetail("时间轴", "敌方时间轴在上方，我方时间轴在下方；左侧设置指令后长按空白时点放置。");
 	}
-	// public void ResetAll()
-	// {
-	//     for (int i = 0; i < allCharacterHeadArray.Length; i++)
-	//     {
-	//         allCharacterHeadArray[i].Texture = (Texture2D)defaultCharacterHead;
-	//     }
-	//     for (int i = 0; i < allCmdMatrix.Length; i++)
-	//     {
-	//         allCmdMatrix[i].Text = defaultCmdName;
-	//     }
-	// }
-	// public void SetCharacterHead(LevelData levelData)
-	// {
-	//     int idx = 0;
-	//     for (int i = 0; i < levelData.playerInfoInLevelArray.Length; i++)
-	//     {
-	//         PlayerInfoInLevel playerInfoInLevel = levelData.playerInfoInLevelArray[i];
-	//         if (idx >= allCharacterHeadArray.Length)
-	//         {
-	//             GD.PrintErr("头像列表赋值错误，超出最大上限");
-	//         }
-	//         allCharacterHeadArray[idx].Texture = playerInfoInLevel.playerData.characterHeadImage;
-	//         idx++;
-	//     }
-	//     for (int i = 0; i < levelData.enemyInfoInLevelArray.Length; i++)
-	//     {
-	//         EnemyInfoInLevel enemyInfoInLevel = levelData.enemyInfoInLevelArray[i];
-	//         if (idx >= allCharacterHeadArray.Length)
-	//         {
-	//             GD.PrintErr("头像列表赋值错误，超出最大上限");
-	//         }
-	//         allCharacterHeadArray[idx].Texture = enemyInfoInLevel.enemyData.characterHeadImage;
-	//         idx++;
-	//     }
-	// }
+
+	private void EnsureGddTimelineLayout()
+	{
+		commandItemPrefab ??= ResourceLoader.Load<PackedScene>("res://Scene/PrefabScene/CommandItem.tscn");
+		Control topPanel = GetTree()?.CurrentScene?.GetNodeOrNull<Control>("MainUi/Panel/VBoxContainer/TopPanel");
+		if (topPanel != null)
+		{
+			topPanel.CustomMinimumSize = new Vector2(0, TopPanelHeight);
+			topPanel.SizeFlagsVertical = Control.SizeFlags.Fill;
+			Label statusLabel = topPanel.GetNodeOrNull<Label>("Label");
+			if (statusLabel != null)
+			{
+				statusLabel.Text = string.Empty;
+				statusLabel.Visible = false;
+			}
+
+			enemyTimelineHost = topPanel.GetNodeOrNull<VBoxContainer>("EnemyTimelineHost");
+			if (enemyTimelineHost == null)
+			{
+				enemyTimelineHost = new VBoxContainer
+				{
+					Name = "EnemyTimelineHost",
+					CustomMinimumSize = new Vector2(GetTimelineTotalWidth(), 0)
+				};
+				enemyTimelineHost.AddThemeConstantOverride("separation", 5);
+				topPanel.AddChild(enemyTimelineHost);
+			}
+			enemyTimelineHost.CustomMinimumSize = new Vector2(GetTimelineTotalWidth(), 0);
+			enemyTimelineHost.AddThemeConstantOverride("separation", TimelineHostRowSeparation);
+			SetCenteredTimelineHost(enemyTimelineHost, TimelinePanelVerticalPadding, -TimelinePanelVerticalPadding);
+		}
+
+		Control downPanel = GetTree()?.CurrentScene?.GetNodeOrNull<Control>("MainUi/Panel/VBoxContainer/DownPanel");
+		if (downPanel != null)
+		{
+			downPanel.CustomMinimumSize = new Vector2(0, DownPanelHeight);
+			downPanel.SizeFlagsVertical = Control.SizeFlags.Fill;
+			playerActionBanner = downPanel.GetNodeOrNull<Control>("PlayerActionBanner");
+			if (playerActionBanner == null)
+			{
+				playerActionBanner = new ColorRect
+				{
+					Name = "PlayerActionBanner",
+					Color = new Color(0.62f, 0.86f, 0.58f, 1f),
+					Visible = false
+				};
+				Label bannerLabel = new()
+				{
+					Name = "Label",
+					Text = "我方行动",
+					HorizontalAlignment = HorizontalAlignment.Center,
+					VerticalAlignment = VerticalAlignment.Center
+				};
+				playerActionBanner.AddChild(bannerLabel);
+				downPanel.AddChild(playerActionBanner);
+			}
+			SetAnchoredOffsets(playerActionBanner, 0f, 4f, 0f, 4f + PlayerBannerHeight);
+			SetAnchoredRect(playerActionBanner.GetNodeOrNull<Control>("Label"), 0f, 0f, 1f, 1f);
+
+			playerTimelineHost = downPanel.GetNodeOrNull<VBoxContainer>("PlayerTimelineHost");
+			if (playerTimelineHost == null)
+			{
+				playerTimelineHost = new VBoxContainer
+				{
+					Name = "PlayerTimelineHost",
+					CustomMinimumSize = new Vector2(GetTimelineTotalWidth(), 0)
+				};
+				playerTimelineHost.AddThemeConstantOverride("separation", 5);
+				downPanel.AddChild(playerTimelineHost);
+			}
+			playerTimelineHost.CustomMinimumSize = new Vector2(GetTimelineTotalWidth(), 0);
+			playerTimelineHost.AddThemeConstantOverride("separation", TimelineHostRowSeparation);
+			SetCenteredTimelineHost(playerTimelineHost, PlayerBannerHeight + 8f, -TimelinePanelVerticalPadding);
+		}
+
+		EnsureLeftInteractionHost();
+		EnsureRightInfoPanel();
+	}
+
+	private void EnsureLeftInteractionHost()
+	{
+		Control leftRegion = GetTree()?.CurrentScene?.GetNodeOrNull<Control>("MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/LeftRegion");
+		if (leftRegion == null)
+		{
+			return;
+		}
+
+		Control enemyHeadContainer = GetTree()?.CurrentScene?.GetNodeOrNull<Control>("MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/RightRegion/EnemyCHContent");
+		if (enemyHeadContainer != null &&
+			Autoloads.sceneSingleton?.battleManager?.eventManager?.damageEventInfo == null)
+		{
+			enemyHeadContainer.Visible = false;
+		}
+
+		VBoxContainer interactionHost = leftRegion.GetNodeOrNull<VBoxContainer>("BattleInteractionPanel");
+		if (interactionHost == null)
+		{
+			interactionHost = new VBoxContainer
+			{
+				Name = "BattleInteractionPanel"
+			};
+			interactionHost.AddThemeConstantOverride("separation", 8);
+			leftRegion.AddChild(interactionHost);
+		}
+		SetAnchoredRect(interactionHost, 0.04f, 0.05f, 0.94f, 0.94f);
+
+		if (timelineControlBar != null && timelineControlBar.GetParent() != interactionHost)
+		{
+			timelineControlBar.GetParent()?.RemoveChild(timelineControlBar);
+			interactionHost.AddChild(timelineControlBar);
+		}
+
+		Control choicePanel = Autoloads.sceneSingleton?.playerActionChoseList as Control;
+		if (choicePanel != null)
+		{
+			if (choicePanel.GetParent() != interactionHost)
+			{
+				choicePanel.GetParent()?.RemoveChild(choicePanel);
+				interactionHost.AddChild(choicePanel);
+			}
+			choicePanel.CustomMinimumSize = new Vector2(0, 150);
+			choicePanel.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+			choicePanel.SizeFlagsVertical = Control.SizeFlags.Fill;
+			choicePanel.Visible = false;
+		}
+	}
+
+	private void EnsureRightInfoPanel()
+	{
+		Control rightRegion = GetTree()?.CurrentScene?.GetNodeOrNull<Control>("MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/RightRegion");
+		if (rightRegion == null)
+		{
+			return;
+		}
+
+		battleInfoPanel = rightRegion.GetNodeOrNull<PanelContainer>("BattleInfoPanel");
+		if (battleInfoPanel == null)
+		{
+			battleInfoPanel = new PanelContainer
+			{
+				Name = "BattleInfoPanel"
+			};
+			rightRegion.AddChild(battleInfoPanel);
+		}
+		SetAnchoredRect(battleInfoPanel, 0.06f, 0.08f, 0.94f, 0.92f);
+
+		battleInfoLabel = battleInfoPanel.GetNodeOrNull<Label>("BattleInfoLabel");
+		if (battleInfoLabel == null)
+		{
+			battleInfoLabel = new Label
+			{
+				Name = "BattleInfoLabel",
+				AutowrapMode = TextServer.AutowrapMode.WordSmart
+			};
+			battleInfoPanel.AddChild(battleInfoLabel);
+		}
+		battleInfoLabel.AddThemeFontSizeOverride("font_size", 14);
+		battleInfoLabel.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+		battleInfoLabel.SizeFlagsVertical = Control.SizeFlags.ExpandFill;
+	}
+
+	private void BuildSeparatedTimelines()
+	{
+		EnsureGddTimelineLayout();
+		if (commandItemPrefab == null || enemyTimelineHost == null || playerTimelineHost == null)
+		{
+			return;
+		}
+
+		timelineUnitInfoMap.Clear();
+		commandItemUIControlMatrix = new List<List<CommandItemUIControl>>();
+		for (int slotIndex = 0; slotIndex < Autoloads.sceneSingleton.gameQueueLength; slotIndex++)
+		{
+			commandItemUIControlMatrix.Add(new List<CommandItemUIControl>());
+		}
+
+		PubTool.instance.ClearChildren(enemyTimelineHost);
+		PubTool.instance.ClearChildren(playerTimelineHost);
+
+		List<PlayerData> players = Autoloads.sceneSingleton?.battleManager?.battlePlayerDataList ?? new List<PlayerData>();
+		List<EnemyData> enemies = Autoloads.sceneSingleton?.battleManager?.battleEnemyDataList ?? new List<EnemyData>();
+		BuildTimelineRows(playerTimelineHost, players.Cast<CharacterData>().ToList(), 0, false);
+		BuildTimelineRows(enemyTimelineHost, enemies.Cast<CharacterData>().ToList(), players.Count, true);
+		RefreshTimelineUnitInfo();
+	}
+
+	private void BuildTimelineRows(VBoxContainer host, List<CharacterData> characters, int rowStartIndex, bool isEnemy)
+	{
+		host.AddThemeConstantOverride("separation", TimelineHostRowSeparation);
+		for (int characterIndex = 0; characterIndex < characters.Count; characterIndex++)
+		{
+			CharacterData characterData = characters[characterIndex];
+			int rowIndex = rowStartIndex + characterIndex;
+			HBoxContainer row = new()
+			{
+				CustomMinimumSize = new Vector2(0, TimelineSlotHeight),
+				SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
+				SizeFlagsVertical = Control.SizeFlags.ShrinkCenter
+			};
+			row.AddThemeConstantOverride("separation", (int)TimelineRowSeparation);
+			host.AddChild(row);
+
+			row.AddChild(CreateTimelineUnitInfo(characterData, isEnemy));
+			HBoxContainer slotRow = new()
+			{
+				CustomMinimumSize = new Vector2(TimelineWidth, TimelineSlotHeight),
+				SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter,
+				SizeFlagsVertical = Control.SizeFlags.ShrinkCenter
+			};
+			slotRow.AddThemeConstantOverride("separation", (int)TimelineTrackSeparation);
+			row.AddChild(slotRow);
+
+			for (int slotIndex = 0; slotIndex < Autoloads.sceneSingleton.gameQueueLength; slotIndex++)
+			{
+				CommandItemUIControl item = commandItemPrefab.Instantiate<CommandItemUIControl>();
+				item.CustomMinimumSize = new Vector2(GetTimelineSlotWidth(Autoloads.sceneSingleton.gameQueueLength), TimelineSlotHeight);
+				item.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+				item.SizeFlagsVertical = Control.SizeFlags.ShrinkCenter;
+				slotRow.AddChild(item);
+				commandItemUIControlMatrix[slotIndex].Add(item);
+			}
+
+			if (isEnemy)
+			{
+				Label actionLabel = new()
+				{
+					CustomMinimumSize = new Vector2(TimelineTailWidth, TimelineSlotHeight),
+					HorizontalAlignment = HorizontalAlignment.Center,
+					VerticalAlignment = VerticalAlignment.Center
+				};
+				row.AddChild(actionLabel);
+				if (timelineUnitInfoMap.TryGetValue(characterData, out TimelineUnitInfo info))
+				{
+					info.ActionLabel = actionLabel;
+				}
+			}
+			else
+			{
+				row.AddChild(new Control
+				{
+					CustomMinimumSize = new Vector2(TimelineTailWidth, TimelineSlotHeight)
+				});
+			}
+		}
+	}
+
+	private Control CreateTimelineUnitInfo(CharacterData characterData, bool isEnemy)
+	{
+		HBoxContainer infoRoot = new()
+		{
+			CustomMinimumSize = new Vector2(TimelineInfoWidth, TimelineSlotHeight),
+			SizeFlagsHorizontal = Control.SizeFlags.Fill,
+			SizeFlagsVertical = Control.SizeFlags.ShrinkCenter
+		};
+		infoRoot.AddThemeConstantOverride("separation", (int)TimelineRowSeparation);
+
+		TextureRect head = new()
+		{
+			Texture = characterData?.characterHeadImage ?? Autoloads.sceneSingleton.defaultCharacterImage,
+			CustomMinimumSize = new Vector2(16, 16),
+			SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter,
+			SizeFlagsVertical = Control.SizeFlags.ShrinkCenter,
+			ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize,
+			StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered
+		};
+		infoRoot.AddChild(head);
+
+		HBoxContainer textColumn = new()
+		{
+			SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
+			SizeFlagsVertical = Control.SizeFlags.ShrinkCenter
+		};
+		textColumn.AddThemeConstantOverride("separation", (int)TimelineRowSeparation);
+		infoRoot.AddChild(textColumn);
+
+		Label nameLabel = new()
+		{
+			Text = characterData?.characterName ?? "未知",
+			AutowrapMode = TextServer.AutowrapMode.Off
+		};
+		nameLabel.AddThemeFontSizeOverride("font_size", 8);
+		nameLabel.HorizontalAlignment = HorizontalAlignment.Left;
+		nameLabel.VerticalAlignment = VerticalAlignment.Center;
+		nameLabel.ClipText = true;
+		nameLabel.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+		textColumn.AddChild(nameLabel);
+
+		Label hpLabel = new()
+		{
+			AutowrapMode = TextServer.AutowrapMode.Off
+		};
+		hpLabel.AddThemeFontSizeOverride("font_size", 8);
+		hpLabel.CustomMinimumSize = new Vector2(characterData is PlayerData ? 58 : 70, TimelineSlotHeight);
+		hpLabel.HorizontalAlignment = HorizontalAlignment.Left;
+		hpLabel.VerticalAlignment = VerticalAlignment.Center;
+		hpLabel.ClipText = true;
+		textColumn.AddChild(hpLabel);
+
+		Label mpLabel = null;
+		if (characterData is PlayerData)
+		{
+			mpLabel = new Label
+			{
+				CustomMinimumSize = new Vector2(54, TimelineSlotHeight),
+				HorizontalAlignment = HorizontalAlignment.Left,
+				VerticalAlignment = VerticalAlignment.Center,
+				AutowrapMode = TextServer.AutowrapMode.Off,
+				ClipText = true
+			};
+			mpLabel.AddThemeFontSizeOverride("font_size", 8);
+			textColumn.AddChild(mpLabel);
+		}
+		textColumn.MoveChild(nameLabel, textColumn.GetChildCount() - 1);
+
+		timelineUnitInfoMap[characterData] = new TimelineUnitInfo
+		{
+			HpLabel = hpLabel,
+			MpLabel = mpLabel
+		};
+		return infoRoot;
+	}
+
+	public void RefreshTimelineUnitInfo()
+	{
+		foreach (KeyValuePair<CharacterData, TimelineUnitInfo> entry in timelineUnitInfoMap)
+		{
+			CharacterData characterData = entry.Key;
+			TimelineUnitInfo info = entry.Value;
+			if (characterData == null || info == null)
+			{
+				continue;
+			}
+
+			if (info.HpLabel != null)
+			{
+				string hpText = $"HP {Mathf.RoundToInt(characterData.hp)}/{Mathf.RoundToInt(characterData.maxHp)}";
+				info.HpLabel.Text = hpText;
+			}
+			if (info.MpLabel != null)
+			{
+				info.MpLabel.Text = $"MP {characterData.mp}/{characterData.maxMp}";
+			}
+			if (info.ActionLabel != null)
+			{
+				info.ActionLabel.Text = characterData.currentRestActionTimes <= 0
+					? "完成"
+					: $"剩余{characterData.currentRestActionTimes}次";
+			}
+		}
+	}
+
+	private static void SetCenteredTimelineHost(Control control, float topOffset, float bottomOffset)
+	{
+		if (control == null)
+		{
+			return;
+		}
+
+		float halfWidth = GetTimelineTotalWidth() / 2f;
+		control.AnchorLeft = 0.5f;
+		control.AnchorRight = 0.5f;
+		control.AnchorTop = 0f;
+		control.AnchorBottom = 1f;
+		control.OffsetLeft = -halfWidth;
+		control.OffsetRight = halfWidth;
+		control.OffsetTop = topOffset;
+		control.OffsetBottom = bottomOffset;
+	}
+
+	private static void SetAnchoredOffsets(Control control, float left, float top, float right, float bottom)
+	{
+		if (control == null)
+		{
+			return;
+		}
+
+		control.AnchorLeft = 0f;
+		control.AnchorTop = 0f;
+		control.AnchorRight = 1f;
+		control.AnchorBottom = 0f;
+		control.OffsetLeft = left;
+		control.OffsetTop = top;
+		control.OffsetRight = -right;
+		control.OffsetBottom = bottom;
+	}
+
+	private static void SetAnchoredRect(Control control, float left, float top, float right, float bottom)
+	{
+		if (control == null)
+		{
+			return;
+		}
+
+		control.AnchorLeft = left;
+		control.AnchorTop = top;
+		control.AnchorRight = right;
+		control.AnchorBottom = bottom;
+		control.OffsetLeft = 0;
+		control.OffsetTop = 0;
+		control.OffsetRight = 0;
+		control.OffsetBottom = 0;
+	}
 	public void SwitchOnPlayerCommandSet()
 	{
-		int playerIdx = Autoloads.sceneSingleton.battleManager.battlePlayerDataList.IndexOf(Autoloads.sceneSingleton.battleManager.eventManager.currentMainPlayer);
+		BattleManager battleManager = Autoloads.sceneSingleton?.battleManager;
+		PlayerData currentPlayer = battleManager?.eventManager?.currentMainPlayer;
+		if (currentPlayer == null || currentPlayer.characterBattleState != CharacterBattleState.ALIVE || currentPlayer.currentRestActionTimes <= 0)
+		{
+			ResetCommandSelectionContext("无法设置指令", "该角色已无行动次数。", true);
+			return;
+		}
+
+		if (commandItemUIControlMatrix == null)
+		{
+			return;
+		}
+
+		int playerIdx = battleManager.battlePlayerDataList.IndexOf(currentPlayer);
 		if (playerIdx < 0)
 		{
 			GD.PrintErr("SwitchOnPlayerCommandSet: 未找到当前玩家索引");
+			ResetCommandSelectionContext("无法设置指令", "当前角色不在我方行动列表中。", true);
 			return;
 		}
 		SetControlMode(false);
@@ -130,17 +534,15 @@ public partial class CmdQueueUIControl : Node
 
 			commandItemUIControlList[playerIdx].EnablePlacement();
 		}
-		ShowCommandDetail("设置指令", "选择空白时点并长按 2 秒确认。已设置指令不可覆盖。");
-		// foreach (var commandItemUIControlList in commandItemUIControlMatrix)
-		// {
-		//     if (commandItemUIControlList[playerIdx].commandItemState == CommandItemState.NORMAL)
-		//     {
-		//         commandItemUIControlList[playerIdx].commandItemState = CommandItemState.HIGHLIGHT;
-		//     }
-		// }
+		ShowCommandDetail("设置指令", "选择空白时点并长按 1.2 秒确认。已设置指令不可覆盖。");
 	}
 	public void SwitchOffPlayerCommandSet()
 	{
+		if (commandItemUIControlMatrix == null)
+		{
+			return;
+		}
+
 		foreach (var commandItemUIControlList in commandItemUIControlMatrix)
 		{
 			foreach (var commandItemUIControl in commandItemUIControlList)
@@ -171,26 +573,107 @@ public partial class CmdQueueUIControl : Node
 	{
 		EnsureTimelineControlBar();
 		startSettlementButton.Visible = visible;
+		if (visible)
+		{
+			setCommandButton.Visible = false;
+			inspectButton.Visible = false;
+			SwitchOffPlayerCommandSet();
+			if (Autoloads.sceneSingleton?.playerActionChoseList != null)
+			{
+				Autoloads.sceneSingleton.playerActionChoseList.Visible = false;
+			}
+			Autoloads.sceneSingleton?.areaTargetMenuControl?.Dismiss();
+			Autoloads.sceneSingleton?.enemyCharacterHeadListUIControl?.ChangeToUninteractable();
+			ClearControlMode();
+			return;
+		}
+
+		RefreshPrepareControlVisibility();
+	}
+
+	public void SetPlayerActionBannerVisible(bool visible)
+	{
+		EnsureGddTimelineLayout();
+		if (playerActionBanner != null)
+		{
+			playerActionBanner.Visible = visible;
+		}
+		SetPrepareActionControlsVisible(visible);
+	}
+
+	private void SetPrepareActionControlsVisible(bool visible)
+	{
+		EnsureTimelineControlBar();
+		if (!visible)
+		{
+			setCommandButton.Visible = false;
+			inspectButton.Visible = false;
+			if (Autoloads.sceneSingleton?.playerActionChoseList != null)
+			{
+				Autoloads.sceneSingleton.playerActionChoseList.Visible = false;
+			}
+			return;
+		}
+
+		RefreshPrepareControlVisibility();
 	}
 
 	public void CancelCurrentCommandSelection()
 	{
+		ResetCommandSelectionContext("返回", "已取消当前指令选择。");
+	}
+
+	public void ResetCommandSelectionContext(string title = null, string detail = null, bool clearCurrentPlayer = false)
+	{
 		SwitchOffPlayerCommandSet();
-		if (Autoloads.sceneSingleton == null)
+		SceneSingleton sceneSingleton = Autoloads.sceneSingleton;
+		if (sceneSingleton == null)
 		{
 			return;
 		}
 
-		Autoloads.sceneSingleton.playerActionChoseList.Visible = false;
-		Autoloads.sceneSingleton.enemyCharacterHeadListUIControl?.ChangeToUninteractable();
-		Autoloads.sceneSingleton.playerCharacterHeadListUIControl?.ResetUIDisplay();
-		if (Autoloads.sceneSingleton.battleManager?.eventManager != null)
+		if (sceneSingleton.playerActionChoseList != null)
 		{
-			Autoloads.sceneSingleton.battleManager.eventManager.currentMainPlayerCommand = null;
-			Autoloads.sceneSingleton.battleManager.eventManager.moveEventInfo = null;
-			Autoloads.sceneSingleton.battleManager.eventManager.damageEventInfo = null;
+			sceneSingleton.playerActionChoseList.Visible = false;
 		}
-		ShowCommandDetail("返回", "已取消当前指令选择。");
+		sceneSingleton.areaTargetMenuControl?.Dismiss();
+		sceneSingleton.enemyCharacterHeadListUIControl?.ChangeToUninteractable();
+		ClearPendingCommandRequest(clearCurrentPlayer);
+
+		ClearControlMode();
+		RefreshPrepareControlVisibility();
+		if (!string.IsNullOrEmpty(title) || !string.IsNullOrEmpty(detail))
+		{
+			ShowCommandDetail(title ?? string.Empty, detail ?? string.Empty);
+		}
+	}
+
+	public bool HasAnyPlayerActionRemaining()
+	{
+		return Autoloads.sceneSingleton?.battleManager?.battlePlayerDataList?.Any(player =>
+			player != null &&
+			player.characterBattleState == CharacterBattleState.ALIVE &&
+			player.currentRestActionTimes > 0) == true;
+	}
+
+	public void RefreshPrepareControlVisibility()
+	{
+		EnsureTimelineControlBar();
+		if (startSettlementButton != null && startSettlementButton.Visible)
+		{
+			setCommandButton.Visible = false;
+			inspectButton.Visible = false;
+			return;
+		}
+
+		bool isPlayerPrepare = Autoloads.sceneSingleton?.battleManager?.prepareTurnState == PrepareTurnState.PLAYER_PRE;
+		bool hasPlayerAction = isPlayerPrepare && HasAnyPlayerActionRemaining();
+		setCommandButton.Visible = hasPlayerAction;
+		inspectButton.Visible = isPlayerPrepare;
+		if (!hasPlayerAction && Autoloads.sceneSingleton?.playerActionChoseList != null)
+		{
+			Autoloads.sceneSingleton.playerActionChoseList.Visible = false;
+		}
 	}
 
 	public void ShowSkillDetail(CommandData commandData, CharacterData source = null, bool revealed = true)
@@ -205,7 +688,7 @@ public partial class CmdQueueUIControl : Node
 		string title = revealed ? commandData.commandName : "未揭示怪物行动";
 		string areaText = source == null
 			? "未知"
-			: AreaDefinition.FromLegacyCoord(source.coord).DisplayName;
+			: AreaDefinition.FormatAreaId(source.ResolveCurrentAreaId());
 		string detail = revealed
 			? $"来源：{source?.characterName ?? "未知"}\n当前区域：{areaText}\n优先级：{skill.Priority}（区域修正后：{FormatAdjustedPriority(skill, source)}）\nMP：{skill.MpCost}\n目标：{FormatTargetType(skill.TargetType)}\n标签：{FormatSkillTags(skill.Tags)}\n效果：{commandData.commandDescription}"
 			: $"来源：{source?.characterName ?? "怪物"}\n当前区域：{areaText}\n标签：{FormatSkillTags(skill.Tags)}\n怪物行动尚未揭示。";
@@ -214,8 +697,11 @@ public partial class CmdQueueUIControl : Node
 
 	public void ShowCommandDetail(string title, string detail)
 	{
-		EnsureTimelineControlBar();
-		timelineDetailLabel.Text = $"{title}\n{detail}";
+		EnsureRightInfoPanel();
+		if (battleInfoLabel != null)
+		{
+			battleInfoLabel.Text = $"{title}\n{detail}";
+		}
 	}
 
 	private void EnsureTimelineControlBar()
@@ -239,32 +725,25 @@ public partial class CmdQueueUIControl : Node
 		setCommandButton = CreateOrGetButton("SetCommandButton", "设置指令");
 		inspectButton = CreateOrGetButton("InspectButton", "检视详情");
 		startSettlementButton = CreateOrGetButton("StartSettlementButton", "开始结算");
-		timelineDetailLabel = GetNodeOrNull<Label>("TimelineControlBar/DetailLabel");
-		if (timelineDetailLabel == null)
+		Label legacyDetailLabel = timelineControlBar.GetNodeOrNull<Label>("DetailLabel");
+		if (legacyDetailLabel != null)
 		{
-			timelineDetailLabel = new Label
-			{
-				Name = "DetailLabel",
-				AutowrapMode = TextServer.AutowrapMode.WordSmart,
-				CustomMinimumSize = new Vector2(150, 90)
-			};
-			timelineControlBar.AddChild(timelineDetailLabel);
+			timelineControlBar.RemoveChild(legacyDetailLabel);
+			legacyDetailLabel.QueueFree();
 		}
 
-		setCommandButton.Pressed -= OnSetCommandPressed;
-		inspectButton.Pressed -= OnInspectPressed;
-		startSettlementButton.Pressed -= OnStartSettlementPressed;
-		setCommandButton.Pressed += OnSetCommandPressed;
-		inspectButton.Pressed += OnInspectPressed;
-		startSettlementButton.Pressed += OnStartSettlementPressed;
-		Autoloads.sceneSingleton?.uiSfxRouter?.RegisterButton(setCommandButton);
-		Autoloads.sceneSingleton?.uiSfxRouter?.RegisterButton(inspectButton);
-		Autoloads.sceneSingleton?.uiSfxRouter?.RegisterButton(startSettlementButton);
+		if (!timelineControlSignalsConnected)
+		{
+			setCommandButton.Pressed += OnSetCommandPressed;
+			inspectButton.Pressed += OnInspectPressed;
+			startSettlementButton.Pressed += OnStartSettlementPressed;
+			timelineControlSignalsConnected = true;
+		}
 	}
 
 	private Button CreateOrGetButton(string nodeName, string text)
 	{
-		Button button = GetNodeOrNull<Button>($"TimelineControlBar/{nodeName}");
+		Button button = timelineControlBar?.GetNodeOrNull<Button>(nodeName);
 		if (button != null)
 		{
 			return button;
@@ -283,7 +762,24 @@ public partial class CmdQueueUIControl : Node
 	private void OnSetCommandPressed()
 	{
 		SetControlMode(false);
-		ShowCommandDetail("设置指令", "选择角色、技能和目标后，长按空白时点 2 秒放置。");
+		if (!HasAnyPlayerActionRemaining())
+		{
+			ResetCommandSelectionContext("设置指令", "当前没有可行动的我方角色。", true);
+			return;
+		}
+
+		PlayerData playerData = ResolveCurrentPlayerForCommand();
+		if (playerData == null)
+		{
+			ResetCommandSelectionContext("设置指令", "当前没有可行动的我方角色。", true);
+			return;
+		}
+
+		ClearPendingCommandRequest(false);
+		Autoloads.sceneSingleton.battleManager.eventManager.currentMainPlayer = playerData;
+		Autoloads.sceneSingleton.playerActionChoseList.Visible = true;
+		(Autoloads.sceneSingleton.playerActionChoseList as PlayerChoseListPanelControl)?.ShowCommandCategoryPanel(playerData);
+		ShowCommandDetail("设置指令", $"当前角色：{playerData.characterName}\n先选择技能分类，再选择技能和目标。");
 	}
 
 	private void OnInspectPressed()
@@ -294,6 +790,29 @@ public partial class CmdQueueUIControl : Node
 
 	private void OnStartSettlementPressed()
 	{
+		EnsureStartSettlementDialog();
+		startSettlementDialog.PopupCentered();
+	}
+
+	private void EnsureStartSettlementDialog()
+	{
+		if (startSettlementDialog != null && startSettlementDialog.GetParent() != null)
+		{
+			return;
+		}
+
+		startSettlementDialog = new ConfirmationDialog
+		{
+			Name = "StartSettlementDialog",
+			Title = "开始结算",
+			DialogText = "是否进入演出阶段？"
+		};
+		AddChild(startSettlementDialog);
+		startSettlementDialog.Confirmed += ConfirmStartSettlement;
+	}
+
+	private void ConfirmStartSettlement()
+	{
 		Autoloads.sceneSingleton.tutorialOverlayControl?.Notify(TutorialWaitCondition.StartSettlement);
 		Autoloads.sceneSingleton.battleManager?.RequestStartSettlement();
 		ShowStartSettlementButton(false);
@@ -303,9 +822,12 @@ public partial class CmdQueueUIControl : Node
 	{
 		return target switch
 		{
+			TutorialHighlightTarget.PlayerTimeline => playerTimelineHost,
+			TutorialHighlightTarget.EnemyTimeline => enemyTimelineHost,
+			TutorialHighlightTarget.TimelineSlot => playerTimelineHost,
 			TutorialHighlightTarget.InspectButton => inspectButton,
 			TutorialHighlightTarget.StartSettlementButton => startSettlementButton,
-			TutorialHighlightTarget.BattleLog => timelineDetailLabel,
+			TutorialHighlightTarget.BattleLog => battleInfoLabel,
 			_ => null
 		};
 	}
@@ -323,12 +845,54 @@ public partial class CmdQueueUIControl : Node
 		}
 	}
 
-	private int GetTimelineRowCount()
+	private void ClearControlMode()
 	{
-		int playerCount = Autoloads.sceneSingleton?.battleManager?.battlePlayerDataList?.Count ?? 0;
-		int enemyCount = Autoloads.sceneSingleton?.battleManager?.battleEnemyDataList?.Count ?? 0;
-		int count = playerCount + enemyCount;
-		return count > 0 ? count : (Autoloads.sceneSingleton?.gameCharacterNum ?? 0);
+		IsInspectMode = false;
+		if (setCommandButton != null)
+		{
+			setCommandButton.ButtonPressed = false;
+		}
+		if (inspectButton != null)
+		{
+			inspectButton.ButtonPressed = false;
+		}
+	}
+
+	private void ClearPendingCommandRequest(bool clearCurrentPlayer)
+	{
+		EventManager eventManager = Autoloads.sceneSingleton?.battleManager?.eventManager;
+		if (eventManager == null)
+		{
+			return;
+		}
+
+		if (clearCurrentPlayer)
+		{
+			eventManager.currentMainPlayer = null;
+		}
+		eventManager.currentMainPlayerCommand = null;
+		eventManager.currentMainEnemy = null;
+		eventManager.currentTargetAreaId = CombatAreaId.Unknown;
+		eventManager.moveEventInfo = null;
+		eventManager.damageEventInfo = null;
+	}
+
+	private PlayerData ResolveCurrentPlayerForCommand()
+	{
+		BattleManager battleManager = Autoloads.sceneSingleton?.battleManager;
+		PlayerData currentPlayer = battleManager?.eventManager?.currentMainPlayer;
+		if (currentPlayer != null &&
+			currentPlayer.characterBattleState == CharacterBattleState.ALIVE &&
+			currentPlayer.currentRestActionTimes > 0)
+		{
+			return currentPlayer;
+		}
+
+		return battleManager?.battlePlayerDataList?
+			.FirstOrDefault(player =>
+				player != null &&
+				player.currentRestActionTimes > 0 &&
+				player.characterBattleState == CharacterBattleState.ALIVE);
 	}
 
 	private CharacterData GetTimelineOwner(int rowIdx)

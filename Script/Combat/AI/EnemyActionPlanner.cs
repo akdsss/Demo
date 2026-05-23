@@ -68,12 +68,13 @@ public class EnemyActionPlanner
     {
         int slotIndex = FindFirstFreeSlot(enemyData);
         Vector2I projectedCoord = GetProjectedCoord(enemyData);
+        CombatAreaId projectedAreaId = GetProjectedAreaId(enemyData);
         List<PlayerData> livingPlayers = playerDataList?
             .Where(IsAlive)
             .ToList() ?? new List<PlayerData>();
 
         PlayerData sameAreaTarget = livingPlayers
-            .Where(player => player.coord == projectedCoord)
+            .Where(player => IsInArea(player, projectedAreaId))
             .OrderBy(player => player.hp)
             .FirstOrDefault();
         PlayerData nearestTarget = livingPlayers
@@ -94,10 +95,10 @@ public class EnemyActionPlanner
             selectedCommand = attackCommand;
             targetCharacter = sameAreaTarget;
         }
-        else if (nearestTarget != null && moveCommand != null && nearestTarget.coord != projectedCoord)
+        else if (nearestTarget != null && moveCommand != null && !IsInArea(nearestTarget, projectedAreaId))
         {
             selectedCommand = moveCommand;
-            targetCoord = nearestTarget.coord;
+            targetCoord = AreaDefinition.GetLegacyCoordForAreaId(nearestTarget.ResolveCurrentAreaId());
         }
         else if (nearestTarget != null && attackCommand != null)
         {
@@ -132,8 +133,9 @@ public class EnemyActionPlanner
     {
         int slotIndex = FindFirstFreeSlot(enemyData);
         Vector2I projectedCoord = GetProjectedCoord(enemyData);
+        CombatAreaId projectedAreaId = GetProjectedAreaId(enemyData);
         List<PlayerData> livingPlayers = GetLivingPlayers(playerDataList);
-        PlayerData sameAreaTarget = GetLowestHpPlayer(livingPlayers.Where(player => player.coord == projectedCoord));
+        PlayerData sameAreaTarget = GetLowestHpPlayer(livingPlayers.Where(player => IsInArea(player, projectedAreaId)));
         PlayerData nearestTarget = GetNearestPlayer(livingPlayers, projectedCoord);
         EnemyCommandData chargeCommand = FindCommandById(commands, 4) ?? FindCommandById(commands, 8);
         EnemyCommandData meleeCommand = FindCommandById(commands, 3) ?? FindCommandById(commands, 9);
@@ -141,7 +143,7 @@ public class EnemyActionPlanner
 
         if (sameAreaTarget != null)
         {
-            int sameAreaCount = livingPlayers.Count(player => player.coord == projectedCoord);
+            int sameAreaCount = livingPlayers.Count(player => IsInArea(player, projectedAreaId));
             EnemyCommandData selectedAttack = sameAreaCount > 1 && chargeCommand != null
                 ? chargeCommand
                 : meleeCommand ?? chargeCommand;
@@ -150,7 +152,7 @@ public class EnemyActionPlanner
 
         if (nearestTarget != null && moveCommand != null)
         {
-            return BuildPlan(enemyData, moveCommand, slotIndex, null, nearestTarget.coord);
+            return BuildPlan(enemyData, moveCommand, slotIndex, null, AreaDefinition.GetLegacyCoordForAreaId(nearestTarget.ResolveCurrentAreaId()));
         }
 
         return BuildSkipOrFallback(enemyData, commands, slotIndex);
@@ -163,8 +165,9 @@ public class EnemyActionPlanner
     {
         int slotIndex = FindFirstFreeSlot(enemyData);
         Vector2I projectedCoord = GetProjectedCoord(enemyData);
+        CombatAreaId projectedAreaId = GetProjectedAreaId(enemyData);
         List<PlayerData> livingPlayers = GetLivingPlayers(playerDataList);
-        bool hasSameAreaPlayer = livingPlayers.Any(player => player.coord == projectedCoord);
+        bool hasSameAreaPlayer = livingPlayers.Any(player => IsInArea(player, projectedAreaId));
         EnemyCommandData moveCommand = FindBestCommand(commands, IsMoveCommand);
         EnemyCommandData rangedCommand = FindCommandById(commands, 5) ?? FindBestCommand(commands, IsRangedCommand);
         PlayerData target = GetLowestHpPlayer(livingPlayers);
@@ -189,15 +192,16 @@ public class EnemyActionPlanner
     {
         int slotIndex = FindFirstFreeSlot(enemyData);
         Vector2I projectedCoord = GetProjectedCoord(enemyData);
+        CombatAreaId projectedAreaId = GetProjectedAreaId(enemyData);
         List<PlayerData> livingPlayers = GetLivingPlayers(playerDataList);
-        PlayerData sameAreaTarget = GetLowestHpPlayer(livingPlayers.Where(player => player.coord == projectedCoord));
+        PlayerData sameAreaTarget = GetLowestHpPlayer(livingPlayers.Where(player => IsInArea(player, projectedAreaId)));
         PlayerData lowestHpTarget = GetLowestHpPlayer(livingPlayers);
         EnemyCommandData ambushCommand = FindCommandById(commands, 6);
         EnemyCommandData meleeCommand = FindCommandById(commands, 3) ?? FindCommandById(commands, 9);
 
         if (sameAreaTarget == null && lowestHpTarget != null && ambushCommand != null)
         {
-            return BuildPlan(enemyData, ambushCommand, slotIndex, lowestHpTarget, lowestHpTarget.coord);
+            return BuildPlan(enemyData, ambushCommand, slotIndex, lowestHpTarget, AreaDefinition.GetLegacyCoordForAreaId(lowestHpTarget.ResolveCurrentAreaId()));
         }
 
         if (sameAreaTarget != null && meleeCommand != null)
@@ -216,6 +220,7 @@ public class EnemyActionPlanner
     {
         int slotIndex = FindFirstFreeSlot(enemyData);
         Vector2I projectedCoord = GetProjectedCoord(enemyData);
+        CombatAreaId projectedAreaId = GetProjectedAreaId(enemyData);
         List<PlayerData> livingPlayers = GetLivingPlayers(playerDataList);
         List<EnemyData> livingAllies = GetLivingEnemies(enemyDataList);
         EnemyData woundedAlly = livingAllies
@@ -228,10 +233,10 @@ public class EnemyActionPlanner
 
         if (woundedAlly != null && healCommand != null)
         {
-            return BuildPlan(enemyData, healCommand, slotIndex, woundedAlly, woundedAlly.coord);
+            return BuildPlan(enemyData, healCommand, slotIndex, woundedAlly, AreaDefinition.GetLegacyCoordForAreaId(woundedAlly.ResolveCurrentAreaId()));
         }
 
-        if (livingPlayers.Any(player => player.coord == projectedCoord) && moveCommand != null)
+        if (livingPlayers.Any(player => IsInArea(player, projectedAreaId)) && moveCommand != null)
         {
             return BuildPlan(enemyData, moveCommand, slotIndex, null, FindSupportCoord(livingPlayers));
         }
@@ -261,7 +266,7 @@ public class EnemyActionPlanner
                 ? Timeline.MaxSlotIndex
                 : FindFirstFreeSlot(enemyData);
             enemyData.rageTriggered = true;
-            return BuildPlan(enemyData, rageCommand, rageSlot, enemyData, enemyData.coord);
+            return BuildPlan(enemyData, rageCommand, rageSlot, enemyData, AreaDefinition.GetLegacyCoordForAreaId(enemyData.ResolveCurrentAreaId()));
         }
 
         if (enemyData.runtimeStatusIds != null && enemyData.runtimeStatusIds.Contains(StatusCatalog.Rage))
@@ -291,8 +296,9 @@ public class EnemyActionPlanner
 
         int slotIndex = FindFirstFreeSlot(enemyData);
         Vector2I projectedCoord = GetProjectedCoord(enemyData);
+        CombatAreaId projectedAreaId = GetProjectedAreaId(enemyData);
         List<PlayerData> livingPlayers = GetLivingPlayers(playerDataList);
-        PlayerData sameAreaTarget = GetLowestHpPlayer(livingPlayers.Where(player => player.coord == projectedCoord));
+        PlayerData sameAreaTarget = GetLowestHpPlayer(livingPlayers.Where(player => IsInArea(player, projectedAreaId)));
         PlayerData lowestHpTarget = GetLowestHpPlayer(livingPlayers);
         EnemyCommandData rushCommand = FindCommandById(commands, 11);
         EnemyCommandData chargeCommand = FindCommandById(commands, 8);
@@ -300,7 +306,7 @@ public class EnemyActionPlanner
 
         if (sameAreaTarget == null && lowestHpTarget != null && rushCommand != null && slotIndex <= 3)
         {
-            return BuildPlan(enemyData, rushCommand, slotIndex, lowestHpTarget, lowestHpTarget.coord);
+            return BuildPlan(enemyData, rushCommand, slotIndex, lowestHpTarget, AreaDefinition.GetLegacyCoordForAreaId(lowestHpTarget.ResolveCurrentAreaId()));
         }
 
         if (sameAreaTarget != null && chargeCommand != null && slotIndex <= 4)
@@ -336,7 +342,7 @@ public class EnemyActionPlanner
 
         if (pathCommand != null && target != null)
         {
-            return BuildPlan(enemyData, pathCommand, slotIndex, target, target.coord);
+            return BuildPlan(enemyData, pathCommand, slotIndex, target, AreaDefinition.GetLegacyCoordForAreaId(target.ResolveCurrentAreaId()));
         }
 
         return PlanRageAction(enemyData, commands, playerDataList, 0);
@@ -350,6 +356,7 @@ public class EnemyActionPlanner
     {
         int slotIndex = FindFirstFreeSlot(enemyData);
         Vector2I projectedCoord = GetProjectedCoord(enemyData);
+        CombatAreaId projectedAreaId = GetProjectedAreaId(enemyData);
         List<PlayerData> livingPlayers = GetLivingPlayers(playerDataList);
         List<EnemyData> livingAllies = GetLivingEnemies(enemyDataList);
         EnemyData woundedAlly = livingAllies
@@ -361,20 +368,20 @@ public class EnemyActionPlanner
         EnemyCommandData rangedCommand = FindCommandById(commands, 5) ?? areaRangedCommand;
         EnemyCommandData moveCommand = FindBestCommand(commands, IsMoveCommand);
 
-        if (woundedAlly != null && healCommand != null && AreaDefinition.FromLegacyCoord(projectedCoord).AreaId == CombatAreaId.Kan)
+        if (woundedAlly != null && healCommand != null && projectedAreaId == CombatAreaId.Kan)
         {
-            return BuildPlan(enemyData, healCommand, slotIndex, woundedAlly, woundedAlly.coord);
+            return BuildPlan(enemyData, healCommand, slotIndex, woundedAlly, AreaDefinition.GetLegacyCoordForAreaId(woundedAlly.ResolveCurrentAreaId()));
         }
 
-        if (woundedAlly != null && healCommand != null && moveCommand != null && !livingPlayers.Any(player => player.coord == new Vector2I(1, 2)))
+        if (woundedAlly != null && healCommand != null && moveCommand != null && !livingPlayers.Any(player => IsInArea(player, CombatAreaId.Kan)))
         {
             return BuildPlan(enemyData, moveCommand, slotIndex, null, new Vector2I(1, 2));
         }
 
         PlayerData target = GetLowestHpPlayer(livingPlayers);
-        if (target != null && AreaDefinition.FromLegacyCoord(projectedCoord).AreaId == CombatAreaId.Dui && areaRangedCommand != null)
+        if (target != null && projectedAreaId == CombatAreaId.Dui && areaRangedCommand != null)
         {
-            return BuildPlan(enemyData, areaRangedCommand, slotIndex, target, target.coord);
+            return BuildPlan(enemyData, areaRangedCommand, slotIndex, target, AreaDefinition.GetLegacyCoordForAreaId(target.ResolveCurrentAreaId()));
         }
 
         if (target != null && rangedCommand != null)
@@ -397,6 +404,7 @@ public class EnemyActionPlanner
             return null;
         }
 
+        CombatAreaId targetAreaId = ResolveTargetAreaId(targetCharacter, targetCoord);
         return new EnemyActionPlan
         {
             SlotIndex = slotIndex,
@@ -406,7 +414,10 @@ public class EnemyActionPlanner
                 sourceCharacterData = enemyData,
                 commandData = selectedCommand,
                 targetCharacterData = targetCharacter,
-                targetCoord = targetCoord
+                targetAreaId = targetAreaId,
+                targetCoord = targetAreaId == CombatAreaId.Unknown
+                    ? targetCoord
+                    : AreaDefinition.GetLegacyCoordForAreaId(targetAreaId)
             }
         };
     }
@@ -454,7 +465,7 @@ public class EnemyActionPlanner
 
     private static Vector2I GetProjectedCoord(EnemyData enemyData)
     {
-        Vector2I projectedCoord = enemyData.coord;
+        Vector2I projectedCoord = AreaDefinition.GetLegacyCoordForAreaId(enemyData.ResolveCurrentAreaId());
         if (enemyData.commandQueue == null)
         {
             return projectedCoord;
@@ -470,11 +481,62 @@ public class EnemyActionPlanner
             SkillDefinition skill = SkillDefinition.FromCommandData(command.commandData);
             if (skill.HasTag(SkillTag.Move))
             {
-                projectedCoord = command.targetCoord;
+                CombatAreaId projectedAreaId = command.targetAreaId != CombatAreaId.Unknown
+                    ? command.targetAreaId
+                    : AreaDefinition.GetAreaIdForLegacyCoord(command.targetCoord);
+                projectedCoord = AreaDefinition.GetLegacyCoordForAreaId(projectedAreaId);
             }
         }
 
         return projectedCoord;
+    }
+
+    private static CombatAreaId GetProjectedAreaId(EnemyData enemyData)
+    {
+        CombatAreaId projectedAreaId = enemyData.ResolveCurrentAreaId();
+        if (enemyData.commandQueue == null)
+        {
+            return projectedAreaId;
+        }
+
+        foreach (CommandExecuteInfo command in enemyData.commandQueue)
+        {
+            if (command == null || command.isDefault || command.commandData == null)
+            {
+                continue;
+            }
+
+            SkillDefinition skill = SkillDefinition.FromCommandData(command.commandData);
+            if (skill.HasTag(SkillTag.Move))
+            {
+                projectedAreaId = command.targetAreaId != CombatAreaId.Unknown
+                    ? command.targetAreaId
+                    : AreaDefinition.GetAreaIdForLegacyCoord(command.targetCoord);
+            }
+        }
+
+        return projectedAreaId;
+    }
+
+    private static CombatAreaId ResolveTargetAreaId(CharacterData targetCharacter, Vector2I targetCoord)
+    {
+        if (targetCharacter != null)
+        {
+            CombatAreaId characterAreaId = targetCharacter.ResolveCurrentAreaId();
+            if (characterAreaId != CombatAreaId.Unknown)
+            {
+                return characterAreaId;
+            }
+        }
+
+        return AreaDefinition.GetAreaIdForLegacyCoord(targetCoord);
+    }
+
+    private static bool IsInArea(CharacterData characterData, CombatAreaId areaId)
+    {
+        return characterData != null &&
+            areaId != CombatAreaId.Unknown &&
+            characterData.ResolveCurrentAreaId() == areaId;
     }
 
     private static EnemyCommandData FindBestCommand(

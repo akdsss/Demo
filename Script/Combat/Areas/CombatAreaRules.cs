@@ -8,7 +8,7 @@ public static class CombatAreaRules
     public static int GetAdjustedPriority(PlannedAction action)
     {
         int priority = action?.Skill?.Priority ?? 0;
-        if (action?.Source?.CurrentArea?.AreaId == CombatAreaId.Zhen &&
+        if (action?.Source?.CurrentAreaId == CombatAreaId.Zhen &&
             action.Skill.HasTag(SkillTag.Move))
         {
             priority += 1;
@@ -29,12 +29,12 @@ public static class CombatAreaRules
                 events.Add(BuildStatusEvent(CombatEventType.StatusRemoved, state, StatusCatalog.Shield, roundIndex));
             }
 
-            if (state.CurrentArea?.AreaId == CombatAreaId.Gen)
+            if (state.CurrentAreaId == CombatAreaId.Gen)
             {
                 ApplyShield(state, roundIndex, events);
             }
 
-            if (state.CurrentArea?.AreaId == CombatAreaId.Xun)
+            if (state.CurrentAreaId == CombatAreaId.Xun)
             {
                 ApplyStatus(state, StatusCatalog.Dodge, roundIndex, events);
             }
@@ -67,14 +67,14 @@ public static class CombatAreaRules
 
     public static float GetDamageMultiplier(PlannedAction action, CharacterState target)
     {
-        if (action?.Source?.CurrentArea == null || action.Skill == null)
+        if (action?.Source == null || action.Skill == null)
         {
             return 1.0f;
         }
 
         float multiplier = 1.0f;
-        CombatAreaId sourceArea = action.Source.CurrentArea.AreaId;
-        CombatAreaId targetArea = target?.CurrentArea?.AreaId ?? CombatAreaId.Unknown;
+        CombatAreaId sourceArea = action.Source.CurrentAreaId;
+        CombatAreaId targetArea = target?.CurrentAreaId ?? CombatAreaId.Unknown;
         SkillDefinition skill = action.Skill;
 
         if (action.Source.HasStatus(StatusCatalog.Rage))
@@ -121,7 +121,7 @@ public static class CombatAreaRules
 
     public static float GetHealMultiplier(PlannedAction action)
     {
-        if (action?.Source?.CurrentArea?.AreaId == CombatAreaId.Kan)
+        if (action?.Source?.CurrentAreaId == CombatAreaId.Kan)
         {
             return 1.4f;
         }
@@ -154,8 +154,8 @@ public static class CombatAreaRules
             return;
         }
 
-        CombatAreaId sourceArea = action.Source.CurrentArea?.AreaId ?? CombatAreaId.Unknown;
-        CombatAreaId targetArea = target.CurrentArea?.AreaId ?? CombatAreaId.Unknown;
+        CombatAreaId sourceArea = action.Source.CurrentAreaId;
+        CombatAreaId targetArea = target.CurrentAreaId;
 
         if (sourceArea == CombatAreaId.Qian)
         {
@@ -245,7 +245,7 @@ public static class CombatAreaRules
             return;
         }
 
-        CombatAreaId areaId = state.CurrentArea?.AreaId ?? CombatAreaId.Unknown;
+        CombatAreaId areaId = state.CurrentAreaId;
         if (areaId == CombatAreaId.Kan)
         {
             RemoveStatus(state, StatusCatalog.Burn, roundIndex, events);
@@ -259,7 +259,7 @@ public static class CombatAreaRules
 
     private static void ResolveKunEndHeal(CharacterState state, int roundIndex, List<CombatEvent> events)
     {
-        if (state.CurrentArea?.AreaId == CombatAreaId.Kun)
+        if (state.CurrentAreaId == CombatAreaId.Kun)
         {
             ApplyHeal(state, state.MaxHp * 0.06f, roundIndex, events, state);
         }
@@ -267,7 +267,7 @@ public static class CombatAreaRules
 
     private static void ResolveXunGale(CharacterState state, int roundIndex, List<CombatEvent> events)
     {
-        if (state.CurrentArea?.AreaId != CombatAreaId.Xun || state.HasStatus(StatusCatalog.GaleImmune))
+        if (state.CurrentAreaId != CombatAreaId.Xun || state.HasStatus(StatusCatalog.GaleImmune))
         {
             return;
         }

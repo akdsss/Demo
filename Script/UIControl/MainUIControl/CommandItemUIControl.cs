@@ -21,7 +21,7 @@ public partial class CommandItemUIControl : Control
 	private bool isHoldingForPlacement;
 	private bool holdCompletedThisPress;
 	private double holdElapsedSeconds;
-	private const double HoldToPlaceSeconds = 2.0;
+	private const double HoldToPlaceSeconds = 1.2;
 	static readonly string playerNormalColor = "c1cfeb";
 	static readonly string enemyNormalColor = "ebc1c1";
 	static readonly string normalColor = "ffffff";
@@ -42,12 +42,16 @@ public partial class CommandItemUIControl : Control
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
 	{
+		if (label != null)
+		{
+			label.AddThemeFontSizeOverride("font_size", 8);
+			label.AutowrapMode = TextServer.AutowrapMode.WordSmart;
+		}
 		slotButton = GetNodeOrNull<Button>("Button");
 		if (slotButton != null)
 		{
 			slotButton.ButtonDown += OnSlotButtonDown;
 			slotButton.ButtonUp += OnSlotButtonUp;
-			Autoloads.sceneSingleton?.uiSfxRouter?.RegisterButton(slotButton);
 		}
 		EnsureHoldProgressBar();
 	}
@@ -137,7 +141,7 @@ public partial class CommandItemUIControl : Control
 
 		if (isOnset == true)
 		{
-			Autoloads.sceneSingleton.cmdQueueUIControl?.ShowCommandDetail("放置指令", "请长按空白时点 2 秒确认指令。");
+			Autoloads.sceneSingleton.cmdQueueUIControl?.ShowCommandDetail("放置指令", "请长按空白时点 1.2 秒确认指令。");
 		}
 
 	}
@@ -156,7 +160,6 @@ public partial class CommandItemUIControl : Control
 		isEnemyActionRevealed = true;
 		label.Text = commandData.commandName;
 		Autoloads.sceneSingleton.cmdQueueUIControl?.SwitchOffPlayerCommandSet();
-		Autoloads.sceneSingleton.playerCharacterHeadListUIControl?.ResetUIDisplay();
 		Autoloads.sceneSingleton.enemyCharacterHeadListUIControl?.ResetUIDisplay();
 	}
 
@@ -266,17 +269,53 @@ public partial class CommandItemUIControl : Control
 			return;
 		}
 
+		EventManager eventManager = sS.battleManager.eventManager;
+		PlayerData currentPlayer = eventManager.currentMainPlayer;
+		if (currentPlayer.characterBattleState != CharacterBattleState.ALIVE || currentPlayer.currentRestActionTimes <= 0)
+		{
+			sS.cmdQueueUIControl?.ResetCommandSelectionContext("无法设置指令", "该角色已无行动次数。", true);
+			return;
+		}
+
+		CommandData currentCommand = eventManager.currentMainPlayerCommand;
+		CharacterData targetCharacter = eventManager.damageEventInfo?.damageTargetCharacter;
+		SkillDefinition skill = SkillDefinition.FromCommandData(currentCommand);
+		CombatAreaId targetAreaId = eventManager.currentTargetAreaId;
+		if (eventManager.moveEventInfo != null &&
+			eventManager.moveEventInfo.moveTargetAreaId != CombatAreaId.Unknown)
+		{
+			targetAreaId = eventManager.moveEventInfo.moveTargetAreaId;
+		}
+		if (targetAreaId == CombatAreaId.Unknown && targetCharacter != null)
+		{
+			targetAreaId = targetCharacter.ResolveCurrentAreaId();
+		}
+		if ((skill.TargetType == SkillTargetType.Area || skill.HasTag(SkillTag.Move)) &&
+			targetAreaId == CombatAreaId.Unknown)
+		{
+			sS.cmdQueueUIControl?.ShowCommandDetail("缺少目标区域", "请先通过区域菜单选择目标区域。");
+			return;
+		}
+		Vector2I targetCoord = targetAreaId == CombatAreaId.Unknown
+			? eventManager.moveEventInfo?.moveTargetCoord ?? new Vector2I()
+			: AreaDefinition.GetLegacyCoordForAreaId(targetAreaId);
+
 		CommandExecuteInfo cei = new()
 		{
 			isDefault = false,
-			commandData = sS.battleManager.eventManager.currentMainPlayerCommand,
-			sourceCharacterData = sS.battleManager.eventManager.currentMainPlayer,
-			targetCoord = sS.battleManager.eventManager.moveEventInfo?.moveTargetCoord ?? new Vector2I(),
-			targetCharacterData = sS.battleManager.eventManager.damageEventInfo?.damageTargetCharacter,
+			commandData = currentCommand,
+			sourceCharacterData = eventManager.currentMainPlayer,
+			targetCoord = targetCoord,
+			targetAreaId = targetAreaId,
+			targetCharacterData = targetCharacter,
 		};
-		sS.battleManager.eventManager.currentMainPlayer.SetCommand(1, CharacterHeadButtonControl.CurrentSelectedPlayerHead, cmdIdxInQueue, cei);
-		sS.enemyCharacterHeadListUIControl.ChangeToUninteractable();
-		sS.cmdQueueUIControl?.ShowSkillDetail(cei.commandData, cei.sourceCharacterData);
+		string sourceName = currentPlayer.characterName;
+		string commandName = currentCommand.commandName;
+		currentPlayer.SetCommand(1, cmdIdxInQueue, cei);
+		sS.enemyCharacterHeadListUIControl?.ChangeToUninteractable();
+		sS.cmdQueueUIControl?.ResetCommandSelectionContext(
+			"指令已设置",
+			$"{sourceName} 已设置 {commandName}。\n剩余行动次数：{currentPlayer.currentRestActionTimes}");
 		sS.tutorialOverlayControl?.Notify(TutorialWaitCondition.HoldPlaceCommand);
 		sS.battleManager.CheckPlayerReadyOver();
 	}
@@ -320,7 +359,7 @@ public partial class CommandItemUIControl : Control
 		holdProgressBar.AnchorTop = 1;
 		holdProgressBar.AnchorRight = 1;
 		holdProgressBar.AnchorBottom = 1;
-		holdProgressBar.OffsetTop = -6;
+		holdProgressBar.OffsetTop = -3;
 		holdProgressBar.OffsetBottom = 0;
 		AddChild(holdProgressBar);
 	}

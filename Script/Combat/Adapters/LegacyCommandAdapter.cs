@@ -31,11 +31,25 @@ public static class LegacyCommandAdapter
 
         if (skill.TargetType == SkillTargetType.Area || skill.HasTag(SkillTag.Move))
         {
-            action.TargetCoord = commandExecuteInfo.targetCoord;
-            action.TargetArea = AreaDefinition.FromLegacyCoord(commandExecuteInfo.targetCoord);
+            CombatAreaId targetAreaId = commandExecuteInfo.targetAreaId;
+            if (targetAreaId == CombatAreaId.Unknown && target.LegacyCharacterData != null)
+            {
+                targetAreaId = target.CurrentAreaId;
+            }
+            if (targetAreaId == CombatAreaId.Unknown)
+            {
+                targetAreaId = AreaDefinition.GetAreaIdForLegacyCoord(commandExecuteInfo.targetCoord);
+            }
+            action.TargetAreaId = targetAreaId;
+            if (targetAreaId != CombatAreaId.Unknown)
+            {
+                action.TargetCoord = AreaDefinition.GetLegacyCoordForAreaId(targetAreaId);
+                action.TargetArea = AreaDefinition.FromKnownArea(targetAreaId);
+            }
         }
         else if (action.TargetCharacter != null)
         {
+            action.TargetAreaId = action.TargetCharacter.CurrentAreaId;
             action.TargetArea = action.TargetCharacter.CurrentArea;
         }
 

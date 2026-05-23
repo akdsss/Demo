@@ -5,6 +5,7 @@
 [resource]
 script = ExtResource("1_oidgd")
 commandId = 1
-commandName = "攻击"
-commandDescription = "对1个近战目标进行攻击"
+commandName = "单体近战"
+commandDescription = "对目标造成（1.0）攻击力的单体近战伤害。"
+priority = 40
 metadata/_custom_type_script = "uid://bjb2y4dhdh5gg"

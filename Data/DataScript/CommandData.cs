@@ -1,6 +1,4 @@
 using Godot;
-using System;
-using System.Collections.Generic;
 
 [GlobalClass]
 public partial class CommandData : Resource
@@ -24,77 +22,12 @@ public class CommandExecuteInfo
     public bool isDefault = false;
     public CharacterData sourceCharacterData;
     public CommandData commandData;
-    // public int targetCharacterNum;
     public Vector2I targetCoord;
-    // public List<CharacterData> targetCharacterList;
+    public CombatAreaId targetAreaId = CombatAreaId.Unknown;
     public CharacterData targetCharacterData;
     public CommandExecuteInfo()
     {
         commandData = new CommandData();
         isDefault = true;
     }
-    public virtual void ExecuteInPlay()
-    {
-        if (isDefault)
-        {
-            GD.Print("默认指令执行");
-            return;
-        }
-
-        CombatResolver resolver = new();
-        List<CombatEvent> combatEvents = resolver.ResolveSingleLegacyCommand(this);
-        GD.Print("兼容入口 ExecuteInPlay 已通过 CombatResolver 生成 CombatEvent。后续流程应直接消费 CombatEvent。");
-        foreach (CombatEvent combatEvent in combatEvents)
-        {
-            string logText = CombatEventLogFormatter.Format(combatEvent);
-            if (!string.IsNullOrEmpty(logText))
-            {
-                GD.Print(logText);
-            }
-            CombatEventApplier.ApplyToLegacyState(combatEvent);
-        }
-    }
-    // public void Execute()
-    // {
-    // 	if(commandData is PlayerCommandData)
-    // 	{
-    //         int cmdID = commandData.commandId;
-    //         switch (cmdID)
-    //         {
-    //             case 0:// 攻击
-    //                 DamageEventManager dem = new();
-    //                 DamageEventInfo dei = new();
-    //                 dei.damageSourceCharacter = sourceCharacterData;
-    //                 dei.damageValue = sourceCharacterData.atk;
-    //                 dei.damageTargetCharacter = targetCharacterList[0];
-    //                 dem.Execute(dei);
-    //                 break;
-    //             case 1:// 移动
-    //                 Autoloads.gd_ChessBoard.MoveCharacter(sourceCharacterData, targetCoord);
-    //                 break;
-    //             case 2:// 防御
-    //                 break;
-    //             default:
-    //                 break;
-    //         }
-    //     }
-    // 	else if(commandData is EnemyCommandData)
-    // 	{
-    //         int cmdID = commandData.commandId;
-    //         switch (cmdID)
-    //         {
-    //             case 0:// 测试
-    //                 GD.Print("怪物测试指令，不执行任何操作");
-    //                 break;
-    //             default:
-    //                 GD.PrintErr("错误：未知的命令ID!");
-    //                 break;
-    //         }
-    //     }
-    // 	else
-    // 	{
-    // 		GD.PrintErr("错误：未知的命令子类!");
-    // 	}
-
-    // }
 }

@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="EnemyInfoInLevel" format=3 uid="uid://m5rlevel1assin"]
 
 [ext_resource type="Script" uid="uid://samwqn81hmy3" path="res://Data/DataScript/EnemyInfoInLevel.cs" id="1_script"]
-[ext_resource type="Resource" uid="uid://m5rassassinen1" path="res://Data/CharacterData/EnemyData/enm_data4.tres" id="2_enemy"]
+[ext_resource type="Resource" uid="uid://m5rassassinen1" path="res://Data/CharacterData/EnemyData/enm_dataB03.tres" id="2_enemy"]
 
 [resource]
 script = ExtResource("1_script")

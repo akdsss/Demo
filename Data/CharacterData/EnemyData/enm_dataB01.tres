@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="EnemyData" format=3 uid="uid://m5rmeleeenemy01"]
+
+[ext_resource type="Texture2D" path="res://Asset/character/enemyB01.png" id="1_head"]
+[ext_resource type="Script" uid="uid://di57v3n6x1ras" path="res://Data/DataScript/EnemyData.cs" id="2_script"]
+[ext_resource type="Resource" uid="uid://qinongqwiyl6" path="res://Data/CommandData/EnemyCommandData/enm_cmd1.tres" id="3_move"]
+[ext_resource type="Resource" uid="uid://boap4niecmhwa" path="res://Data/CommandData/EnemyCommandData/enm_cmd3.tres" id="4_melee"]
+[ext_resource type="Resource" uid="uid://m5rchargecmd01" path="res://Data/CommandData/EnemyCommandData/enm_cmd4.tres" id="5_charge"]
+[ext_resource type="Resource" uid="uid://dp1ltok4008ow" path="res://Data/CommandData/EnemyCommandData/enm_cmd2.tres" id="6_skip"]
+
+[resource]
+script = ExtResource("2_script")
+enemyCommandDataArray = Array[Object]([ExtResource("3_move"), ExtResource("4_melee"), ExtResource("5_charge"), ExtResource("6_skip")])
+aiProfile = 1
+characterId = 101
+characterName = "小型近战敌人"
+characterDescription = "第二关小型敌方团体成员：普通位移、近战和蓄力。"
+characterHeadImage = ExtResource("1_head")
+hp = 100.0
+maxHp = 100.0
+atk = 10.0
+turnInitialActionTimes = 2
+metadata/_custom_type_script = "uid://di57v3n6x1ras"

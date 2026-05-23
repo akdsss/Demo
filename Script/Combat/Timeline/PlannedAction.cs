@@ -11,6 +11,7 @@ public class PlannedAction
     public SkillDefinition Skill { get; set; }
     public CharacterState TargetCharacter { get; set; }
     public AreaDefinition TargetArea { get; set; }
+    public CombatAreaId TargetAreaId { get; set; } = CombatAreaId.Unknown;
     public Vector2I? TargetCoord { get; set; }
     public bool IsRevealed { get; set; } = true;
     public CommandExecuteInfo LegacyCommandExecuteInfo { get; set; }
@@ -22,7 +23,7 @@ public class PlannedAction
 
     public bool HasTargetArea
     {
-        get { return TargetArea != null || TargetCoord.HasValue; }
+        get { return TargetAreaId != CombatAreaId.Unknown || TargetArea != null || TargetCoord.HasValue; }
     }
 
     public static PlannedAction Empty(int slotIndex, CombatFaction faction = CombatFaction.Unknown)

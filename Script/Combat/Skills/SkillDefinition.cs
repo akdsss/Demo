@@ -84,11 +84,13 @@ public class SkillDefinition
             case 1:
                 definition.TargetType = SkillTargetType.Enemy;
                 definition.Tags = SkillTag.Melee | SkillTag.SingleTarget;
+                definition.MpCost = 10;
                 definition.Effects.Add(SkillEffectDefinition.Damage(1.0f));
                 break;
             case 2:
                 definition.TargetType = SkillTargetType.Area;
                 definition.Tags = SkillTag.Move;
+                definition.MpCost = 5;
                 definition.Effects.Add(SkillEffectDefinition.Move());
                 break;
             case 3:
@@ -99,16 +101,19 @@ public class SkillDefinition
             case 4:
                 definition.TargetType = SkillTargetType.Enemy;
                 definition.Tags = SkillTag.Ranged | SkillTag.SingleTarget;
+                definition.MpCost = 10;
                 definition.Effects.Add(SkillEffectDefinition.Damage(1.0f));
                 break;
             case 5:
                 definition.TargetType = SkillTargetType.Ally;
                 definition.Tags = SkillTag.Heal | SkillTag.Special;
+                definition.MpCost = 20;
                 definition.Effects.Add(SkillEffectDefinition.Heal(1.0f));
                 break;
             case 6:
                 definition.TargetType = SkillTargetType.Enemy;
                 definition.Tags = SkillTag.Melee | SkillTag.SingleTarget;
+                definition.MpCost = 10;
                 definition.Effects.Add(SkillEffectDefinition.Damage(1.5f));
                 break;
             default:
@@ -157,7 +162,7 @@ public class SkillDefinition
                 definition.TargetType = SkillTargetType.Enemy;
                 definition.Tags = SkillTag.Melee | SkillTag.Area;
                 definition.DurationSlots = 2;
-                definition.Effects.Add(SkillEffectDefinition.Damage(1.5f));
+                definition.Effects.Add(SkillEffectDefinition.Damage(1.5f, excludeSource: true));
                 break;
             case 9:
                 definition.TargetType = SkillTargetType.Enemy;
@@ -179,19 +184,19 @@ public class SkillDefinition
                 definition.TargetType = SkillTargetType.Enemy;
                 definition.Tags = SkillTag.Melee | SkillTag.Area | SkillTag.Special;
                 definition.DurationSlots = 4;
-                definition.Effects.Add(SkillEffectDefinition.Damage(1.0f));
+                definition.Effects.Add(SkillEffectDefinition.Damage(1.0f, excludeSource: true));
                 break;
             case 13:
                 definition.TargetType = SkillTargetType.Enemy;
                 definition.Tags = SkillTag.Melee | SkillTag.Area | SkillTag.Special;
                 definition.DurationSlots = 4;
-                definition.Effects.Add(SkillEffectDefinition.Damage(1.0f));
+                definition.Effects.Add(SkillEffectDefinition.Damage(1.0f, excludeSource: true));
                 break;
             case 14:
                 definition.TargetType = SkillTargetType.Enemy;
                 definition.Tags = SkillTag.Ranged | SkillTag.Area | SkillTag.Special;
                 definition.DurationSlots = 4;
-                definition.Effects.Add(SkillEffectDefinition.Damage(1.0f));
+                definition.Effects.Add(SkillEffectDefinition.Damage(1.0f, excludeSource: true));
                 break;
             default:
                 definition.TargetType = SkillTargetType.None;
@@ -208,13 +213,15 @@ public class SkillEffectDefinition
     public string StatusId { get; set; } = string.Empty;
     public int DelaySlots { get; set; }
     public CombatAreaId TargetAreaId { get; set; } = CombatAreaId.Unknown;
+    public bool ExcludeSource { get; set; }
 
-    public static SkillEffectDefinition Damage(float multiplier)
+    public static SkillEffectDefinition Damage(float multiplier, bool excludeSource = false)
     {
         return new SkillEffectDefinition
         {
             EffectType = SkillEffectType.Damage,
-            Value = multiplier
+            Value = multiplier,
+            ExcludeSource = excludeSource
         };
     }
 
