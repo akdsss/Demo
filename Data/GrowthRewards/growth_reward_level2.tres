@@ -1,23 +1,20 @@
 [gd_resource type="Resource" script_class="GrowthRewardData" format=3 uid="uid://m5rrewardlevel2"]
 
 [ext_resource type="Script" path="res://Data/DataScript/GrowthRewardData.cs" id="1_reward"]
-[ext_resource type="Resource" uid="uid://grtxmchfk7wy" path="res://Data/CharacterData/PlayerData/ply_data0.tres" id="2_player_a"]
-[ext_resource type="Resource" uid="uid://dxesp6pjxwnm3" path="res://Data/CharacterData/PlayerData/ply_data1.tres" id="3_player_b"]
-[ext_resource type="Resource" uid="uid://df1sfcfb7s1am" path="res://Data/CharacterData/PlayerData/ply_data2.tres" id="4_player_c"]
-[ext_resource type="Resource" uid="uid://m5rplypower01" path="res://Data/CommandData/PlayerCommandData/ply_cmd6.tres" id="5_power"]
-[ext_resource type="Resource" uid="uid://djte3fnfk71y7" path="res://Data/CommandData/PlayerCommandData/ply_cmd2.tres" id="6_move"]
-[ext_resource type="Resource" uid="uid://m5rplyheal001" path="res://Data/CommandData/PlayerCommandData/ply_cmd5.tres" id="7_heal"]
+[ext_resource type="Resource" uid="uid://m5rplyl3melee" path="res://Data/CharacterData/PlayerData/ply_data_level3_melee.tres" id="2_player_a"]
+[ext_resource type="Resource" uid="uid://m5rplyl3ranged" path="res://Data/CharacterData/PlayerData/ply_data_level3_ranged.tres" id="3_player_b"]
+[ext_resource type="Resource" uid="uid://m5rplyl3support" path="res://Data/CharacterData/PlayerData/ply_data_level3_support.tres" id="4_player_c"]
 
 [resource]
 script = ExtResource("1_reward")
 rewardId = "level_3_clear_reward"
-uiSummaryText = "双精英战胜利。队伍获得强击，并进一步强化移动与治疗。"
+uiSummaryText = "双精英战胜利。当前 GDD 暂未配置关卡3结束后的新增玩家技能。"
 characterDataArray = Array[Object]([ExtResource("2_player_a"), ExtResource("3_player_b"), ExtResource("4_player_c")])
-statChangeTextArray = PackedStringArray("攻击 +3", "最大生命 +15", "攻击 +3")
-unlockSkillTextArray = PackedStringArray("解锁：强击", "技能升级：移动", "技能升级：治疗")
-maxHpChangeArray = PackedInt32Array(0, 15, 0)
-attackChangeArray = PackedFloat32Array(3, 0, 3)
-unlockSkillDataArray = Array[Object]([ExtResource("5_power")])
-upgradeSkillDataArray = Array[Object]([ExtResource("6_move"), ExtResource("7_heal")])
-upgradePriorityDeltaArray = PackedInt32Array(5, 5)
-upgradedDescriptionArray = PackedStringArray("移动到指定地点，区域修正理解提升。", "为目标恢复（1.0）攻击力的生命，治疗时机更稳定。")
+statChangeTextArray = PackedStringArray("", "", "")
+unlockSkillTextArray = PackedStringArray("暂无新增技能", "暂无新增技能", "暂无新增技能")
+maxHpChangeArray = PackedInt32Array()
+attackChangeArray = PackedFloat32Array()
+unlockSkillDataArray = Array[Object]([])
+upgradeSkillDataArray = Array[Object]([])
+upgradePriorityDeltaArray = PackedInt32Array()
+upgradedDescriptionArray = PackedStringArray()

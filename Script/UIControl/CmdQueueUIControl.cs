@@ -11,14 +11,15 @@ public partial class CmdQueueUIControl : Node
 	public bool IsInspectMode { get; private set; }
 	private const float TimelineWidth = 420f;
 	private const float TimelineSlotHeight = 22f;
-	private const float TimelineInfoWidth = 210f;
+	private const float TimelineInfoWidth = 410f;
 	private const float TimelineTailWidth = 78f;
-	private const float TimelineRowSeparation = 2f;
+	private const float TimelineSectionSeparation = 2f;
+	private const float TimelineInfoTextSeparation = 15f;
 	private const float TimelineTrackSeparation = 1f;
 	private const float TimelinePanelVerticalPadding = 3f;
 	private const int TimelineHostRowSeparation = 1;
-	private const float PlayerBannerHeight = 22f;
-	private const float TopPanelHeight = 92f;
+	private const float PlayerBannerHeight = 23f;
+	private const float TopPanelHeight = 98f;
 	private const float DownPanelHeight = 104f;
 	private PackedScene commandItemPrefab;
 	private VBoxContainer enemyTimelineHost;
@@ -43,7 +44,7 @@ public partial class CmdQueueUIControl : Node
 
 	private static float GetTimelineTotalWidth()
 	{
-		return TimelineInfoWidth + TimelineRowSeparation + TimelineWidth + TimelineRowSeparation + TimelineTailWidth;
+		return TimelineWidth + TimelineSectionSeparation + TimelineTailWidth;
 	}
 
 	private static float GetTimelineSlotWidth(int slotCount)
@@ -129,7 +130,7 @@ public partial class CmdQueueUIControl : Node
 			}
 			enemyTimelineHost.CustomMinimumSize = new Vector2(GetTimelineTotalWidth(), 0);
 			enemyTimelineHost.AddThemeConstantOverride("separation", TimelineHostRowSeparation);
-			SetCenteredTimelineHost(enemyTimelineHost, TimelinePanelVerticalPadding, -TimelinePanelVerticalPadding);
+			SetTimelineHostBounds(enemyTimelineHost, TimelinePanelVerticalPadding, -TimelinePanelVerticalPadding);
 		}
 
 		Control downPanel = GetTree()?.CurrentScene?.GetNodeOrNull<Control>("MainUi/Panel/VBoxContainer/DownPanel");
@@ -172,7 +173,7 @@ public partial class CmdQueueUIControl : Node
 			}
 			playerTimelineHost.CustomMinimumSize = new Vector2(GetTimelineTotalWidth(), 0);
 			playerTimelineHost.AddThemeConstantOverride("separation", TimelineHostRowSeparation);
-			SetCenteredTimelineHost(playerTimelineHost, PlayerBannerHeight + 8f, -TimelinePanelVerticalPadding);
+			SetTimelineHostBounds(playerTimelineHost, PlayerBannerHeight + 8f, -TimelinePanelVerticalPadding);
 		}
 
 		EnsureLeftInteractionHost();
@@ -256,7 +257,7 @@ public partial class CmdQueueUIControl : Node
 			};
 			battleInfoPanel.AddChild(battleInfoLabel);
 		}
-		battleInfoLabel.AddThemeFontSizeOverride("font_size", 14);
+		battleInfoLabel.AddThemeFontSizeOverride("font_size", 13);
 		battleInfoLabel.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
 		battleInfoLabel.SizeFlagsVertical = Control.SizeFlags.ExpandFill;
 	}
@@ -293,16 +294,18 @@ public partial class CmdQueueUIControl : Node
 		{
 			CharacterData characterData = characters[characterIndex];
 			int rowIndex = rowStartIndex + characterIndex;
-			HBoxContainer row = new()
+			Control row = new()
 			{
 				CustomMinimumSize = new Vector2(0, TimelineSlotHeight),
 				SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
 				SizeFlagsVertical = Control.SizeFlags.ShrinkCenter
 			};
-			row.AddThemeConstantOverride("separation", (int)TimelineRowSeparation);
 			host.AddChild(row);
 
-			row.AddChild(CreateTimelineUnitInfo(characterData, isEnemy));
+			Control unitInfo = CreateTimelineUnitInfo(characterData, isEnemy);
+			row.AddChild(unitInfo);
+			PlaceTimelineRowChild(unitInfo, 0f, TimelineInfoWidth);
+
 			HBoxContainer slotRow = new()
 			{
 				CustomMinimumSize = new Vector2(TimelineWidth, TimelineSlotHeight),
@@ -311,6 +314,7 @@ public partial class CmdQueueUIControl : Node
 			};
 			slotRow.AddThemeConstantOverride("separation", (int)TimelineTrackSeparation);
 			row.AddChild(slotRow);
+			PlaceCenteredTimelineRowChild(slotRow, TimelineWidth);
 
 			for (int slotIndex = 0; slotIndex < Autoloads.sceneSingleton.gameQueueLength; slotIndex++)
 			{
@@ -331,6 +335,7 @@ public partial class CmdQueueUIControl : Node
 					VerticalAlignment = VerticalAlignment.Center
 				};
 				row.AddChild(actionLabel);
+				PlaceTimelineTail(actionLabel);
 				if (timelineUnitInfoMap.TryGetValue(characterData, out TimelineUnitInfo info))
 				{
 					info.ActionLabel = actionLabel;
@@ -338,10 +343,12 @@ public partial class CmdQueueUIControl : Node
 			}
 			else
 			{
-				row.AddChild(new Control
+				Control tailSpacer = new()
 				{
 					CustomMinimumSize = new Vector2(TimelineTailWidth, TimelineSlotHeight)
-				});
+				};
+				row.AddChild(tailSpacer);
+				PlaceTimelineTail(tailSpacer);
 			}
 		}
 	}
@@ -354,7 +361,7 @@ public partial class CmdQueueUIControl : Node
 			SizeFlagsHorizontal = Control.SizeFlags.Fill,
 			SizeFlagsVertical = Control.SizeFlags.ShrinkCenter
 		};
-		infoRoot.AddThemeConstantOverride("separation", (int)TimelineRowSeparation);
+		infoRoot.AddThemeConstantOverride("separation", (int)TimelineInfoTextSeparation);
 
 		TextureRect head = new()
 		{
@@ -372,7 +379,7 @@ public partial class CmdQueueUIControl : Node
 			SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
 			SizeFlagsVertical = Control.SizeFlags.ShrinkCenter
 		};
-		textColumn.AddThemeConstantOverride("separation", (int)TimelineRowSeparation);
+		textColumn.AddThemeConstantOverride("separation", (int)TimelineInfoTextSeparation);
 		infoRoot.AddChild(textColumn);
 
 		Label nameLabel = new()
@@ -380,7 +387,7 @@ public partial class CmdQueueUIControl : Node
 			Text = characterData?.characterName ?? "未知",
 			AutowrapMode = TextServer.AutowrapMode.Off
 		};
-		nameLabel.AddThemeFontSizeOverride("font_size", 8);
+		nameLabel.AddThemeFontSizeOverride("font_size", 13);
 		nameLabel.HorizontalAlignment = HorizontalAlignment.Left;
 		nameLabel.VerticalAlignment = VerticalAlignment.Center;
 		nameLabel.ClipText = true;
@@ -391,8 +398,8 @@ public partial class CmdQueueUIControl : Node
 		{
 			AutowrapMode = TextServer.AutowrapMode.Off
 		};
-		hpLabel.AddThemeFontSizeOverride("font_size", 8);
-		hpLabel.CustomMinimumSize = new Vector2(characterData is PlayerData ? 58 : 70, TimelineSlotHeight);
+		hpLabel.AddThemeFontSizeOverride("font_size", 13);
+		hpLabel.CustomMinimumSize = new Vector2(characterData is PlayerData ? 60 : 70, TimelineSlotHeight);
 		hpLabel.HorizontalAlignment = HorizontalAlignment.Left;
 		hpLabel.VerticalAlignment = VerticalAlignment.Center;
 		hpLabel.ClipText = true;
@@ -403,13 +410,13 @@ public partial class CmdQueueUIControl : Node
 		{
 			mpLabel = new Label
 			{
-				CustomMinimumSize = new Vector2(54, TimelineSlotHeight),
+				CustomMinimumSize = new Vector2(60, TimelineSlotHeight),
 				HorizontalAlignment = HorizontalAlignment.Left,
 				VerticalAlignment = VerticalAlignment.Center,
 				AutowrapMode = TextServer.AutowrapMode.Off,
 				ClipText = true
 			};
-			mpLabel.AddThemeFontSizeOverride("font_size", 8);
+			mpLabel.AddThemeFontSizeOverride("font_size", 13);
 			textColumn.AddChild(mpLabel);
 		}
 		textColumn.MoveChild(nameLabel, textColumn.GetChildCount() - 1);
@@ -451,22 +458,62 @@ public partial class CmdQueueUIControl : Node
 		}
 	}
 
-	private static void SetCenteredTimelineHost(Control control, float topOffset, float bottomOffset)
+	private static void SetTimelineHostBounds(Control control, float topOffset, float bottomOffset)
 	{
 		if (control == null)
 		{
 			return;
 		}
 
-		float halfWidth = GetTimelineTotalWidth() / 2f;
+		control.AnchorLeft = 0f;
+		control.AnchorRight = 1f;
+		control.AnchorTop = 0f;
+		control.AnchorBottom = 1f;
+		control.OffsetLeft = 0f;
+		control.OffsetRight = 0f;
+		control.OffsetTop = topOffset;
+		control.OffsetBottom = bottomOffset;
+	}
+
+	private static void PlaceTimelineRowChild(Control control, float left, float width)
+	{
+		if (control == null)
+		{
+			return;
+		}
+
+		control.AnchorLeft = 0f;
+		control.AnchorRight = 0f;
+		control.AnchorTop = 0f;
+		control.AnchorBottom = 1f;
+		control.OffsetLeft = left;
+		control.OffsetRight = left + width;
+		control.OffsetTop = 0f;
+		control.OffsetBottom = 0f;
+	}
+
+	private static void PlaceCenteredTimelineRowChild(Control control, float width, float centerOffset = 0f)
+	{
+		if (control == null)
+		{
+			return;
+		}
+
+		float halfWidth = width / 2f;
 		control.AnchorLeft = 0.5f;
 		control.AnchorRight = 0.5f;
 		control.AnchorTop = 0f;
 		control.AnchorBottom = 1f;
-		control.OffsetLeft = -halfWidth;
-		control.OffsetRight = halfWidth;
-		control.OffsetTop = topOffset;
-		control.OffsetBottom = bottomOffset;
+		control.OffsetLeft = centerOffset - halfWidth;
+		control.OffsetRight = centerOffset + halfWidth;
+		control.OffsetTop = 0f;
+		control.OffsetBottom = 0f;
+	}
+
+	private static void PlaceTimelineTail(Control control)
+	{
+		float centerOffset = (TimelineWidth / 2f) + TimelineSectionSeparation + (TimelineTailWidth / 2f);
+		PlaceCenteredTimelineRowChild(control, TimelineTailWidth, centerOffset);
 	}
 
 	private static void SetAnchoredOffsets(Control control, float left, float top, float right, float bottom)
@@ -620,6 +667,25 @@ public partial class CmdQueueUIControl : Node
 
 	public void CancelCurrentCommandSelection()
 	{
+		SceneSingleton sceneSingleton = Autoloads.sceneSingleton;
+		if (sceneSingleton?.areaTargetMenuControl?.HandleBackPressed() == true)
+		{
+			SwitchOffPlayerCommandSet();
+			RefreshPrepareControlVisibility();
+			return;
+		}
+
+		Control choicePanel = sceneSingleton?.playerActionChoseList as Control;
+		if ((choicePanel as PlayerChoseListPanelControl)?.HandleBackPressed() == true)
+		{
+			if (choicePanel.Visible == false)
+			{
+				ClearControlMode();
+			}
+			RefreshPrepareControlVisibility();
+			return;
+		}
+
 		ResetCommandSelectionContext("返回", "已取消当前指令选择。");
 	}
 
@@ -659,6 +725,11 @@ public partial class CmdQueueUIControl : Node
 	public void RefreshPrepareControlVisibility()
 	{
 		EnsureTimelineControlBar();
+		bool isPlayerPrepare = Autoloads.sceneSingleton?.battleManager?.prepareTurnState == PrepareTurnState.PLAYER_PRE;
+		if (isPlayerPrepare && startSettlementButton != null)
+		{
+			startSettlementButton.Visible = false;
+		}
 		if (startSettlementButton != null && startSettlementButton.Visible)
 		{
 			setCommandButton.Visible = false;
@@ -666,7 +737,6 @@ public partial class CmdQueueUIControl : Node
 			return;
 		}
 
-		bool isPlayerPrepare = Autoloads.sceneSingleton?.battleManager?.prepareTurnState == PrepareTurnState.PLAYER_PRE;
 		bool hasPlayerAction = isPlayerPrepare && HasAnyPlayerActionRemaining();
 		setCommandButton.Visible = hasPlayerAction;
 		inspectButton.Visible = isPlayerPrepare;
@@ -689,8 +759,9 @@ public partial class CmdQueueUIControl : Node
 		string areaText = source == null
 			? "未知"
 			: AreaDefinition.FormatAreaId(source.ResolveCurrentAreaId());
+		string description = SkillDescriptionFormatter.Format(skill, source);
 		string detail = revealed
-			? $"来源：{source?.characterName ?? "未知"}\n当前区域：{areaText}\n优先级：{skill.Priority}（区域修正后：{FormatAdjustedPriority(skill, source)}）\nMP：{skill.MpCost}\n目标：{FormatTargetType(skill.TargetType)}\n标签：{FormatSkillTags(skill.Tags)}\n效果：{commandData.commandDescription}"
+			? $"来源：{source?.characterName ?? "未知"}\n当前区域：{areaText}\n优先级：{skill.Priority}（区域修正后：{FormatAdjustedPriority(skill, source)}）\nMP：{skill.MpCost}\n目标：{FormatTargetType(skill.TargetType)}\n标签：{FormatSkillTags(skill.Tags)}\n效果：{description}"
 			: $"来源：{source?.characterName ?? "怪物"}\n当前区域：{areaText}\n标签：{FormatSkillTags(skill.Tags)}\n怪物行动尚未揭示。";
 		ShowCommandDetail(title, detail);
 	}
@@ -768,17 +839,23 @@ public partial class CmdQueueUIControl : Node
 			return;
 		}
 
-		PlayerData playerData = ResolveCurrentPlayerForCommand();
-		if (playerData == null)
+		ClearPendingCommandRequest(true);
+		if (!HasAnyPlayerActionRemaining())
 		{
 			ResetCommandSelectionContext("设置指令", "当前没有可行动的我方角色。", true);
 			return;
 		}
 
-		ClearPendingCommandRequest(false);
-		Autoloads.sceneSingleton.battleManager.eventManager.currentMainPlayer = playerData;
+		ClearPendingCommandRequest(true);
+		Autoloads.sceneSingleton.battleManager.eventManager.currentMainPlayer = null;
 		Autoloads.sceneSingleton.playerActionChoseList.Visible = true;
-		(Autoloads.sceneSingleton.playerActionChoseList as PlayerChoseListPanelControl)?.ShowCommandCategoryPanel(playerData);
+		(Autoloads.sceneSingleton.playerActionChoseList as PlayerChoseListPanelControl)?.ShowPlayerSelectPanel(Autoloads.sceneSingleton.battleManager.battlePlayerDataList);
+		PlayerData playerData = Autoloads.sceneSingleton?.battleManager?.eventManager?.currentMainPlayer;
+		ShowCommandDetail("设置指令", "请先选择仍有行动次数的我方角色。");
+		if (playerData == null)
+		{
+			return;
+		}
 		ShowCommandDetail("设置指令", $"当前角色：{playerData.characterName}\n先选择技能分类，再选择技能和目标。");
 	}
 

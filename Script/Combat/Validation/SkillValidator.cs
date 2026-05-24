@@ -93,6 +93,14 @@ public class SkillValidator
             }
         }
 
+        if (skill.RequiresDifferentTargetArea &&
+            context.TargetCharacter != null &&
+            context.TargetAreaId != CombatAreaId.Unknown &&
+            context.TargetAreaId == context.TargetCharacter.CurrentAreaId)
+        {
+            return SkillValidationResult.Fail(SkillFailReason.RushTargetMustBeInDifferentArea, skill.FailTextKey);
+        }
+
         if (skill.TargetType == SkillTargetType.Area &&
             context.TargetAreaId == CombatAreaId.Unknown &&
             context.TargetArea == null &&

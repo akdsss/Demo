@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="PlayerCommandData" format=3 uid="uid://dt34viewdvy6j"]
+
+[ext_resource type="Script" uid="uid://bjb2y4dhdh5gg" path="res://Data/DataScript/PlayerCommandData.cs" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+commandId = 21
+commandName = "溯"
+commandDescription = "揭示所选时点与前4个时点的所有敌方意图。"
+priority = 50
+metadata/_custom_type_script = "uid://bjb2y4dhdh5gg"

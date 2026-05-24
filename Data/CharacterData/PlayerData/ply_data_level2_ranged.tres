@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="PlayerData" format=3 uid="uid://m5rplyl2ranged"]
+
+[ext_resource type="Script" uid="uid://bw07j5wfv22k0" path="res://Data/DataScript/PlayerData.cs" id="1_script"]
+[ext_resource type="Texture2D" path="res://Asset/character/character02.png" id="2_head"]
+[ext_resource type="Resource" uid="uid://djte3fnfk71y7" path="res://Data/CommandData/PlayerCommandData/ply_cmd2.tres" id="3_move"]
+[ext_resource type="Resource" uid="uid://baoxeiy3g2dvl" path="res://Data/CommandData/PlayerCommandData/ply_cmd3.tres" id="4_defense"]
+[ext_resource type="Resource" uid="uid://m5rplyranged01" path="res://Data/CommandData/PlayerCommandData/ply_cmd4.tres" id="5_ranged"]
+[ext_resource type="Resource" uid="uid://m5rplyrestoremp" path="res://Data/CommandData/PlayerCommandData/ply_cmd7_restore_mp.tres" id="6_mp"]
+[ext_resource type="Resource" uid="uid://m5rplydodge" path="res://Data/CommandData/PlayerCommandData/ply_cmd13_dodge.tres" id="7_dodge"]
+[ext_resource type="Resource" uid="uid://m5rplyarearange" path="res://Data/CommandData/PlayerCommandData/ply_cmd14_area_range.tres" id="8_area"]
+[ext_resource type="Resource" uid="uid://m5rplytargetrange" path="res://Data/CommandData/PlayerCommandData/ply_cmd15_target_range.tres" id="9_target_area"]
+[ext_resource type="Resource" uid="uid://m5rplymark" path="res://Data/CommandData/PlayerCommandData/ply_cmd16_mark.tres" id="10_mark"]
+
+[resource]
+script = ExtResource("1_script")
+playerCommandDataList = Array[Object]([ExtResource("3_move"), ExtResource("4_defense"), ExtResource("7_dodge"), ExtResource("6_mp"), ExtResource("5_ranged"), ExtResource("8_area"), ExtResource("9_target_area"), ExtResource("10_mark")])
+characterId = 1
+characterName = "我方远程"
+characterDescription = "第2关远程角色。关卡1结束后：生命29，攻击力10，MP60，每回合2次行动。"
+characterHeadImage = ExtResource("2_head")
+hp = 29.0
+maxHp = 29.0
+mp = 60
+maxMp = 60
+atk = 10.0
+turnInitialActionTimes = 2
+metadata/_custom_type_script = "uid://bw07j5wfv22k0"

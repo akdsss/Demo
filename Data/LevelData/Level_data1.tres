@@ -5,9 +5,9 @@
 [ext_resource type="Resource" uid="uid://m5rlevel1range" path="res://Data/LevelData/EnemyInfoInlevel/enm_info_level1_ranged.tres" id="3_ranged"]
 [ext_resource type="Resource" uid="uid://m5rlevel1assin" path="res://Data/LevelData/EnemyInfoInlevel/enm_info_level1_assassin.tres" id="4_assassin"]
 [ext_resource type="Resource" uid="uid://m5rlevel1healr" path="res://Data/LevelData/EnemyInfoInlevel/enm_info_level1_healer.tres" id="5_healer"]
-[ext_resource type="Resource" uid="uid://ck8g1j4en3sq8" path="res://Data/LevelData/PlayerInfoInLevel/ply_info_level0.tres" id="6_player0"]
-[ext_resource type="Resource" uid="uid://k50keva7c6i" path="res://Data/LevelData/PlayerInfoInLevel/ply_info_level1.tres" id="7_player1"]
-[ext_resource type="Resource" uid="uid://cwi34lb5hv5c1" path="res://Data/LevelData/PlayerInfoInLevel/ply_info_level2.tres" id="8_player2"]
+[ext_resource type="Resource" uid="uid://m5rplyinfo2melee" path="res://Data/LevelData/PlayerInfoInLevel/ply_info_level2_melee.tres" id="6_player0"]
+[ext_resource type="Resource" uid="uid://m5rplyinfo2ranged" path="res://Data/LevelData/PlayerInfoInLevel/ply_info_level2_ranged.tres" id="7_player1"]
+[ext_resource type="Resource" uid="uid://m5rplyinfo2support" path="res://Data/LevelData/PlayerInfoInLevel/ply_info_level2_support.tres" id="8_player2"]
 [ext_resource type="Resource" uid="uid://m5rrewardlevel1" path="res://Data/GrowthRewards/growth_reward_level1.tres" id="9_reward"]
 
 [resource]

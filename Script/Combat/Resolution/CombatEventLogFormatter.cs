@@ -24,7 +24,10 @@ public static class CombatEventLogFormatter
             CombatEventType.CharacterMoved => $"{sourceName} 从 {FormatArea(combatEvent.FromAreaId, combatEvent.FromCoord)} 移动到 {FormatArea(combatEvent.ToAreaId, combatEvent.ToCoord)}",
             CombatEventType.DamageApplied => FormatDamage(combatEvent, sourceName, targetName),
             CombatEventType.HealApplied => $"{sourceName} 为 {targetName} 恢复 {combatEvent.Amount} 点生命",
-            CombatEventType.MpChanged => $"{targetName} 恢复 {combatEvent.Amount} 点 MP",
+            CombatEventType.MpChanged => combatEvent.Amount < 0
+                ? $"{targetName} 消耗 {-combatEvent.Amount} 点 MP"
+                : $"{targetName} 恢复 {combatEvent.Amount} 点 MP",
+            CombatEventType.IntentRevealed => combatEvent.Message,
             CombatEventType.DefenseApplied => $"{sourceName} 进入防御",
             CombatEventType.CharacterDefeated => $"{targetName} 失去战斗能力",
             CombatEventType.StatusApplied => $"{targetName} 获得状态 {combatEvent.StatusId}",

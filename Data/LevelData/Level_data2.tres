@@ -3,9 +3,9 @@
 [ext_resource type="Script" uid="uid://b4odp0seqjtt0" path="res://Data/DataScript/LevelData.cs" id="1_script"]
 [ext_resource type="Resource" uid="uid://m5rlevel2melee" path="res://Data/LevelData/EnemyInfoInlevel/enm_info_level2_melee_elite.tres" id="2_melee"]
 [ext_resource type="Resource" uid="uid://m5rlevel2suppt" path="res://Data/LevelData/EnemyInfoInlevel/enm_info_level2_support_elite.tres" id="3_support"]
-[ext_resource type="Resource" uid="uid://ck8g1j4en3sq8" path="res://Data/LevelData/PlayerInfoInLevel/ply_info_level0.tres" id="4_player0"]
-[ext_resource type="Resource" uid="uid://k50keva7c6i" path="res://Data/LevelData/PlayerInfoInLevel/ply_info_level1.tres" id="5_player1"]
-[ext_resource type="Resource" uid="uid://cwi34lb5hv5c1" path="res://Data/LevelData/PlayerInfoInLevel/ply_info_level2.tres" id="6_player2"]
+[ext_resource type="Resource" uid="uid://m5rplyinfo3melee" path="res://Data/LevelData/PlayerInfoInLevel/ply_info_level3_melee.tres" id="4_player0"]
+[ext_resource type="Resource" uid="uid://m5rplyinfo3ranged" path="res://Data/LevelData/PlayerInfoInLevel/ply_info_level3_ranged.tres" id="5_player1"]
+[ext_resource type="Resource" uid="uid://m5rplyinfo3support" path="res://Data/LevelData/PlayerInfoInLevel/ply_info_level3_support.tres" id="6_player2"]
 [ext_resource type="Resource" uid="uid://m5rrewardlevel2" path="res://Data/GrowthRewards/growth_reward_level2.tres" id="7_reward"]
 
 [resource]

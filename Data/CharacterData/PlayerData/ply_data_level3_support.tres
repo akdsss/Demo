@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="PlayerData" format=3 uid="uid://m5rplyl3support"]
+
+[ext_resource type="Script" uid="uid://bw07j5wfv22k0" path="res://Data/DataScript/PlayerData.cs" id="1_script"]
+[ext_resource type="Texture2D" path="res://Asset/character/character03.png" id="2_head"]
+[ext_resource type="Resource" uid="uid://djte3fnfk71y7" path="res://Data/CommandData/PlayerCommandData/ply_cmd2.tres" id="3_move"]
+[ext_resource type="Resource" uid="uid://baoxeiy3g2dvl" path="res://Data/CommandData/PlayerCommandData/ply_cmd3.tres" id="4_defense"]
+[ext_resource type="Resource" uid="uid://m5rplyheal001" path="res://Data/CommandData/PlayerCommandData/ply_cmd5.tres" id="5_heal"]
+[ext_resource type="Resource" uid="uid://m5rplysupportshot" path="res://Data/CommandData/PlayerCommandData/ply_cmd19_support_shot.tres" id="6_shot"]
+[ext_resource type="Resource" uid="uid://m5rplyareaheal" path="res://Data/CommandData/PlayerCommandData/ply_cmd20_area_heal.tres" id="7_area_heal"]
+[ext_resource type="Resource" uid="uid://m5rplyrevealpast" path="res://Data/CommandData/PlayerCommandData/ply_cmd21_reveal_past.tres" id="8_reveal_past"]
+[ext_resource type="Resource" uid="uid://m5rplyrevealcross" path="res://Data/CommandData/PlayerCommandData/ply_cmd22_reveal_cross.tres" id="9_reveal_cross"]
+[ext_resource type="Resource" uid="uid://m5rplyrevealfuture" path="res://Data/CommandData/PlayerCommandData/ply_cmd23_reveal_future.tres" id="10_reveal_future"]
+[ext_resource type="Resource" uid="uid://m5rplypowerup" path="res://Data/CommandData/PlayerCommandData/ply_cmd24_power_up.tres" id="11_power"]
+[ext_resource type="Resource" uid="uid://m5rplyswap" path="res://Data/CommandData/PlayerCommandData/ply_cmd25_swap.tres" id="12_swap"]
+[ext_resource type="Resource" uid="uid://m5rplyteammpp" path="res://Data/CommandData/PlayerCommandData/ply_cmd26_team_mp_plus.tres" id="13_mp_plus"]
+
+[resource]
+script = ExtResource("1_script")
+playerCommandDataList = Array[Object]([ExtResource("3_move"), ExtResource("12_swap"), ExtResource("4_defense"), ExtResource("13_mp_plus"), ExtResource("6_shot"), ExtResource("5_heal"), ExtResource("7_area_heal"), ExtResource("8_reveal_past"), ExtResource("9_reveal_cross"), ExtResource("10_reveal_future"), ExtResource("11_power")])
+characterId = 2
+characterName = "我方支援"
+characterDescription = "第3关支援角色。关卡2结束后：生命50，攻击力16，MP60，每回合2次行动。"
+characterHeadImage = ExtResource("2_head")
+hp = 50.0
+maxHp = 50.0
+mp = 60
+maxMp = 60
+atk = 16.0
+turnInitialActionTimes = 2
+metadata/_custom_type_script = "uid://bw07j5wfv22k0"

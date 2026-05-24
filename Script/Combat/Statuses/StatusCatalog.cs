@@ -3,6 +3,10 @@ public static class StatusCatalog
     public const string Mark = "刻印";
     public const string Burn = "燃烧";
     public const string Dodge = "闪避";
+    public const string Defense = "防御";
+    public const string CounterSingleMelee = "反击";
+    public const string CounterMelee = "反击+";
+    public const string PowerUp = "强化";
     public const string Shield = "护盾";
     public const string Gale = "罡风";
     public const string GaleImmune = "罡风免疫";
@@ -40,6 +44,46 @@ public static class StatusCatalog
                 Description = "闪避单体远程攻击。",
                 DurationType = StatusDurationType.Rounds,
                 DurationValue = 1,
+                StackMode = StatusStackMode.RefreshDuration
+            },
+            Defense => new StatusDefinition
+            {
+                Id = Defense,
+                DisplayName = Defense,
+                Description = "该时点期间受到的伤害减半。",
+                DurationType = StatusDurationType.Slots,
+                DurationValue = 1,
+                StackMode = StatusStackMode.RefreshDuration
+            },
+            CounterSingleMelee => new StatusDefinition
+            {
+                Id = CounterSingleMelee,
+                DisplayName = CounterSingleMelee,
+                Description = "格挡1次单体近战攻击，并对攻击者造成1.0攻击力的近战伤害。",
+                DurationType = StatusDurationType.Slots,
+                DurationValue = 1,
+                StackMode = StatusStackMode.RefreshDuration,
+                RemoveCondition = StatusRemoveCondition.NextMeleeHit,
+                TriggerEffects = { SkillEffectDefinition.Damage(1.0f) }
+            },
+            CounterMelee => new StatusDefinition
+            {
+                Id = CounterMelee,
+                DisplayName = CounterMelee,
+                Description = "格挡1次近战攻击，并对攻击者造成1.0攻击力的近战伤害。",
+                DurationType = StatusDurationType.Slots,
+                DurationValue = 1,
+                StackMode = StatusStackMode.RefreshDuration,
+                RemoveCondition = StatusRemoveCondition.NextMeleeHit,
+                TriggerEffects = { SkillEffectDefinition.Damage(1.0f) }
+            },
+            PowerUp => new StatusDefinition
+            {
+                Id = PowerUp,
+                DisplayName = PowerUp,
+                Description = "造成伤害+50%，持续3时点。",
+                DurationType = StatusDurationType.Slots,
+                DurationValue = 3,
                 StackMode = StatusStackMode.RefreshDuration
             },
             Shield => new StatusDefinition

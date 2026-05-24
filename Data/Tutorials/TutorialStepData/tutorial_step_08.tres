@@ -9,5 +9,5 @@ orderIndex = 8
 title = "怪物行动与优先级"
 promptText = "当场上没有可行动角色后，怪物行动会全部揭示。相同时点内，优先级更高的行动先执行。"
 highlightTarget = 3
-waitCondition = 5
+waitCondition = 0
 blocksOtherInput = true

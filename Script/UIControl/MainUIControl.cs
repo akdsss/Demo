@@ -61,11 +61,18 @@ public partial class MainUIControl : CanvasLayer
 		GetTree().Quit();
 	}
 
-	public override void _UnhandledInput(InputEvent @event)
+	public override void _Input(InputEvent @event)
 	{
 		if (@event.IsActionPressed("back"))
 		{
-			Autoloads.sceneSingleton?.cmdQueueUIControl?.CancelCurrentCommandSelection();
+			if (SetPanel != null && SetPanel.Visible)
+			{
+				SetPanel.Visible = false;
+			}
+			else
+			{
+				Autoloads.sceneSingleton?.cmdQueueUIControl?.CancelCurrentCommandSelection();
+			}
 			GetViewport().SetInputAsHandled();
 		}
 	}

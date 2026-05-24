@@ -122,7 +122,7 @@ public partial class GrowthRewardOverlayControl : Control
             Name = "ContinueButton",
             Text = "继续"
         };
-        continueButton.Pressed += HideReward;
+        continueButton.Pressed += OnContinuePressed;
         content.AddChild(continueButton);
     }
 
@@ -195,5 +195,11 @@ public partial class GrowthRewardOverlayControl : Control
     private void HideReward()
     {
         Visible = false;
+    }
+
+    private void OnContinuePressed()
+    {
+        HideReward();
+        (GetTree()?.CurrentScene as GameMain)?.ContinueAfterVictory();
     }
 }

@@ -12,6 +12,8 @@ public partial class GrowthRewardData : Resource
     [Export] public string[] statChangeTextArray = Array.Empty<string>();
     [Export] public string[] unlockSkillTextArray = Array.Empty<string>();
     [Export] public int[] maxHpChangeArray = Array.Empty<int>();
+    [Export] public int[] maxMpChangeArray = Array.Empty<int>();
+    [Export] public int[] actionTimesChangeArray = Array.Empty<int>();
     [Export] public float[] attackChangeArray = Array.Empty<float>();
     [Export] public PlayerCommandData[] unlockSkillDataArray = Array.Empty<PlayerCommandData>();
     [Export] public PlayerCommandData[] upgradeSkillDataArray = Array.Empty<PlayerCommandData>();
@@ -28,7 +30,9 @@ public partial class GrowthRewardData : Resource
                 Math.Max(
                     Math.Max(statChangeTextArray?.Length ?? 0, unlockSkillTextArray?.Length ?? 0),
                     Math.Max(
-                        Math.Max(maxHpChangeArray?.Length ?? 0, attackChangeArray?.Length ?? 0),
+                        Math.Max(
+                            Math.Max(maxHpChangeArray?.Length ?? 0, maxMpChangeArray?.Length ?? 0),
+                            Math.Max(actionTimesChangeArray?.Length ?? 0, attackChangeArray?.Length ?? 0)),
                         Math.Max(unlockSkillDataArray?.Length ?? 0, upgradeSkillDataArray?.Length ?? 0))));
         }
     }
@@ -52,6 +56,8 @@ public partial class GrowthRewardData : Resource
 
         List<string> parts = new();
         int maxHpChange = GetMaxHpChange(index);
+        int maxMpChange = GetMaxMpChange(index);
+        int actionTimesChange = GetActionTimesChange(index);
         float attackChange = GetAttackChange(index);
         if (maxHpChange != 0)
         {
@@ -60,6 +66,14 @@ public partial class GrowthRewardData : Resource
         if (Math.Abs(attackChange) > 0.001f)
         {
             parts.Add($"攻击 {(attackChange > 0 ? "+" : string.Empty)}{attackChange}");
+        }
+        if (maxMpChange != 0)
+        {
+            parts.Add($"MP {(maxMpChange > 0 ? "+" : string.Empty)}{maxMpChange}");
+        }
+        if (actionTimesChange != 0)
+        {
+            parts.Add($"行动点 {(actionTimesChange > 0 ? "+" : string.Empty)}{actionTimesChange}");
         }
 
         return parts.Count > 0 ? string.Join("，", parts) : string.Empty;
@@ -124,6 +138,20 @@ public partial class GrowthRewardData : Resource
             : 0;
     }
 
+    private int GetMaxMpChange(int index)
+    {
+        return index >= 0 && index < (maxMpChangeArray?.Length ?? 0)
+            ? maxMpChangeArray[index]
+            : 0;
+    }
+
+    private int GetActionTimesChange(int index)
+    {
+        return index >= 0 && index < (actionTimesChangeArray?.Length ?? 0)
+            ? actionTimesChangeArray[index]
+            : 0;
+    }
+
     private float GetAttackChange(int index)
     {
         return index >= 0 && index < (attackChangeArray?.Length ?? 0)
@@ -162,6 +190,8 @@ public partial class GrowthRewardData : Resource
     private void ApplyStats(PlayerData target, int index)
     {
         int maxHpChange = GetMaxHpChange(index);
+        int maxMpChange = GetMaxMpChange(index);
+        int actionTimesChange = GetActionTimesChange(index);
         float attackChange = GetAttackChange(index);
         if (maxHpChange != 0)
         {
@@ -172,6 +202,17 @@ public partial class GrowthRewardData : Resource
         if (Math.Abs(attackChange) > 0.001f)
         {
             target.atk = Math.Max(0, target.atk + attackChange);
+        }
+
+        if (maxMpChange != 0)
+        {
+            target.maxMp = Math.Max(0, target.maxMp + maxMpChange);
+            target.mp = Math.Min(target.maxMp, target.mp + Math.Max(0, maxMpChange));
+        }
+
+        if (actionTimesChange != 0)
+        {
+            target.turnInitialActionTimes = Math.Max(0, target.turnInitialActionTimes + actionTimesChange);
         }
     }
 

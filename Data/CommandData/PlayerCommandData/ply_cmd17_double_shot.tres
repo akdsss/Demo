@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="PlayerCommandData" format=3 uid="uid://dt3p6hb75y62j"]
+
+[ext_resource type="Script" uid="uid://bjb2y4dhdh5gg" path="res://Data/DataScript/PlayerCommandData.cs" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+commandId = 17
+commandName = "单体连击"
+commandDescription = "持续2个时点。对目标造成（1.0）攻击力的单体远程伤害。"
+priority = 20
+metadata/_custom_type_script = "uid://bjb2y4dhdh5gg"

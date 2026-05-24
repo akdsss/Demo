@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="PlayerCommandData" format=3 uid="uid://m5rplydodge"]
+
+[ext_resource type="Script" uid="uid://bjb2y4dhdh5gg" path="res://Data/DataScript/PlayerCommandData.cs" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+commandId = 13
+commandName = "闪避"
+commandDescription = "获得闪避，持续2时点。"
+priority = 50
+metadata/_custom_type_script = "uid://bjb2y4dhdh5gg"

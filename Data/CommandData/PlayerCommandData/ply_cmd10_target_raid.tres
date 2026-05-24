@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="PlayerCommandData" format=3 uid="uid://dt36reg1lxyu2"]
+
+[ext_resource type="Script" uid="uid://bjb2y4dhdh5gg" path="res://Data/DataScript/PlayerCommandData.cs" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+commandId = 10
+commandName = "目标突袭"
+commandDescription = "移动至指定目标所在区域，获得闪避，持续2时点。"
+priority = 30
+metadata/_custom_type_script = "uid://bjb2y4dhdh5gg"

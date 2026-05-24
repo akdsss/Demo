@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="PlayerData" format=3 uid="uid://m5rplyl2melee"]
+
+[ext_resource type="Script" uid="uid://bw07j5wfv22k0" path="res://Data/DataScript/PlayerData.cs" id="1_script"]
+[ext_resource type="Texture2D" path="res://Asset/character/character01.png" id="2_head"]
+[ext_resource type="Resource" uid="uid://djte3fnfk71y7" path="res://Data/CommandData/PlayerCommandData/ply_cmd2.tres" id="3_move"]
+[ext_resource type="Resource" uid="uid://baoxeiy3g2dvl" path="res://Data/CommandData/PlayerCommandData/ply_cmd3.tres" id="4_defense"]
+[ext_resource type="Resource" uid="uid://blo0ajilvr0vb" path="res://Data/CommandData/PlayerCommandData/ply_cmd1.tres" id="5_melee"]
+[ext_resource type="Resource" uid="uid://m5rplyrestoremp" path="res://Data/CommandData/PlayerCommandData/ply_cmd7_restore_mp.tres" id="6_mp"]
+[ext_resource type="Resource" uid="uid://m5rplycounter1" path="res://Data/CommandData/PlayerCommandData/ply_cmd8_counter.tres" id="7_counter"]
+[ext_resource type="Resource" uid="uid://m5rplychargeaoe" path="res://Data/CommandData/PlayerCommandData/ply_cmd9_charge_area.tres" id="8_charge"]
+
+[resource]
+script = ExtResource("1_script")
+playerCommandDataList = Array[Object]([ExtResource("3_move"), ExtResource("4_defense"), ExtResource("6_mp"), ExtResource("5_melee"), ExtResource("7_counter"), ExtResource("8_charge")])
+characterId = 0
+characterName = "我方近战"
+characterDescription = "第2关近战角色。关卡1结束后：生命36，攻击力12，MP100，每回合3次行动。"
+characterHeadImage = ExtResource("2_head")
+hp = 36.0
+maxHp = 36.0
+mp = 100
+maxMp = 100
+atk = 12.0
+turnInitialActionTimes = 3
+metadata/_custom_type_script = "uid://bw07j5wfv22k0"

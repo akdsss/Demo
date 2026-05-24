@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="PlayerCommandData" format=3 uid="uid://m5rplykick"]
+
+[ext_resource type="Script" uid="uid://bjb2y4dhdh5gg" path="res://Data/DataScript/PlayerCommandData.cs" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+commandId = 12
+commandName = "踢飞"
+commandDescription = "对指定目标造成（0.5）攻击力的单体近战伤害，并将其击退至指定区域。"
+priority = 40
+metadata/_custom_type_script = "uid://bjb2y4dhdh5gg"

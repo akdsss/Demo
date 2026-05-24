@@ -5,10 +5,11 @@
 [ext_resource type="Texture2D" path="res://Asset/character/character01.png" id="2_head"]
 [ext_resource type="Resource" uid="uid://blo0ajilvr0vb" path="res://Data/CommandData/PlayerCommandData/ply_cmd1.tres" id="3_1of5w"]
 [ext_resource type="Resource" uid="uid://djte3fnfk71y7" path="res://Data/CommandData/PlayerCommandData/ply_cmd2.tres" id="4_1of5w"]
+[ext_resource type="Resource" uid="uid://m5rplyrestoremp" path="res://Data/CommandData/PlayerCommandData/ply_cmd7_restore_mp.tres" id="5_mp"]
 
 [resource]
 script = ExtResource("1_kqkx6")
-playerCommandDataList = Array[Object]([ExtResource("4_1of5w"), ExtResource("1_cr8x0"), ExtResource("3_1of5w")])
+playerCommandDataList = Array[Object]([ExtResource("4_1of5w"), ExtResource("1_cr8x0"), ExtResource("5_mp"), ExtResource("3_1of5w")])
 characterName = "我方近战"
 characterDescription = "教学关近战角色。初始生命26，攻击力12，每回合2次行动。"
 characterHeadImage = ExtResource("2_head")
@@ -17,5 +18,5 @@ maxHp = 26.0
 mp = 60
 maxMp = 60
 atk = 120.0
-turnInitialActionTimes = 2
+turnInitialActionTimes = 0
 metadata/_custom_type_script = "uid://bw07j5wfv22k0"

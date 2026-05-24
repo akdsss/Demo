@@ -7,6 +7,7 @@ public partial class AreaTargetMenuControl : Control
     private Label titleLabel;
     private PlayerCommandData pendingCommandData;
     private CharacterData pendingSource;
+    private CharacterData pendingCharacterTarget;
 
     public override void _Ready()
     {
@@ -35,8 +36,14 @@ public partial class AreaTargetMenuControl : Control
 
     public void ShowForCommand(PlayerCommandData commandData, CharacterData source)
     {
+        ShowForCommand(commandData, source, null);
+    }
+
+    public void ShowForCommand(PlayerCommandData commandData, CharacterData source, CharacterData characterTarget)
+    {
         pendingCommandData = commandData;
         pendingSource = source;
+        pendingCharacterTarget = characterTarget;
         titleLabel.Text = commandData == null
             ? "选择目标区域"
             : $"选择 {commandData.commandName} 的目标区域";
@@ -47,6 +54,17 @@ public partial class AreaTargetMenuControl : Control
     public void Dismiss()
     {
         HideAndClear();
+    }
+
+    public bool HandleBackPressed()
+    {
+        if (!Visible)
+        {
+            return false;
+        }
+
+        CancelSelection();
+        return true;
     }
 
     private void BuildUi()
@@ -146,6 +164,15 @@ public partial class AreaTargetMenuControl : Control
         eventManager.currentTargetAreaId = areaId;
         eventManager.currentMainPlayerCommand = pendingCommandData;
         SkillDefinition skill = SkillDefinition.FromCommandData(pendingCommandData);
+        if (pendingCharacterTarget != null)
+        {
+            eventManager.damageEventInfo = new DamageEventInfo
+            {
+                damageSourceCharacter = pendingSource,
+                damageTargetCharacter = pendingCharacterTarget
+            };
+            eventManager.currentMainEnemy = pendingCharacterTarget as EnemyData;
+        }
         eventManager.moveEventInfo = skill.HasTag(SkillTag.Move)
             ? new MoveEventInfo
         {
@@ -167,6 +194,11 @@ public partial class AreaTargetMenuControl : Control
         {
             eventManager.currentTargetAreaId = CombatAreaId.Unknown;
             eventManager.moveEventInfo = null;
+            if (pendingCharacterTarget != null)
+            {
+                eventManager.damageEventInfo = null;
+                eventManager.currentMainEnemy = null;
+            }
         }
 
         Autoloads.sceneSingleton?.cmdQueueUIControl?.ShowCommandDetail("返回", "已返回上一级技能选择。");
@@ -178,5 +210,6 @@ public partial class AreaTargetMenuControl : Control
         Visible = false;
         pendingCommandData = null;
         pendingSource = null;
+        pendingCharacterTarget = null;
     }
 }

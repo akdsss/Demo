@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="PlayerCommandData" format=3 uid="uid://bkj3ts2mk00gf"]
+
+[ext_resource type="Script" uid="uid://bjb2y4dhdh5gg" path="res://Data/DataScript/PlayerCommandData.cs" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+commandId = 26
+commandName = "回蓝+"
+commandDescription = "己方全体恢复50 MP。"
+priority = 50
+metadata/_custom_type_script = "uid://bjb2y4dhdh5gg"

@@ -38,9 +38,13 @@ public enum SkillEffectType
     Damage,
     Heal,
     Move,
+    MoveTarget,
+    SwapPosition,
+    RestoreMp,
     ApplyStatus,
     RemoveStatus,
     Defend,
+    RevealIntent,
     ScheduledEffect
 }
 
@@ -56,6 +60,7 @@ public enum CombatEventType
     HealApplied,
     DefenseApplied,
     MpChanged,
+    IntentRevealed,
     StatusApplied,
     StatusRemoved,
     ScheduledEffectCreated,

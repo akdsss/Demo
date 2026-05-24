@@ -1,0 +1,27 @@
+[gd_resource type="Resource" script_class="PlayerData" format=3 uid="uid://m5rplyl3melee"]
+
+[ext_resource type="Script" uid="uid://bw07j5wfv22k0" path="res://Data/DataScript/PlayerData.cs" id="1_script"]
+[ext_resource type="Texture2D" path="res://Asset/character/character01.png" id="2_head"]
+[ext_resource type="Resource" uid="uid://djte3fnfk71y7" path="res://Data/CommandData/PlayerCommandData/ply_cmd2.tres" id="3_move"]
+[ext_resource type="Resource" uid="uid://baoxeiy3g2dvl" path="res://Data/CommandData/PlayerCommandData/ply_cmd3.tres" id="4_defense"]
+[ext_resource type="Resource" uid="uid://blo0ajilvr0vb" path="res://Data/CommandData/PlayerCommandData/ply_cmd1.tres" id="5_melee"]
+[ext_resource type="Resource" uid="uid://m5rplyrestoremp" path="res://Data/CommandData/PlayerCommandData/ply_cmd7_restore_mp.tres" id="6_mp"]
+[ext_resource type="Resource" uid="uid://m5rplychargeaoe" path="res://Data/CommandData/PlayerCommandData/ply_cmd9_charge_area.tres" id="7_charge"]
+[ext_resource type="Resource" uid="uid://m5rplytargetraid" path="res://Data/CommandData/PlayerCommandData/ply_cmd10_target_raid.tres" id="8_raid"]
+[ext_resource type="Resource" uid="uid://m5rplycounterp" path="res://Data/CommandData/PlayerCommandData/ply_cmd11_counter_plus.tres" id="9_counter_plus"]
+[ext_resource type="Resource" uid="uid://m5rplykick" path="res://Data/CommandData/PlayerCommandData/ply_cmd12_kick.tres" id="10_kick"]
+
+[resource]
+script = ExtResource("1_script")
+playerCommandDataList = Array[Object]([ExtResource("3_move"), ExtResource("8_raid"), ExtResource("4_defense"), ExtResource("6_mp"), ExtResource("5_melee"), ExtResource("7_charge"), ExtResource("9_counter_plus"), ExtResource("10_kick")])
+characterId = 0
+characterName = "我方近战"
+characterDescription = "第3关近战角色。关卡2结束后：生命56，攻击力20，MP100，每回合3次行动。"
+characterHeadImage = ExtResource("2_head")
+hp = 56.0
+maxHp = 56.0
+mp = 100
+maxMp = 100
+atk = 20.0
+turnInitialActionTimes = 3
+metadata/_custom_type_script = "uid://bw07j5wfv22k0"

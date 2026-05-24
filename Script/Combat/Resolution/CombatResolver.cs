@@ -21,6 +21,7 @@ public class CombatResolver
         };
 
         CombatAreaRules.ApplyRoundStart(roundStates, roundIndex, events);
+        Dictionary<int, List<ScheduledCombatEffect>> scheduledEffectsBySlot = new();
 
         for (int slotIndex = Timeline.MinSlotIndex; slotIndex <= Timeline.MaxSlotIndex; slotIndex++)
         {
@@ -30,8 +31,11 @@ public class CombatResolver
 
             foreach (PlannedAction action in slotActions)
             {
-                ResolveAction(action, events, roundStates);
+                ResolveAction(action, events, roundStates, scheduledEffectsBySlot);
             }
+
+            ResolveScheduledEffects(slotIndex, scheduledEffectsBySlot, events, roundStates);
+            TickSlotStatuses(roundStates, roundIndex, events);
         }
 
         CombatAreaRules.ApplyRoundEnd(roundStates, roundIndex, events);
@@ -122,7 +126,8 @@ public class CombatResolver
     private static void ResolveAction(
         PlannedAction action,
         List<CombatEvent> events,
-        IReadOnlyList<CharacterState> roundStates)
+        IReadOnlyList<CharacterState> roundStates,
+        Dictionary<int, List<ScheduledCombatEffect>> scheduledEffectsBySlot)
     {
         SkillFailReason failReason = GetResolutionFailReason(action);
         if (failReason != SkillFailReason.None)
@@ -132,6 +137,7 @@ public class CombatResolver
         }
 
         events.Add(CombatEvent.ForAction(CombatEventType.ActionStarted, action));
+        SpendMp(action, events);
 
         if (action.Skill.Effects.Count == 0)
         {
@@ -140,7 +146,7 @@ public class CombatResolver
 
         foreach (SkillEffectDefinition effect in action.Skill.Effects)
         {
-            ResolveEffect(action, effect, events, roundStates);
+            ResolveEffect(action, effect, events, roundStates, scheduledEffectsBySlot);
         }
     }
 
@@ -164,6 +170,11 @@ public class CombatResolver
         if (action.Source.HasBlockedTag(action.Skill.Tags))
         {
             return SkillFailReason.BlockedByStatus;
+        }
+
+        if (action.Skill.MpCost > 0 && action.Source.CurrentMp < action.Skill.MpCost)
+        {
+            return SkillFailReason.MpInsufficient;
         }
 
         bool needsCharacterTarget =
@@ -193,6 +204,14 @@ public class CombatResolver
             IsMoveTargetSameAsSourceArea(action))
         {
             return SkillFailReason.MoveTargetAlreadyCurrentArea;
+        }
+
+        if (action.Skill.RequiresDifferentTargetArea &&
+            action.TargetCharacter != null &&
+            action.TargetAreaId != CombatAreaId.Unknown &&
+            action.TargetAreaId == action.TargetCharacter.CurrentAreaId)
+        {
+            return SkillFailReason.RushTargetMustBeInDifferentArea;
         }
 
         if (CombatAreaRules.TryEvade(action))
@@ -250,10 +269,17 @@ public class CombatResolver
         PlannedAction action,
         SkillEffectDefinition effect,
         List<CombatEvent> events,
-        IReadOnlyList<CharacterState> roundStates)
+        IReadOnlyList<CharacterState> roundStates,
+        Dictionary<int, List<ScheduledCombatEffect>> scheduledEffectsBySlot)
     {
         if (effect == null)
         {
+            return;
+        }
+
+        if (effect.DelaySlots > 0)
+        {
+            ScheduleEffect(action, effect, events, scheduledEffectsBySlot);
             return;
         }
 
@@ -270,13 +296,31 @@ public class CombatResolver
                 }
                 break;
             case SkillEffectType.Heal:
-                ResolveHeal(action, effect, events);
+                if (action.Skill.HasTag(SkillTag.Area) || effect.AffectAllies)
+                {
+                    ResolveAreaHeal(action, effect, events, roundStates);
+                }
+                else
+                {
+                    ResolveHeal(action, effect, events);
+                }
+                break;
+            case SkillEffectType.RestoreMp:
+                ResolveRestoreMp(action, effect, events, roundStates);
                 break;
             case SkillEffectType.Move:
                 ResolveMove(action, events);
                 break;
+            case SkillEffectType.MoveTarget:
+                ResolveMoveTarget(action, events);
+                break;
+            case SkillEffectType.SwapPosition:
+                ResolveSwapPosition(action, events);
+                break;
             case SkillEffectType.Defend:
+                action.Source?.AddOrRefreshStatus(StatusCatalog.Create(StatusCatalog.Defense), action.Source);
                 events.Add(BuildEffectEvent(CombatEventType.DefenseApplied, SkillEffectType.Defend, action));
+                events.Add(CombatAreaRules.BuildStatusEvent(CombatEventType.StatusApplied, action.Source, StatusCatalog.Defense, action.RoundIndex));
                 break;
             case SkillEffectType.ApplyStatus:
                 CharacterState statusTarget = action.Skill.TargetType == SkillTargetType.Self
@@ -286,6 +330,18 @@ public class CombatResolver
                 CombatEvent statusAppliedEvent = BuildEffectEvent(CombatEventType.StatusApplied, SkillEffectType.ApplyStatus, action, statusTarget);
                 statusAppliedEvent.StatusId = effect.StatusId;
                 events.Add(statusAppliedEvent);
+                break;
+            case SkillEffectType.RevealIntent:
+                events.Add(new CombatEvent
+                {
+                    EventType = CombatEventType.IntentRevealed,
+                    RoundIndex = action.RoundIndex,
+                    SlotIndex = action.SlotIndex,
+                    Source = action.Source,
+                    SourceLegacyCharacterData = action.Source?.LegacyCharacterData,
+                    Skill = action.Skill,
+                    Message = $"{action.Source?.DisplayName ?? "未知角色"} 揭示敌方意图：{effect.Message}"
+                });
                 break;
             case SkillEffectType.RemoveStatus:
                 CombatEvent statusRemovedEvent = BuildEffectEvent(CombatEventType.StatusRemoved, SkillEffectType.RemoveStatus, action);
@@ -315,9 +371,18 @@ public class CombatResolver
             return;
         }
 
-        float multiplier = effect.Value <= 0 ? 1.0f : effect.Value;
+        if (TryResolveCounter(action, target, events))
+        {
+            return;
+        }
+
+        float multiplier = SkillEffectMath.ResolvePowerMultiplier(effect);
         multiplier *= CombatAreaRules.GetDamageMultiplier(action, target);
-        float amount = Math.Max(0, action.Source.Attack * multiplier);
+        float amount = SkillEffectMath.CalculatePowerAmount(action.Source.Attack, multiplier);
+        if (target.HasStatus(StatusCatalog.Defense))
+        {
+            amount *= 0.5f;
+        }
         amount = CombatAreaRules.AbsorbShield(target, amount, action.RoundIndex, events);
         target.Hp = Math.Max(0, target.Hp - amount);
 
@@ -375,9 +440,24 @@ public class CombatResolver
     private static void ResolveHeal(PlannedAction action, SkillEffectDefinition effect, List<CombatEvent> events)
     {
         CharacterState target = action.TargetCharacter ?? action.Source;
-        float multiplier = effect.Value <= 0 ? 1.0f : effect.Value;
+        ResolveHealOnTarget(action, effect, events, target);
+    }
+
+    private static void ResolveHealOnTarget(
+        PlannedAction action,
+        SkillEffectDefinition effect,
+        List<CombatEvent> events,
+        CharacterState target)
+    {
+        if (target == null)
+        {
+            events.Add(BuildSkillFailedEvent(action, SkillFailReason.MissingTarget));
+            return;
+        }
+
+        float multiplier = SkillEffectMath.ResolvePowerMultiplier(effect);
         multiplier *= CombatAreaRules.GetHealMultiplier(action);
-        float amount = Math.Max(0, action.Source.Attack * multiplier);
+        float amount = SkillEffectMath.CalculatePowerAmount(action.Source.Attack, multiplier);
         target.Hp = Math.Min(target.MaxHp, target.Hp + amount);
 
         CombatEvent healEvent = BuildEffectEvent(CombatEventType.HealApplied, SkillEffectType.Heal, action, target);
@@ -386,17 +466,75 @@ public class CombatResolver
         events.Add(healEvent);
     }
 
+    private static void ResolveAreaHeal(
+        PlannedAction action,
+        SkillEffectDefinition effect,
+        List<CombatEvent> events,
+        IReadOnlyList<CharacterState> roundStates)
+    {
+        CombatAreaId targetAreaId = ResolveTargetAreaId(action);
+        List<CharacterState> targets = roundStates?
+            .Where(state =>
+                state != null &&
+                !state.IsDefeated &&
+                state.Faction == action.Source.Faction &&
+                (effect.AffectAllies ||
+                    (targetAreaId != CombatAreaId.Unknown && state.CurrentAreaId == targetAreaId)))
+            .ToList() ?? new List<CharacterState>();
+
+        if (targets.Count == 0)
+        {
+            events.Add(BuildSkillFailedEvent(action, SkillFailReason.MissingTarget));
+            return;
+        }
+
+        foreach (CharacterState target in targets)
+        {
+            ResolveHealOnTarget(action, effect, events, target);
+        }
+    }
+
+    private static void ResolveRestoreMp(
+        PlannedAction action,
+        SkillEffectDefinition effect,
+        List<CombatEvent> events,
+        IReadOnlyList<CharacterState> roundStates)
+    {
+        List<CharacterState> targets = effect.AffectAllies
+            ? roundStates?
+                .Where(state => state != null && !state.IsDefeated && state.Faction == action.Source.Faction)
+                .ToList() ?? new List<CharacterState>()
+            : new List<CharacterState> { action.TargetCharacter ?? action.Source };
+
+        foreach (CharacterState target in targets.Where(target => target != null))
+        {
+            int amount = Mathf.RoundToInt(effect.Value);
+            int before = target.CurrentMp;
+            target.CurrentMp = Math.Clamp(target.CurrentMp + amount, 0, target.MaxMp);
+            int changed = target.CurrentMp - before;
+            if (changed == 0)
+            {
+                continue;
+            }
+
+            events.Add(new CombatEvent
+            {
+                EventType = CombatEventType.MpChanged,
+                RoundIndex = action.RoundIndex,
+                SlotIndex = action.SlotIndex,
+                Source = action.Source,
+                Target = target,
+                SourceLegacyCharacterData = action.Source?.LegacyCharacterData,
+                TargetLegacyCharacterData = target.LegacyCharacterData,
+                Skill = action.Skill,
+                Amount = changed
+            });
+        }
+    }
+
     private static void ResolveMove(PlannedAction action, List<CombatEvent> events)
     {
-        CombatAreaId targetAreaId = action.TargetAreaId;
-        if (targetAreaId == CombatAreaId.Unknown)
-        {
-            targetAreaId = action.TargetArea?.AreaId ?? CombatAreaId.Unknown;
-        }
-        if (targetAreaId == CombatAreaId.Unknown && action.TargetCoord.HasValue)
-        {
-            targetAreaId = AreaDefinition.GetAreaIdForLegacyCoord(action.TargetCoord.Value);
-        }
+        CombatAreaId targetAreaId = ResolveTargetAreaId(action);
         if (targetAreaId == CombatAreaId.Unknown)
         {
             events.Add(BuildSkillFailedEvent(action, SkillFailReason.MissingTarget));
@@ -417,6 +555,250 @@ public class CombatResolver
         moveEvent.ToAreaId = targetAreaId;
         events.Add(moveEvent);
         CombatAreaRules.ApplyAfterMove(action, fromArea, action.Source.CurrentArea, action.RoundIndex, events);
+    }
+
+    private static void ResolveMoveTarget(PlannedAction action, List<CombatEvent> events)
+    {
+        CharacterState target = action.TargetCharacter;
+        CombatAreaId targetAreaId = ResolveTargetAreaId(action);
+        if (target == null || targetAreaId == CombatAreaId.Unknown)
+        {
+            events.Add(BuildSkillFailedEvent(action, SkillFailReason.MissingTarget));
+            return;
+        }
+
+        MoveCharacterState(target, targetAreaId, action, events);
+    }
+
+    private static void ResolveSwapPosition(PlannedAction action, List<CombatEvent> events)
+    {
+        if (action.Source == null || action.TargetCharacter == null)
+        {
+            events.Add(BuildSkillFailedEvent(action, SkillFailReason.MissingTarget));
+            return;
+        }
+
+        CombatAreaId sourceAreaId = action.Source.CurrentAreaId;
+        CombatAreaId targetAreaId = action.TargetCharacter.CurrentAreaId;
+        if (sourceAreaId == CombatAreaId.Unknown || targetAreaId == CombatAreaId.Unknown)
+        {
+            events.Add(BuildSkillFailedEvent(action, SkillFailReason.MissingTarget));
+            return;
+        }
+
+        MoveCharacterState(action.Source, targetAreaId, action, events);
+        MoveCharacterState(action.TargetCharacter, sourceAreaId, action, events);
+    }
+
+    private static void MoveCharacterState(
+        CharacterState movingCharacter,
+        CombatAreaId targetAreaId,
+        PlannedAction action,
+        List<CombatEvent> events)
+    {
+        Vector2I fromCoord = movingCharacter.LegacyCoord;
+        AreaDefinition fromArea = movingCharacter.CurrentArea;
+        CombatAreaId fromAreaId = movingCharacter.CurrentAreaId;
+        movingCharacter.CurrentAreaId = targetAreaId;
+        movingCharacter.LegacyCoord = AreaDefinition.GetLegacyCoordForAreaId(targetAreaId);
+        movingCharacter.CurrentArea = AreaDefinition.FromKnownArea(targetAreaId);
+
+        CombatEvent moveEvent = BuildEffectEvent(CombatEventType.CharacterMoved, SkillEffectType.Move, action, movingCharacter);
+        moveEvent.Source = movingCharacter;
+        moveEvent.SourceLegacyCharacterData = movingCharacter.LegacyCharacterData;
+        moveEvent.Target = action.TargetCharacter;
+        moveEvent.TargetLegacyCharacterData = action.TargetCharacter?.LegacyCharacterData;
+        moveEvent.FromCoord = fromCoord;
+        moveEvent.ToCoord = movingCharacter.LegacyCoord;
+        moveEvent.FromAreaId = fromAreaId;
+        moveEvent.ToAreaId = targetAreaId;
+        events.Add(moveEvent);
+        CombatAreaRules.ApplyAfterMove(action, fromArea, movingCharacter.CurrentArea, action.RoundIndex, events);
+    }
+
+    private static CombatAreaId ResolveTargetAreaId(PlannedAction action)
+    {
+        CombatAreaId targetAreaId = action.TargetAreaId;
+        if (targetAreaId == CombatAreaId.Unknown)
+        {
+            targetAreaId = action.TargetArea?.AreaId ?? CombatAreaId.Unknown;
+        }
+        if (targetAreaId == CombatAreaId.Unknown && action.TargetCoord.HasValue)
+        {
+            targetAreaId = AreaDefinition.GetAreaIdForLegacyCoord(action.TargetCoord.Value);
+        }
+        if (targetAreaId == CombatAreaId.Unknown && action.TargetCharacter != null)
+        {
+            targetAreaId = action.TargetCharacter.CurrentAreaId;
+        }
+
+        return targetAreaId;
+    }
+
+    private static void SpendMp(PlannedAction action, List<CombatEvent> events)
+    {
+        if (action?.Source == null || action.Skill == null || action.Skill.MpCost <= 0)
+        {
+            return;
+        }
+
+        action.Source.CurrentMp = Math.Max(0, action.Source.CurrentMp - action.Skill.MpCost);
+        events.Add(new CombatEvent
+        {
+            EventType = CombatEventType.MpChanged,
+            RoundIndex = action.RoundIndex,
+            SlotIndex = action.SlotIndex,
+            Source = action.Source,
+            Target = action.Source,
+            SourceLegacyCharacterData = action.Source.LegacyCharacterData,
+            TargetLegacyCharacterData = action.Source.LegacyCharacterData,
+            Skill = action.Skill,
+            Amount = -action.Skill.MpCost
+        });
+    }
+
+    private static bool TryResolveCounter(PlannedAction action, CharacterState target, List<CombatEvent> events)
+    {
+        if (action?.Skill == null || action.Source == null || target == null || target.IsDefeated)
+        {
+            return false;
+        }
+
+        bool isMelee = action.Skill.HasTag(SkillTag.Melee);
+        bool isSingleMelee = isMelee && action.Skill.HasTag(SkillTag.SingleTarget);
+        string counterStatus = string.Empty;
+        if (target.HasStatus(StatusCatalog.CounterMelee) && isMelee)
+        {
+            counterStatus = StatusCatalog.CounterMelee;
+        }
+        else if (target.HasStatus(StatusCatalog.CounterSingleMelee) && isSingleMelee)
+        {
+            counterStatus = StatusCatalog.CounterSingleMelee;
+        }
+
+        if (string.IsNullOrEmpty(counterStatus))
+        {
+            return false;
+        }
+
+        target.RemoveStatus(counterStatus);
+        events.Add(CombatAreaRules.BuildStatusEvent(CombatEventType.StatusRemoved, target, counterStatus, action.RoundIndex));
+
+        float counterAmount = SkillEffectMath.CalculatePowerAmount(target.Attack, ResolveCounterDamageEffect(counterStatus));
+        CharacterState attacker = action.Source;
+        counterAmount = CombatAreaRules.AbsorbShield(attacker, counterAmount, action.RoundIndex, events);
+        attacker.Hp = Math.Max(0, attacker.Hp - counterAmount);
+        CombatEvent counterDamageEvent = new()
+        {
+            EventType = CombatEventType.DamageApplied,
+            RoundIndex = action.RoundIndex,
+            SlotIndex = action.SlotIndex,
+            Source = target,
+            Target = attacker,
+            SourceLegacyCharacterData = target.LegacyCharacterData,
+            TargetLegacyCharacterData = attacker.LegacyCharacterData,
+            Skill = action.Skill,
+            Amount = counterAmount,
+            TargetHpAfter = attacker.Hp,
+            StatusId = counterStatus
+        };
+        events.Add(counterDamageEvent);
+
+        if (attacker.Hp <= 0 && attacker.BattleState != CharacterBattleState.DEAD)
+        {
+            attacker.BattleState = CharacterBattleState.DEAD;
+            CombatEvent defeatedEvent = BuildEffectEvent(CombatEventType.CharacterDefeated, SkillEffectType.None, action, attacker);
+            defeatedEvent.TargetHpAfter = attacker.Hp;
+            events.Add(defeatedEvent);
+        }
+
+        return true;
+    }
+
+    private static SkillEffectDefinition ResolveCounterDamageEffect(string counterStatus)
+    {
+        return StatusCatalog.Create(counterStatus)
+            .TriggerEffects
+            .FirstOrDefault(effect => effect?.EffectType == SkillEffectType.Damage)
+            ?? SkillEffectDefinition.Damage(1.0f);
+    }
+
+    private static void ScheduleEffect(
+        PlannedAction action,
+        SkillEffectDefinition effect,
+        List<CombatEvent> events,
+        Dictionary<int, List<ScheduledCombatEffect>> scheduledEffectsBySlot)
+    {
+        int dueSlot = action.SlotIndex + effect.DelaySlots;
+        events.Add(BuildEffectEvent(CombatEventType.ScheduledEffectCreated, SkillEffectType.ScheduledEffect, action));
+        if (dueSlot > Timeline.MaxSlotIndex)
+        {
+            return;
+        }
+
+        if (!scheduledEffectsBySlot.TryGetValue(dueSlot, out List<ScheduledCombatEffect> effects))
+        {
+            effects = new List<ScheduledCombatEffect>();
+            scheduledEffectsBySlot[dueSlot] = effects;
+        }
+
+        effects.Add(new ScheduledCombatEffect(action, CloneWithoutDelay(effect)));
+    }
+
+    private static void ResolveScheduledEffects(
+        int slotIndex,
+        Dictionary<int, List<ScheduledCombatEffect>> scheduledEffectsBySlot,
+        List<CombatEvent> events,
+        IReadOnlyList<CharacterState> roundStates)
+    {
+        if (!scheduledEffectsBySlot.TryGetValue(slotIndex, out List<ScheduledCombatEffect> effects))
+        {
+            return;
+        }
+
+        foreach (ScheduledCombatEffect scheduledEffect in effects)
+        {
+            scheduledEffect.Action.SlotIndex = slotIndex;
+            ResolveEffect(scheduledEffect.Action, scheduledEffect.Effect, events, roundStates, scheduledEffectsBySlot);
+        }
+    }
+
+    private static SkillEffectDefinition CloneWithoutDelay(SkillEffectDefinition effect)
+    {
+        return new SkillEffectDefinition
+        {
+            EffectType = effect.EffectType,
+            Value = effect.Value,
+            StatusId = effect.StatusId,
+            TargetAreaId = effect.TargetAreaId,
+            ExcludeSource = effect.ExcludeSource,
+            AffectAllies = effect.AffectAllies,
+            Message = effect.Message
+        };
+    }
+
+    private static void TickSlotStatuses(IEnumerable<CharacterState> states, int roundIndex, List<CombatEvent> events)
+    {
+        foreach (CharacterState state in states ?? Enumerable.Empty<CharacterState>())
+        {
+            List<string> expiredStatusIds = state.Statuses
+                .Where(status => status?.Definition?.DurationType == StatusDurationType.Slots)
+                .Select(status =>
+                {
+                    status.TickDuration();
+                    return status.IsExpired ? status.Definition.Id : string.Empty;
+                })
+                .Where(statusId => !string.IsNullOrEmpty(statusId))
+                .ToList();
+
+            foreach (string statusId in expiredStatusIds)
+            {
+                if (state.RemoveStatus(statusId))
+                {
+                    events.Add(CombatAreaRules.BuildStatusEvent(CombatEventType.StatusRemoved, state, statusId, roundIndex));
+                }
+            }
+        }
     }
 
     private static CombatEvent BuildEffectEvent(
@@ -444,6 +826,18 @@ public class CombatResolver
         {
             CombatEvent combatEvent = events[i];
             combatEvent.EventId = $"round_{combatEvent.RoundIndex}_slot_{combatEvent.SlotIndex}_{i}_{combatEvent.EventType}";
+        }
+    }
+
+    private sealed class ScheduledCombatEffect
+    {
+        public PlannedAction Action { get; }
+        public SkillEffectDefinition Effect { get; }
+
+        public ScheduledCombatEffect(PlannedAction action, SkillEffectDefinition effect)
+        {
+            Action = action;
+            Effect = effect;
         }
     }
 }

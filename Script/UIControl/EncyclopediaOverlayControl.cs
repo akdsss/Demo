@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 public partial class EncyclopediaOverlayControl : Control
 {
+    private const float PanelWidth = 720f;
     private Control externalOpenButton;
     private PanelContainer panel;
     private VBoxContainer entryList;
@@ -18,6 +19,14 @@ public partial class EncyclopediaOverlayControl : Control
         panel.Visible = false;
     }
 
+    public override void _Notification(int what)
+    {
+        if (what == NotificationResized)
+        {
+            FitToViewport();
+        }
+    }
+
     public void SetExternalOpenButton(Control control)
     {
         externalOpenButton = control;
@@ -31,6 +40,7 @@ public partial class EncyclopediaOverlayControl : Control
     private void BuildOverlay()
     {
         SetAnchorsPreset(LayoutPreset.FullRect);
+        FitToViewport();
         MouseFilter = MouseFilterEnum.Ignore;
 
         panel = new PanelContainer
@@ -38,10 +48,14 @@ public partial class EncyclopediaOverlayControl : Control
             Name = "EncyclopediaPanel",
             MouseFilter = MouseFilterEnum.Stop
         };
-        panel.AnchorLeft = 0.54f;
-        panel.AnchorRight = 0.96f;
-        panel.AnchorTop = 0.12f;
-        panel.AnchorBottom = 0.88f;
+        panel.AnchorLeft = 0.5f;
+        panel.AnchorRight = 0.5f;
+        panel.AnchorTop = 0.10f;
+        panel.AnchorBottom = 0.90f;
+        panel.OffsetLeft = -PanelWidth * 0.5f;
+        panel.OffsetRight = PanelWidth * 0.5f;
+        panel.OffsetTop = 0f;
+        panel.OffsetBottom = 0f;
         AddChild(panel);
 
         VBoxContainer root = new()
@@ -132,8 +146,23 @@ public partial class EncyclopediaOverlayControl : Control
 
     public void OpenEncyclopedia()
     {
+        FitToViewport();
         panel.Visible = true;
+        panel.MoveToFront();
         Autoloads.sceneSingleton.tutorialOverlayControl?.Notify(TutorialWaitCondition.OpenEncyclopedia);
+    }
+
+    private void FitToViewport()
+    {
+        AnchorLeft = 0f;
+        AnchorTop = 0f;
+        AnchorRight = 1f;
+        AnchorBottom = 1f;
+        OffsetLeft = 0f;
+        OffsetTop = 0f;
+        OffsetRight = 0f;
+        OffsetBottom = 0f;
+        Size = GetViewportRect().Size;
     }
 
     private void ShowEntry(EncyclopediaEntry entry)

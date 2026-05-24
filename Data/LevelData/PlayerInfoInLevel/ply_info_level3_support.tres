@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="PlayerInfoInLevel" format=3 uid="uid://m5rplyinfo3support"]
+
+[ext_resource type="Script" uid="uid://c5cvmqiy66klq" path="res://Data/DataScript/PlayerInfoInLevel.cs" id="1_script"]
+[ext_resource type="Resource" uid="uid://m5rplyl3support" path="res://Data/CharacterData/PlayerData/ply_data_level3_support.tres" id="2_player"]
+
+[resource]
+script = ExtResource("1_script")
+playerData = ExtResource("2_player")
+coord = Vector2i(2, 2)
+metadata/_custom_type_script = "uid://c5cvmqiy66klq"

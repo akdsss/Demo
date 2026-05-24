@@ -5,10 +5,14 @@
 [ext_resource type="Resource" uid="uid://baoxeiy3g2dvl" path="res://Data/CommandData/PlayerCommandData/ply_cmd3.tres" id="2_defense"]
 [ext_resource type="Resource" uid="uid://m5rplyheal001" path="res://Data/CommandData/PlayerCommandData/ply_cmd5.tres" id="3_heal"]
 [ext_resource type="Script" uid="uid://bw07j5wfv22k0" path="res://Data/DataScript/PlayerData.cs" id="4_g50c1"]
+[ext_resource type="Resource" uid="uid://m5rplyteammp" path="res://Data/CommandData/PlayerCommandData/ply_cmd18_team_mp.tres" id="5_mp"]
+[ext_resource type="Resource" uid="uid://m5rplysupportshot" path="res://Data/CommandData/PlayerCommandData/ply_cmd19_support_shot.tres" id="6_shot"]
+[ext_resource type="Resource" uid="uid://m5rplyareaheal" path="res://Data/CommandData/PlayerCommandData/ply_cmd20_area_heal.tres" id="7_area_heal"]
+[ext_resource type="Resource" uid="uid://m5rplypowerup" path="res://Data/CommandData/PlayerCommandData/ply_cmd24_power_up.tres" id="8_power"]
 
 [resource]
 script = ExtResource("4_g50c1")
-playerCommandDataList = Array[Object]([ExtResource("1_move"), ExtResource("2_defense"), ExtResource("3_heal")])
+playerCommandDataList = Array[Object]([ExtResource("1_move"), ExtResource("2_defense"), ExtResource("5_mp"), ExtResource("6_shot"), ExtResource("3_heal"), ExtResource("7_area_heal"), ExtResource("8_power")])
 characterId = 2
 characterName = "我方支援"
 characterDescription = "教学关支援角色。初始生命22，攻击力10，每回合2次行动。"
@@ -18,5 +22,5 @@ maxHp = 22.0
 mp = 60
 maxMp = 60
 atk = 100.0
-turnInitialActionTimes = 2
+turnInitialActionTimes = 0
 metadata/_custom_type_script = "uid://bw07j5wfv22k0"

@@ -30,11 +30,6 @@ public partial class BattleManager : Node
 		while (battleState != BattleState.OVER)
 		{
 			await TurnStart();
-			if (PubTool.instance.gameMode != GameMode.Test)
-			{
-				await ToSignal(this, nameof(MainTS));
-			}
-
 		}
 		BattleEnd();
 	}
@@ -232,6 +227,7 @@ public partial class BattleManager : Node
 		}
 		Autoloads.sceneSingleton.cmdQueueUIControl.UpdateCmdMatrix();
 		Autoloads.sceneSingleton.enemyCharacterHeadListUIControl.UpdateEnemyPrepareDisplays();
+		Autoloads.sceneSingleton.cmdQueueUIControl?.ShowStartSettlementButton(false);
 		Autoloads.sceneSingleton.cmdQueueUIControl?.SetPlayerActionBannerVisible(false);
 		prepareTurnState = PrepareTurnState.BEFORE_PRE;
 	}

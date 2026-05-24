@@ -28,7 +28,7 @@ public partial class PlayerActionButtonControl : Button
 		PlayerData source = eventManager.currentMainPlayer;
 		SkillDefinition skill = SkillDefinition.FromCommandData(playerCommandData);
 		PlayerChoseListPanelControl choicePanel = Autoloads.sceneSingleton.playerActionChoseList as PlayerChoseListPanelControl;
-		if (skill.TargetType == SkillTargetType.Area || skill.HasTag(SkillTag.Move))
+		if (skill.TargetType == SkillTargetType.Area)
 		{
 			Autoloads.sceneSingleton.areaTargetMenuControl?.ShowForCommand(playerCommandData, source);
 		}

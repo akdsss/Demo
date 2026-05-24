@@ -82,6 +82,11 @@ public static class CombatAreaRules
             multiplier *= 1.5f;
         }
 
+        if (action.Source.HasStatus(StatusCatalog.PowerUp))
+        {
+            multiplier *= 1.5f;
+        }
+
         if (target != null && target.HasStatus(StatusCatalog.Rage))
         {
             multiplier *= 1.5f;

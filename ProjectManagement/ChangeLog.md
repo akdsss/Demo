@@ -1,5 +1,113 @@
 # ChangeLog
 
+## 2026-05-24 时间轴左侧文本定位解耦
+
+- `CmdQueueUIControl` 将上下时间轴 host 改为横向铺满面板，时间轴槽位区继续按屏幕中心线居中。
+- 每一行的头像、HP、MP、名称信息改为独立贴左定位，不再参与时间轴总宽度和居中计算；上下位置仍与对应时间轴槽位保持同一行。
+- `RefactorCodeGuide.md` 补充时间轴横向定位说明与后续手动调参位置。
+- 验证：`dotnet build .\Demo\Demo.csproj --no-restore` 通过；Godot Mono headless 打开 `res://Scene/MainScene.tscn` 可进入第 1 轮准备阶段，未发现 `ERROR`、`Exception`、`NullReference` 或 C# 编译错误。
+
+## 2026-05-24 百科居中、回合流转、关卡推进与顶部背景高度修复
+
+- `EncyclopediaOverlayControl` 改为撑满视口并以屏幕中心锚定百科面板，打开百科时强制刷新视口尺寸并置顶，避免百科显示区域贴到屏幕左端。
+- `BattleManager.BattleStart()` 移除每回合结束后等待无人触发的 `MainTS` 信号，确保第二回合能够自然进入准备阶段并重新显示左侧战斗交互 UI。
+- `GameMain` 增加三关 demo 的关卡序列推进逻辑；`GrowthRewardOverlayControl` 的继续按钮在关闭胜利奖励界面后调用 `ContinueAfterVictory()`，教学关胜利后可进入下一关。
+- `CmdQueueUIControl` 将运行时 `TopPanelHeight` 从 `92f` 调整为 `97f`，使上方红色矩形背景短边约增加 5%。
+- 验证：`dotnet build .\Demo\Demo.csproj` 通过，0 警告 0 错误。
+
+## 2026-05-24 教学第 8 步与第二回合交互按钮修复
+
+- 教学第 8 步取消等待 `EnemyActionsRevealed`，改为普通阅读步骤，由现有教程系统显示 `继续` 按钮进入下一步。
+- 新回合准备阶段初始化时主动关闭 `开始结算` 按钮，避免上一回合演出前的结算入口残留影响第二回合左侧交互控件。
+- `RefreshPrepareControlVisibility()` 在玩家准备阶段会强制关闭 `开始结算`，再根据行动次数显示 `设置指令` / `检视详情`。
+- 验证：`dotnet build .\Demo\Demo.csproj --no-restore` 通过，0 警告 0 错误；Godot Mono headless 打开 `res://Scene/MainScene.tscn` 可进入第 1 轮准备阶段，日志未发现 `ERROR`、`Exception`、`NullReference` 或 C# 编译错误。
+
+## 2026-05-24 时间轴整体居中
+
+- 将时间轴 host 定位从左侧 padding 改回按 `GetTimelineTotalWidth()` 计算总宽并以屏幕中心锚定。
+- 移除 `TimelineHostSidePadding`，后续时间轴整体位置由总宽居中决定；左侧信息与槽位之间仍通过 `TimelineInfoToTrackGap` 控制。
+- 验证：`dotnet build .\Demo\Demo.csproj --no-restore` 通过，0 警告 0 错误；Godot Mono headless 打开 `res://Scene/MainScene.tscn` 可进入第 1 轮准备阶段，日志未发现 `ERROR`、`Exception`、`NullReference` 或 C# 编译错误。
+
+## 2026-05-24 战斗交互角色选择与时间轴左侧布局优化
+
+- `设置指令` 入口改为先显示我方角色列表；战败或剩余行动次数为 0 的角色置灰并禁用，选择可行动角色后再进入技能分类。
+- 百科面板锚点从右侧区域调整到屏幕中间区域显示。
+- 时间轴 host 改为横向铺满面板，左侧单位信息从面板左侧开始显示，并通过独立的 `TimelineInfoToTrackGap` 与时间轴槽位拉开距离。
+- 新增 `TimelineInfoTextSeparation` / `TimelineHostSidePadding` 等常量，便于后续手动调整时间轴左侧文本间距和整体左右边距。
+- 验证：`dotnet build .\Demo\Demo.csproj --no-restore` 通过，0 警告 0 错误；Godot Mono headless 打开 `res://Scene/MainScene.tscn` 可进入第 1 轮准备阶段，日志未发现 `ERROR`、`Exception`、`NullReference` 或 C# 编译错误。
+
+## 2026-05-24 时间轴间距与槽位高度微调
+
+- 将时间轴槽位高度从 18 调整为 22，并同步更新 `CommandItem.tscn` 根节点高度。
+- 将 `CommandItem.tscn` 场景内槽位文字字号从 8 调整为 9。
+- 在 `BuildTimelineRows()` 中再次强制覆盖时间轴 host 行间距，确保敌方时间轴和我方时间轴使用同一套 `TimelineHostRowSeparation`。
+- 验证：`dotnet build .\Demo\Demo.csproj --no-restore` 通过，0 警告 0 错误；Godot Mono headless 打开 `res://Scene/MainScene.tscn` 可进入第 1 轮准备阶段，日志未发现 `ERROR`、`Exception`、`NullReference` 或 C# 编译错误。
+
+## 2026-05-24 教学百科高亮与角色目标列表重构
+
+- 修复教学第 4 步百科高亮：设置面板关闭时高亮右上角设置按钮，设置面板打开后继续高亮面板内的 `百科` 按钮。
+- 将以角色为目标的玩家技能改为左侧次级目标列表：敌方目标列出全部敌人，友方目标列出全部友方；已战败目标显示为灰色并禁用。
+- 修复治疗技能默认选自己的问题：治疗现在按 `Ally` 目标类型打开友方目标列表，由玩家选择治疗对象。
+- 删除玩家技能选择中的旧敌方头像目标路径：`PlayerCommandData` 不再分发 UI 点击逻辑，旧敌方头像交互不再写入目标或开启时间轴放置。
+- 验证：`dotnet build .\Demo\Demo.csproj --no-restore` 通过，0 警告 0 错误；Godot Mono headless 打开 `res://Scene/MainScene.tscn` 可进入第 1 轮准备阶段，日志未发现 `ERROR`、`Exception`、`NullReference` 或 C# 编译错误。
+
+## 2026-05-24 时间轴左侧信息区压缩
+
+- 将时间轴左侧单位信息从上下两行改为横向单行：头像、HP、MP（仅玩家）、名称。
+- 将角色时间轴行间距从 5 缩减为 1，槽位间距从 3 缩减为 1，行内信息区/槽位区/尾列间距从 4 缩减为 2。
+- 同步缩减时间轴面板垂直 padding，减少上下方时间轴整体留白。
+- 验证：`dotnet build .\Demo\Demo.csproj --no-restore` 通过，0 警告 0 错误；Godot Mono headless 打开 `res://Scene/MainScene.tscn` 可进入第 1 轮准备阶段，日志未发现 `ERROR`、`Exception`、`NullReference` 或 C# 编译错误。
+
+## 2026-05-24 指令长按确认时间调整
+
+- 将玩家在时间轴空白槽位放置指令的长按确认时间从 2.0 秒缩短为 1.2 秒。
+- 同步更新设置指令、空白槽位点击提示和区域目标确认后的提示文案。
+- 验证：`dotnet build .\Demo\Demo.csproj --no-restore` 通过，0 警告 0 错误。
+
+## 2026-05-24 时间轴短边压缩
+
+- 将 `CmdQueueUIControl` 的 `TimelineSlotHeight` 从 30 调整为 18，约为原短边长度的 60%。
+- 同步压缩时间轴行头头像、行头字号、槽位文字字号和长按进度条高度，避免控件内容反向撑高时间轴。
+- 同步压缩 `CommandItem.tscn` 槽位 prefab 的原始高度和场景内字号，避免 Godot 容器继续按 prefab 的 37 高度排版。
+- 下调 `TopPanel` / `DownPanel` 运行时最小高度，使压缩后的敌我时间轴占屏更少。
+- 验证：`dotnet build .\Demo\Demo.csproj --no-restore` 通过，0 警告 0 错误；Godot Mono headless 打开 `res://Scene/MainScene.tscn` 可进入第 1 轮准备阶段，日志未发现 `ERROR`、`Exception`、`NullReference` 或 C# 编译错误。
+
+## 2026-05-24 指令提交上下文重置与行动次数防漏
+
+- 新增 `CmdQueueUIControl.ResetCommandSelectionContext()`，统一清理技能分类/技能列表、区域目标菜单、敌方目标头像、时间轴放置高亮和当前技能/目标上下文。
+- 长按时间轴成功放置指令后，立即退出放置模式并回到左侧主按钮初始状态；下一次指令必须重新点击 `设置指令`，重新选择仍有行动次数的角色。
+- 在 `SwitchOnPlayerCommandSet()` 与时间轴长按提交前补充行动次数防线，无剩余行动次数的角色会拒绝提交并提示。
+- 统一准备阶段按钮显隐：有可行动我方时显示 `设置指令` / `检视详情`；后台结算完成并揭示敌方行动后显示 `开始结算`。
+- 验证：`dotnet build .\Demo\Demo.csproj --no-restore` 通过，0 警告 0 错误；Godot Mono headless 打开 `res://Scene/MainScene.tscn` 可进入第 1 轮准备阶段，日志未发现 `ERROR`、`Exception`、`NullReference` 或 C# 编译错误。
+
+## 2026-05-23 时间轴 UI 重写与技能菜单修复
+
+- 重写 `CmdQueueUIControl` 时间轴运行时布局：敌方与我方时间轴共用同一组宽度、行高、槽位宽度和尾列尺寸；`TopPanel` / `DownPanel` 改为固定高度，不再依赖 VBox 拉伸比例，避免我方时间轴过高并溢出屏幕。
+- 缩小时间轴行高、头像、文字字号与槽位文本字号；我方 HP/MP 合并为单行显示，敌我时间轴视觉尺寸保持一致。
+- 左侧战斗交互区只保留 `设置指令`、`检视详情`、`开始结算` 及其技能分类/技能列表；原左侧 `DetailLabel` 在运行时移除。
+- 新增右侧 `BattleInfoPanel`，准备阶段提示、技能详情、检视信息、怪物行动揭示和演出阶段战斗详情统一显示到右侧。
+- 压缩 `PlayerChoseListPanelControl` 的分类/技能按钮高度、标题和说明文本高度；技能分类刷新技能列表后强制保持面板可见，减少“点击分类后菜单像消失”的问题。
+- 敌方目标头像列表显示时调用 `MoveToFront()`，避免被右侧信息面板遮挡导致技能目标不可选。
+- 验证：`dotnet build .\Demo\Demo.csproj --no-restore` 通过，0 警告 0 错误；Godot Mono headless 打开 `res://Scene/MainScene.tscn` 可进入第 1 回合准备阶段，日志未检出 `ERROR`、`Exception` 或 C# 编译错误关键字。
+
+## 2026-05-23 旧 UI 兼容层与直接执行入口重构
+
+- 删除旧我方头像列表脚本 `PlayerCharacterHeadListUIControl.cs` 及 `.uid`，删除旧混合队列头像脚本 `CommandHeadListUIControl.cs` 及 `.uid`；相关战斗流程引用已移除，当前我方/敌方信息以 GDD 上下分离时间轴为准。
+- 移除 `CommandExecuteInfo.ExecuteInPlay()` 与旧伤害/位移注释块，`CommandExecuteInfo` 收口为 UI/AI 行动请求 DTO，战斗结果统一由 `CombatResolver -> CombatEvent -> CombatEventApplier` 生成和应用。
+- 将区域显示锚点绑定收口到 `ChessBoard.BindAreaAnchors()`；`ChessBoard` / `ChessCell` 作为历史场景兼容名保留，真实语义记录为 10 区域显示板与区域锚点。
+- 清理 `BattleManager`、`CmdQueueUIControl`、`PubTool` 等文件中的旧测试流程与旧 UI 注释残留，并补充 `PubTool` 状态栏空引用保护。
+- 新增 `ProjectManagement/RefactorCodeGuide.md`，说明当前架构、战斗数据流、代码规范、历史命名映射、删除清单与验证方式。
+- 验证：通过临时重定向 `APPDATA` / `LOCALAPPDATA` 并使用本机 NuGet 包缓存执行 `dotnet build .\Demo\Demo.csproj --no-restore`，0 警告 0 错误；Godot Mono headless 打开 `res://Scene/MainScene.tscn` 可进入第 1 回合准备阶段，日志未检出 `ERROR`、`Exception` 或 C# 编译错误关键字。
+
+## 2026-05-23 区域 CurrentAreaId / TargetAreaId 重构
+
+- 按 `GDD_Split/04_Areas_Statuses.md` 与 `ProjectManagement/Decisions.md` 的区域核心支柱重构区域相关代码：角色真实站位改以 `CharacterData.CurrentAreaId` / `CharacterState.CurrentAreaId` 为准，旧 `coord` 仅保留为兼容显示坐标。
+- 新增并贯通 `CommandExecuteInfo.targetAreaId`、`PlannedAction.TargetAreaId`、`CombatEvent.TargetAreaId` / `FromAreaId` / `ToAreaId`，移动、AI、校验、日志和旧命令适配器均优先读写区域 ID。
+- 范围伤害改为按 `CurrentAreaId == TargetAreaId` 过滤存活单位，不再读取头像位置、锚点编号、背景像素或旧棋盘坐标；是否排除施法者由 `SkillEffectDefinition.ExcludeSource` 显式决定。
+- 区域视觉继续复用当前 10 个区域 Control，每区 9 个透明头像锚点；角色进出只释放/占用该角色自己的锚点，不重排同区域其他头像。
+- 新增运行时 `AreaTargetMenuControl`：玩家选择区域目标时显示 10 个区域名矩形按钮；按钮外点击只返回上一级并吞掉输入，不触发地图、头像或时间轴点击。
+- 保持 2026-05-23 素材清理结论：未恢复 `Asset/Generated`、`BattleAssetCatalog`、`BattlePresentationPlaceholderControl`、`UISfxRouter` 或状态图标容器引用。
+
 ## 2026-05-21
 
 - 创建 `ProjectManagement` 目录。
@@ -131,3 +239,191 @@
 - 验证记录：Godot `--headless --path Demo --quit-after 3` 与 `--build-solutions --quit` 均正常退出。直接 `dotnet build Demo/Demo.csproj --no-restore` 仍因沙箱内无法读取本机 `NuGet.Config` / `Godot.NET.Sdk` 失败；按规则请求沙箱外构建两次，自动审批均超时。Roslyn 直接抽查只命中旧 Godot 信号源生成器相关 `MainTS` / `PreTS` / `PlayTS` / `BS` 误报，未出现本次新增 UI 代码的类型错误。
 - 编码检查：本次新增/修改的 C# 与项目管理 Markdown 文件均可严格 UTF-8 解码，且无 UTF-8 BOM。
 - 更新 `TaskBoard.md`：M3R GDD 时间轴 UI 对齐 Todo 全部完成；下一个 Todo 进入 M4R“基于现有 `LevelData` 配置教学关”。
+
+## 2026-05-22 M4R 教学关配置、基础敌人 AI 与教程数据
+
+- 先阅读 `GDD_Split` 与 `ProjectManagement` 下全部文档，确认 M4R 当前先沿用现有 `LevelData` / `.tres` Resource 工作流，不引入 JSON 数据迁移，不改无关场景层级。
+- `Demo/Data/DataScript/LevelData.cs` 增加 `tutorialStepDataArray`，并在 `LevelType` 中增加 `TUTORIAL`，用于把教学关和普通关卡区分开。
+- 将 `Demo/Data/LevelData/Level_data0.tres` 从“测试关”配置为“教学关”：设置 `levelId = 1`、`levelType = TUTORIAL`，并暂时使用 2 名现有玩家和 1 名教学敌人。
+- 新增 `Demo/Data/DataScript/TutorialStepData.cs`，定义教程步骤 Resource 字段：步骤 ID、顺序、标题、提示文本、高亮目标、等待条件、目标 ID 和是否阻塞其他输入。
+- 新增 12 个教程步骤资源到 `Demo/Data/Tutorials/TutorialStepData/`，覆盖时间点与区域、六时点、八卦区域修正、百科、技能选择、长按放置、检视详情、怪物行动揭示、开始结算、战斗记录、区域变化和胜利成长。
+- 新增 `Demo/Script/Combat/AI/EnemyActionPlanner.cs`，基础敌人行动生成不再固定取 `enemyCommandDataArray[0]`：会根据敌人当前/已规划位置选择攻击、移动或跳过，并放入第一个可用时点。
+- `BattleManager.PrepareTurn()` 改为调用 `EnemyActionPlanner` 生成敌人行动，并按生成出的时点写入现有时间轴 UI。
+- 更新 `enm_dataA01.tres` 与 `enm_dataA02.tres`，为基础敌人接入移动、攻击、跳过等现有敌人指令资源；`enm_dataA01.tres` 命名为“教学敌人”。
+- 更新 `enm_cmd1.tres`、`enm_cmd2.tres`、`enm_cmd3.tres` 的优先级，使基础 AI 可以稳定排序移动、攻击与跳过。
+- 验证记录：Godot `--headless --path Demo --quit-after 3` 与 `--build-solutions --quit` 均正常退出；`Level_data0.tres` 中所有 `res://` 引用路径均存在。
+- `dotnet build Demo/Demo.csproj --no-restore` 在沙箱内仍因无法读取本机 `NuGet.Config` / `Godot.NET.Sdk` 失败；按规则请求沙箱外构建两次，自动审批均超时。
+- 编码检查：本次新增/修改的 C#、`.tres` 与项目管理 Markdown 文件均可严格 UTF-8 解码，且无 UTF-8 BOM。
+- 更新 `TaskBoard.md`：完成 M4R 前三个 Todo；下一个 Todo 为“实现教程遮罩、高亮、提示文本和等待条件”。
+
+## 2026-05-22 M4R 运行时教程 Overlay 与百科入口
+
+- 根据用户确认，采用“运行时动态 Overlay”方向：不手工修改 `MainUI.tscn` 深层结构，由 `MainUIControl` 在运行时创建教程和百科 UI。
+- 新增 `Demo/Script/UIControl/TutorialOverlayControl.cs`，提供半透明遮罩、目标高亮、提示标题/正文、继续按钮、跳过教学按钮和等待条件推进。
+- `MainUIControl` 启动时动态创建 `TutorialOverlayControl` 并注册到 `SceneSingleton`；`BattleManager.BattleInitialize()` 在教学关加载后启动 `LevelData.tutorialStepDataArray`。
+- 教程 Overlay 当前可高亮战斗区域、时间轴、技能列表、检视按钮、开始结算按钮、百科入口和战斗记录详情区；战斗区域高亮使用当前棋盘兼容区域。
+- 将教程等待条件接入现有交互：选择技能、长按放置指令、检视详情、怪物行动揭示、点击开始结算、战斗记录显示、角色移动和胜利。
+- 新增 `Demo/Script/UIControl/EncyclopediaOverlayControl.cs`，运行时创建右上角“百科”入口与条目面板。
+- 百科当前包含两个条目集合：“区域修正”和“状态效果”；区域修正解释八卦区域和当前棋盘兼容规则，状态效果包含闪避、刻印、护盾、燃烧、罡风、狂怒等基础条目。
+- 教程步骤 1 到 10 已能通过运行时 Overlay 与现有交互推进；步骤 11 暂停在“进入/离开区域的修正变化”，因为当前项目尚未接入真实八卦区域修正，需要后续决定先做占位演示还是先接完整区域修正。
+- 验证记录：Godot `--headless --path Demo --quit-after 3` 与 `--build-solutions --quit` 均正常退出；`Demo/godot.log` 未检出错误、异常或 C# 编译错误关键字。
+- `dotnet build Demo/Demo.csproj --no-restore` 在沙箱内仍因无法读取本机 `NuGet.Config` / `Godot.NET.Sdk` 失败；按规则请求沙箱外构建两次，自动审批均超时。
+- 编码检查：本次新增/修改的 C# 与项目管理 Markdown 文件均可严格 UTF-8 解码，且无 UTF-8 BOM。
+- 更新 `TaskBoard.md`：完成 M4R 的教程 Overlay、教程步骤 1-10，以及百科入口和两个条目集合；下一个待决策 Todo 为“教程步骤 11：演示进入/离开区域的修正变化”。
+
+## 2026-05-22 M4R 完整八卦区域修正系统
+
+- 按用户指示，先接入完整八卦区域修正系统，再继续教程步骤 11；本次仍沿用现有棋盘和运行时 UI，不改 `MainUI.tscn` 深层结构。
+- `AreaDefinition.FromLegacyCoord()` 已将当前 10 个棋盘格映射为乾、兑、离、震、巽、坎、艮、坤、阴、阳十区域，并统一提供显示名、百科文本和坐标格式化。
+- 新增并接入 `CombatAreaRules` 与 `StatusCatalog`：覆盖移动优先级修正、伤害/治疗倍率、回合开始/结束触发、进入/离开区域触发、护盾吸收、闪避、刻印、燃烧、罡风、湍扼、压顶残留和丰壤残留。
+- `CombatResolver` 现在使用全员共享战斗状态结算一回合，执行区域回合触发、修正后的优先级排序、状态禁用、闪避判定、近战同区域校验和移动到原地校验。
+- `CombatEventApplier` 会把运行时状态与护盾同步回 `CharacterData`，避免区域触发产生的状态在后续时点或下一回合丢失。
+- 百科区域条目改为从完整十区域定义生成，状态条目改为从状态目录生成；时间轴详情和敌方揭示详情会显示区域修正后的实际优先级。
+- 教程步骤 11 现在可由真实 `CharacterMoved` / `AreaChanged` 事件推进，用实际进入/离开区域修正规则演示，不再依赖占位说明。
+- 验证记录：Godot `--headless --path Demo --build-solutions --quit`、`--headless --path Demo --quit-after 3` 与 `--headless --editor --path Demo --quit` 均正常退出；`Demo/godot.log` 未检出错误、异常或 C# 编译错误关键字。
+- `dotnet build Demo/Demo.csproj --no-restore` 在沙箱内仍因无法读取本机 `NuGet.Config` 与 `Godot.NET.Sdk` 失败；按规则请求沙箱外构建两次，自动审批均超时。
+- 编码检查：本次新增/修改的八卦区域相关 C# 与项目管理 Markdown 文件均可严格 UTF-8 解码，且无 UTF-8 BOM。
+- 更新 `TaskBoard.md`：完成 M4R“教程步骤 11：演示进入/离开区域的修正变化”；下一项为“教程步骤 12：胜利后展示成长界面”。
+
+## 2026-05-22 M4R 胜利成长展示
+
+- 按 M4R 范围完成“胜利后展示成长界面”：新增运行时 `GrowthRewardOverlayControl`，由 `MainUIControl` 动态创建，不修改 `MainUI.tscn` 深层结构。
+- 新增 `GrowthRewardData`，让成长展示从奖励资源读取头像、属性变化、新技能提示和总结文本；真实数值应用、技能解锁和后续关卡使用仍留到 M5R。
+- 新增 `Demo/Data/GrowthRewards/growth_reward_tutorial.tres`，并挂到教学关 `Level_data0.tres` 的 `growthRewardData` 字段。
+- `BattleManager` 在胜利判定时展示成长面板，并继续通知教程 `VictoryReached`，让教程步骤 12 能通过真实胜利流程收尾。
+- `TutorialOverlayControl` 支持高亮成长面板，便于步骤 12 指向胜利结算 UI。
+- 验证记录：Godot `--headless --path Demo --build-solutions --quit`、`--headless --path Demo --quit-after 3` 与 `--headless --editor --path Demo --quit` 均正常退出；`Demo/godot.log` 未检出错误、异常或 C# 编译错误关键字。
+- 资源引用检查：`Level_data0.tres` 与 `growth_reward_tutorial.tres` 中的 `res://` 路径均存在。
+- 编码检查：本次新增/修改的成长展示相关 C#、`.tres` 与项目管理 Markdown 文件均可严格 UTF-8 解码，且无 UTF-8 BOM。
+- 更新 `TaskBoard.md`：完成 M4R“教程步骤 12：胜利后展示成长界面”；下一项为“教学关完整通关测试”，需要进入 Godot 交互流程进行人工回归。
+
+## 2026-05-22 M5R 第二关小型敌方团体配置
+
+- 先复核 `DemoUIPrefabReuseReport.md`、`DemoStructureMapping.md` 和 `GDD_Split/07_GodotProjectStructure.md`，确认当前仍采用“保留 `Demo/Asset`、`Demo/Data`、`Demo/Scene`、`Demo/Script`，在现有目录内部分层”的策略；本次无需修改结构文档。
+- 新增第二关关卡资源 `Demo/Data/LevelData/Level_data1.tres`，关卡名为“小型敌方团体”，使用 3 名现有玩家与 4 名第二关敌人。
+- 新增第二关敌人站位资源：近战、远程、刺客、治疗 4 个 `EnemyInfoInLevel`。
+- 新增第二关敌人数据：`小型近战敌人`、`小型远程敌人`、`小型刺客敌人`、`小型治疗敌人`，按 `EnemyDesign.md` 配置生命值、攻击力和每回合 2 次行动机会。
+- 新增敌方指令资源：`蓄力`、`远程`、`突袭`、`治疗`；保留现有 `移动`、`攻击`、`跳过` 指令作为兼容基础。
+- 扩展 `SkillDefinition.FromCommandData()` 的敌方旧指令兼容映射，让新增敌方指令能提供标签、目标类型和基础结算效果；完整 AI profile、治疗目标选择、突袭闪避与蓄力延迟仍留给后续 M5R Todo。
+- 验证记录：新增 `.tres` 文件均可严格 UTF-8 解码且无 BOM；`.tres/.tscn` 的 `res://` 引用路径存在；资源 UID 未发现重复。
+- 验证记录：Godot `--headless --path Demo --build-solutions --quit`、`--headless --path Demo --quit-after 3` 与 `--headless --editor --path Demo --quit` 均正常退出，`Demo/godot.log` 未检出错误、异常或 C# 编译错误关键字。
+- 更新 `TaskBoard.md`：完成 M5R“配置第二关小型敌方团体”；下一项为“配置第三关双精英战”。
+
+## 2026-05-22 M5R 第三关双精英战配置
+
+- 继续沿用现有 `LevelData` / `.tres` Resource 工作流，不改 `Demo` 目录结构、不移动场景、不调整 UI prefab。
+- 新增第三关关卡资源 `Demo/Data/LevelData/Level_data2.tres`，关卡名为“双精英战”，使用 3 名现有玩家与 2 名精英敌人。
+- 新增第三关敌人站位资源：`enm_info_level2_melee_elite.tres` 与 `enm_info_level2_support_elite.tres`，当前按 `EnemyDesign.md` 的敌人初始站位原则放在阳区域兼容坐标。
+- 新增第三关敌人数据：`强力近战精英`（生命值 300、攻击力 16、基础每回合 2 次行动）与 `远程支援精英`（生命值 228、攻击力 16、基础每回合 3 次行动）。
+- 新增第三关敌方指令资源：`精英蓄力`、`单体`、`狂怒`、`冲锋`、`至阴`、`至阳`、`范围远程`；复用已有 `移动`、`治疗`、`远程`、`跳过`。
+- 扩展 `SkillDefinition.FromCommandData()` 的敌方旧指令兼容映射，让第三关新增指令能在 UI 中展示目标、标签、优先级和基础结算效果。
+- 本次只完成关卡/敌人/技能配置；奇偶回合行动次数、支援优先级 AI、狂怒触发与狂怒行动方案、至阴/至阳路径移动、延迟范围伤害仍留给后续 M5R Todo。
+- 验证记录：新增第三关 `.tres` 与修改的 C# 文件均可严格 UTF-8 解码且无 BOM；`.tres/.tscn` 的 `res://` 引用路径存在；资源 UID 未发现重复。
+- 验证记录：Godot `--headless --path Demo --build-solutions --quit`、`--headless --path Demo --quit-after 3` 与 `--headless --editor --path Demo --quit` 均正常退出，`Demo/godot.log` 未检出错误、异常或 C# 编译错误关键字。
+- 更新 `TaskBoard.md`：完成 M5R“配置第三关双精英战”；下一项为“实现刺客/近战/远程/支援敌人 AI profile”。
+
+## 2026-05-22 M5R AI Profile、狂怒与成长奖励
+
+- 在 `EnemyData` 中新增 `EnemyAiProfile`、狂怒开关、奇偶回合行动次数配置和运行时 `rageTriggered`，并让敌人初始化时重置狂怒触发状态。
+- 将第二关敌人配置到 `Melee`、`Ranged`、`Assassin`、`Support` profile；将第三关配置到 `EliteMelee` 与 `EliteSupport` profile。
+- 重构 `EnemyActionPlanner`：按 profile 分派近战追击、远程拉开距离、刺客突袭低血量目标、支援治疗/远程、精英近战和精英支援行动。
+- 实现精英近战半血后优先在时点 6 放置 `狂怒`；狂怒状态持续至战斗结束，造成伤害 +50%、受到伤害 +50%、每回合行动次数 +1，并接入精英狂怒后的冲锋/蓄力/单体/至阴/至阳行动分支。
+- 扩展范围伤害兼容结算：带 `Area` 标签的伤害技能会命中目标区域内除施放者外的存活单位，支撑精英蓄力、至阴/至阳和范围远程的 demo 级结算。
+- 扩展 `GrowthRewardData`：新增可应用的最大生命、攻击、解锁技能、升级技能字段；胜利时由 `BattleManager` 应用到运行时玩家数据，再展示成长面板。
+- 新增玩家技能资源：`远程射击`、`治疗`、`强击`；扩展玩家旧指令兼容映射和按钮点击逻辑，使解锁后的技能能进入现有目标选择与时间轴放置流程。
+- 新增并接入 `growth_reward_level1.tres`、`growth_reward_level2.tres`，并补强 `growth_reward_tutorial.tres`，让教学关、第二关、第三关胜利后都有结构化成长奖励。
+- 验证记录：变更涉及的 C#、`.tres` 与项目管理 Markdown 文件均可严格 UTF-8 解码且无 BOM；`.tres/.tscn` 的 `res://` 引用路径存在；资源 UID 未发现重复。
+- 验证记录：Godot `--headless --path Demo --build-solutions --quit`、`--headless --path Demo --quit-after 3` 与 `--headless --editor --path Demo --quit` 均正常退出，`Demo/godot.log` 未检出错误、异常或 C# 编译错误关键字。
+- 更新 `TaskBoard.md`：完成 M5R 的 AI profile、狂怒状态与行动逻辑、胜利成长奖励、技能解锁和升级；下一项为“三关连续游玩测试”。
+
+## 2026-05-22 M6R 资源与打磨暂停记录
+
+- 按用户更正，技能不制作或接入图标，技能 UI 继续只显示技能名称；文档中的“技能/状态图标”已修正为“状态图标”。
+- 新增区域图标资源到 `Demo/Asset/Generated/AreaIcons`，并通过 `BattleAssetCatalog` 为百科区域条目提供图标路径。
+- 新增简约蓝色状态图标资源到 `Demo/Asset/Generated/StatusIcons`，并在角色头像状态条与百科状态条目中预留显示入口。
+- 新增战斗播片占位资源到 `Demo/Asset/Generated/CutscenePlaceholders`，并接入运行时 `BattlePresentationPlaceholderControl`。
+- 新增 `UISfxRouter` 作为 UI hover/click/confirm/phase 音效接口；当前仅预留 AudioStream 接口，不接入 BGM 或战斗攻击/受击音效。
+- `EncyclopediaOverlayControl` 详情区已补 `ScrollContainer`，内容超出时可滚动浏览；区域和状态条目可显示对应图标。
+- 角色头像与敌人头像的正式素材由用户后续提供，本次不将头像 Todo 记为完成；已暂停继续处理头像素材。
+- 验证记录：Godot `--headless --path Demo --build-solutions --quit` 与 `--headless --path Demo --quit-after 3` 均正常退出，`Demo/godot.log` 未检出错误、异常或 C# 编译错误关键字。
+- 更新 `TaskBoard.md`：完成 M6R 的区域图标、状态图标、战斗播片占位、UI 音效接口和百科滚动检查；角色/敌人头像保留为待办，等待用户提供正式素材。
+
+## 2026-05-23 M6R 头像素材接入与生成素材残留清理
+
+- 按用户指示，不再生成素材；先检查并清理此前错误接入的生成素材相关代码引用。
+- 删除残留脚本 `Demo/Script/Presentation/BattleAssetCatalog.cs`、`BattlePresentationPlaceholderControl.cs`、`UISfxRouter.cs` 及对应 `.uid` 文件；删除操作均按单个明确路径逐个执行。
+- 从 `MainUIControl`、`BattleManager`、`SceneSingleton`、`CharacterHeadButtonControl`、`CmdQueueUIControl`、`PlayerChoseListPanelControl`、`CommandItemUIControl`、`EncyclopediaOverlayControl` 中移除 `Asset/Generated`、状态图标、播片占位 overlay 和 UI SFX 路由相关引用。
+- 依据 `ProjectManagement/PictureAsset.md`，将 3 名玩家头像接入 `character01.png`、`character02.png`、`character03.png`。
+- 依据 `ProjectManagement/PictureAsset.md`，将 8 名敌人头像接入 `enemyA01.png`、`enemyA02.png`、`enemyB01.png`、`enemyB02.png`、`enemyB03.png`、`enemyB04.png`、`enemyC01.png`、`enemyC02.png`。
+- 残留检查：`Demo/Script`、`Demo/Data`、`Demo/Scene` 中已无 `BattleAssetCatalog`、`UISfxRouter`、`BattlePresentationPlaceholder`、`StatusIconContainer` 或 `Asset/Generated` 引用。
+- 验证记录：Godot `--headless --path Demo --build-solutions --quit`、`--headless --path Demo --quit-after 3`、`--headless --editor --path Demo --quit` 均正常退出；`Demo/godot.log` 未检出错误、异常或 C# 编译错误关键字。
+- 更新 `TaskBoard.md`：完成 M6R“接入玩家角色与敌人的图片素材”；下一项为“接入战斗播片占位资源”。
+
+## 2026-05-23 教学关 GDD 配置与战斗 UI 修正
+
+- 依据 `GDD_Split/EnemyDesign.md`、`GDD_Split/PlayerDesign.md`、`GDD_Split/06_UI_UX.md`、`ProjectManagement/PictureAsset.md` 与既有 `ProjectManagement/ChangeLog.md` 复核当前教学关偏差。
+- 偏差原因：此前 M3R/M4R 记录中为降低风险选择“复用现有 `CmdQueueUIControl`、不做大规模场景迁移”，导致运行时仍保留旧的“点击我方头像选择技能 + 下方混合时间轴矩阵”原型；教学关资源也仍沿用临时的 2 名玩家 + 1 名教学敌人配置。
+- 将 `Level_data0.tres` 调整为教学关 3 名玩家与 2 名训练人偶：我方近战 26 HP/12 ATK、我方远程 19 HP/10 ATK、我方支援 22 HP/10 ATK；近战训练人偶 49 HP/10 ATK、远程训练人偶 44 HP/10 ATK，均为每回合 2 次行动。
+- 按 `EnemyDesign.md` 将教学关两名敌人初始站位改到阳区域兼容坐标，并将远程训练人偶接入远程攻击指令与 Ranged AI profile。
+- 为玩家数据补充 MP/最大 MP 字段并按 `PlayerDesign.md` 初始值配置为 60/60；技能详情显示 GDD 优先级与 MP 消耗。
+- 重构 `CmdQueueUIControl` 的运行时布局：敌方时间轴生成到屏幕上方，我方时间轴生成到屏幕下方，时间轴槽位总宽度收窄为约原先的一半；左侧生成“设置指令”“检视详情”“开始结算”和详情区域。
+- 将释放技能流程改为左侧“设置指令 -> 近战/位移/远程/特殊 -> 技能”分类菜单；选择技能和目标后再在我方时间轴空白时点长按 2 秒放置，不再依赖点击我方头像 UI。
+- “开始结算”按 `06_UI_UX.md` 改为显示确认弹窗；准备阶段判定改为所有存活玩家行动次数用尽后才进入结算。
+- 按 `PictureAsset.md` 修复场景中残留的 `characterA01.png` / `characterB01.png` 缺失引用，改为 `character01.png` / `character02.png`。
+- 验证记录：`dotnet build Demo/Demo.csproj --no-restore` 成功，0 警告 0 错误；`.tres/.tscn` 全量 `res://` 引用检查通过；本机 PATH 中未找到 Godot 可执行文件，未能进行 Godot 运行态截图/交互回归。
+- 更新 `TaskBoard.md`：完成教学关 GDD 数值配置、敌/我时间轴布局、左侧设置指令入口三项修正。
+
+## 2026-05-23 教学关 UI 运行态修正
+
+- 修复旧 `CharacterHeadButton` 场景占位节点在未绑定 `characterData` 时输出“未知角色类型/未设置角色数据”的问题：占位头像现在静默隐藏，动态绑定数据的头像仍正常工作。
+- 将 `CharacterHeadButtonControl` 与 `EnemyCharacterHeadListUIControl` 的 C# 基类改为实际挂载节点类型，避免隐藏/显示控件时出现类型问题。
+- 将我方时间轴从旧 `CmdQueueUIControl` 所在的混合 `HBoxContainer` 中移出，改为直接挂到 `DownPanel/PlayerTimelineHost` 独立锚点区域，避免被旧容器布局挤成竖排或异常尺寸。
+- 敌方目标选择用的旧敌人头像列表默认隐藏，只在选择需要敌方目标的技能时临时显示；常驻敌方信息由上方敌方时间轴承担。
+- 验证记录：`dotnet build Demo/Demo.csproj --no-restore` 成功，0 警告 0 错误；Godot Mono `--headless --path Demo --quit-after 3` 正常退出；Godot Mono `--headless --path Demo --build-solutions --quit` 正常完成 .NET 构建。
+- 更新 `TaskBoard.md`：完成旧头像占位报错修复与新时间轴容器修正。
+
+## 2026-05-23 旧我方 UI 残留清理
+
+- 按用户运行反馈，移除左上角“玩家准备中……”状态写入，准备阶段等待循环不再向状态 Label 或控制台输出该文本。
+- 删除 `MainUI.tscn` / `MainScene.tscn` 中旧 `PlayerCHContainer` 下的预置头像节点与编辑路径；`PlayerCharacterHeadListUIControl.Initialize()` 不再实例化旧我方头像按钮，屏幕上我方角色 UI 只保留新生成的下方我方时间轴。
+- 删除 `MainUI.tscn` / `MainScene.tscn` 中旧 `HeadList` 下的头像列节点与覆盖资源；`CommandHeadListUIControl` 不再实例化或写入旧时间轴头像列，避免再次显示 3 个旧我方头像。
+- 撤回上一轮对旧 UI prefab/场景默认贴图的误改：旧 `CharacterHeadButton`、`CmdHeadPrefab`、`BaseCharacter` 以及旧场景占位贴图均改回 `unknown.png`，正式玩家素材只由角色数据资源引用。
+- 验证记录：`.tres/.tscn` 全量 `res://` 引用检查通过；沙箱内 `dotnet build Demo/Demo.csproj --no-restore` 因无法读取 `C:\Users\Lenovo\AppData\Roaming\NuGet\NuGet.Config` 失败，已两次请求沙箱外构建但自动审批超时；Godot Mono headless 启动本轮在沙箱内触发 Godot 原生 signal 11，`Demo/godot.log` 未记录 C# 编译错误或旧头像空数据错误。
+- 更新 `TaskBoard.md`：完成旧我方头像 UI、旧时间轴头像列和“玩家准备中……”显示清理。
+## 2026-05-23 敌我时间轴视觉尺寸统一补修
+
+- 原因说明：上一轮虽然统一了行头、槽位和尾列宽度参数，但我方时间轴仍额外生成 `PlayerActionBanner` 横幅；同时敌我时间轴宿主使用百分比锚点拉伸，槽位 prefab 实际高度为 37，而代码行高参数仍是 20，导致运行态视觉尺寸仍不一致。
+- 移除我方时间轴专属 `PlayerActionBanner` 生成和 `BattleManager` 对该横幅的状态更新调用，避免我方时间轴比敌方多一块额外高度。
+- 将敌我 `EnemyTimelineHost` / `PlayerTimelineHost` 改为使用 `GetTimelineTotalWidth()` 固定总宽并居中，避免父容器百分比锚点造成视觉宽度差异。
+- 将 `TimelineSlotHeight` 调整为 38，与 `CommandItem.tscn` 槽位 prefab 的实际高度一致；敌我行高、槽位高度、行头高度和尾列高度继续共用同一组参数。
+- 验证：`dotnet build .\Demo\Demo.csproj --no-restore` 通过，0 警告 0 错误；Godot Mono headless 主场景可进入准备阶段。
+
+## 2026-05-23 战斗 UI 状态文本与时间轴尺寸修正
+
+- 原因说明：左上角再次出现 `已将prepareTurnState修改为PLAYER_PRE`，是因为 `BattleManager.SetManagerState(PrepareTurnState)` 仍把状态切换调试文本传给 `PubTool.PrintToCmdAndTitle()`，而该工具会写入旧 `TopPanel/Label`。
+- 移除 `BattleManager` 四个 `SetManagerState(...)` 重载中的 `已将...修改为...` 调试标题写入，避免内部状态枚举显示到战斗 UI。
+- 将 `MainUI.tscn` 的旧 `TopPanel/Label` 默认隐藏并清空显示文本，避免旧状态标题再次覆盖敌方时间轴区域。
+- 原因说明：敌我时间轴显示大小不一致，是因为敌方行额外带 `剩余行动` 尾列，且敌我角色信息区宽度分别使用了不同硬编码值。
+- `CmdQueueUIControl` 新增统一的时间轴尺寸参数：行头宽度、槽位总宽、尾列宽度、行间距和槽间距；敌方使用尾列显示剩余行动，我方使用同宽空占位，因此敌我时间轴总宽一致。
+- 更新 `TaskBoard.md`：完成旧状态标题文本清理与敌我时间轴尺寸统一。
+
+## 2026-05-23 Godot 运行态崩溃窗口修正
+
+- 针对用户反馈的 `0xc00007FF78C996C14` / `0x0000000000000058` 读取内存崩溃窗口，复查旧 UI 清理后的运行态初始化路径。
+- 旧我方 UI 的可见内容仍保持删除：`PlayerCHContainer` 下不再保留预置头像按钮，`HeadList` 下不再保留旧头像列节点；为避免 Godot 继承场景和脚本生命周期访问空路径，仅保留隐藏的空兼容锚点。
+- `CmdQueueUIControl` 的“设置指令 / 检视详情 / 开始结算”按钮 signal 改为只连接一次，避免初始化重复调用时先断开不存在连接而报错。
+- `PlayerCharacterHeadListUIControl`、`EnemyCharacterHeadListUIControl`、`CommandHeadListUIControl`、`ActionListUIControl` 的 `_Ready()` / 构建入口增加空安全保护，避免单独装载 UI 场景或旧兼容容器为空时抛出 C# 空引用。
+- 验证：`Godot_v4.6.2-stable_mono_win64_console.exe --headless --path .\Demo --scene res://Scene/MainScene.tscn --quit-after 2` 正常退出；此前的按钮 signal 错误不再出现。沙箱内 `dotnet build` 仍受本机 `NuGet.Config` / `Godot.NET.Sdk` 访问限制影响，无法直接验证完整构建。
+
+## 2026-05-23 战斗 UI 场景布局重构
+
+- 依据用户更新后的 `GDD_Split/06_UI_UX.md`，将 `MainUI.tscn` 从旧下方混合指令矩阵原型改为静态保留明确的 GDD 布局锚点：`EnemyTimelineHost` 位于上方，`BattleInteractionPanel` 位于左侧，`PlayerActionBanner` 与 `PlayerTimelineHost` 位于下方。
+- 删除 `MainUI.tscn` / `MainScene.tscn` 中的 `GameTest` 调试菜单节点，并逐个删除未引用的 `Demo/Script/GameLogic/GameTest.cs` 与 `.uid` 文件。
+- 从 `MainUI.tscn` 移除旧 `PlayerCHContainer`、旧 `HeadList`、旧 `CommandMatrix` / `CommandColumn*` 与对应 editable path；`CmdQueueUIControl` 不再暴露旧 `CommandQueueMatrix` / `commandListPrefab`，时间轴槽位继续运行时从 `CommandItem.tscn` 生成。
+- 按新版设置说明保留右上角齿轮入口，设置面板内容改为“百科”和“退出游戏”；百科入口从独立右上角按钮迁入设置面板，教程高亮改为指向设置面板内的百科按钮。
+- 百科打开时右侧内容改为空白初始状态，并按新版文档限制为『区域修正』与『状态效果』条目；区域顺序和状态说明同步到 `06_UI_UX.md` 表格内容。
+- 将棋盘区域按钮保持隐藏、禁用并忽略鼠标，避免地图热点参与区域目标选择；区域目标仍只通过 `AreaTargetMenuControl` 的 10 个矩形按钮选择。
+- 恢复我方行动横幅为文档要求：仅在准备阶段且玩家行动时显示“我方行动”，其余阶段隐藏；玩家时间轴下移以避开横幅。
+- 收紧左侧战斗交互按钮显隐：场景初始和敌方准备时隐藏“设置指令/检视详情”，我方行动时显示；等待进入演出阶段时隐藏二者，只显示“开始结算”。
+- 验证：`dotnet build .\Demo\Demo.csproj --no-restore` 成功，0 警告 0 错误；Godot Mono headless 直接打开 `res://Scene/MainScene.tscn` 可进入准备阶段，`Demo/godot.log` 未检出错误、异常或 C# 编译错误关键字。退出时仍有 Godot ObjectDB leak warning，未阻塞场景加载。
+- 更新 `TaskBoard.md`：记录静态战斗 UI 场景重构、设置菜单百科入口、百科滚动检查和左侧交互按钮阶段显隐完成。
