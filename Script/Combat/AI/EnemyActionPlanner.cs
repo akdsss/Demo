@@ -12,17 +12,34 @@ public class EnemyActionPlan
 
 public class EnemyActionPlanner
 {
-    private static readonly Vector2I[] FallbackMoveCoords =
+    private static readonly Random Rng = new();
+    private static readonly CombatAreaId[] AllAreas = AreaDefinition.GetDefaultAreaOrder();
+    private static readonly CombatAreaId[] YinPath =
     {
-        new(1, 1),
-        new(1, 2),
-        new(0, 1),
-        new(2, 1),
-        new(1, 0),
-        new(1, 3)
+        CombatAreaId.Qian,
+        CombatAreaId.Dui,
+        CombatAreaId.Li,
+        CombatAreaId.Zhen,
+        CombatAreaId.Xun,
+        CombatAreaId.Kan,
+        CombatAreaId.Gen,
+        CombatAreaId.Kun,
+        CombatAreaId.Yin,
+        CombatAreaId.Yang
     };
-    private static readonly Vector2I YangCoord = new(2, 2);
-    private static readonly Vector2I YinCoord = new(2, 1);
+    private static readonly CombatAreaId[] YangPath =
+    {
+        CombatAreaId.Kun,
+        CombatAreaId.Gen,
+        CombatAreaId.Kan,
+        CombatAreaId.Xun,
+        CombatAreaId.Zhen,
+        CombatAreaId.Li,
+        CombatAreaId.Dui,
+        CombatAreaId.Qian,
+        CombatAreaId.Yang,
+        CombatAreaId.Yin
+    };
 
     public EnemyActionPlan PlanNextAction(
         EnemyData enemyData,
@@ -35,12 +52,6 @@ public class EnemyActionPlanner
             return null;
         }
 
-        int slotIndex = FindFirstFreeSlot(enemyData);
-        if (slotIndex < Timeline.MinSlotIndex)
-        {
-            return null;
-        }
-
         List<EnemyCommandData> commands = enemyData.enemyCommandDataArray?
             .Where(command => command != null)
             .ToList() ?? new List<EnemyCommandData>();
@@ -49,347 +60,561 @@ public class EnemyActionPlanner
             return null;
         }
 
-        return enemyData.aiProfile switch
-        {
-            EnemyAiProfile.Melee => PlanMelee(enemyData, commands, playerDataList),
-            EnemyAiProfile.Ranged => PlanRanged(enemyData, commands, playerDataList),
-            EnemyAiProfile.Assassin => PlanAssassin(enemyData, commands, playerDataList),
-            EnemyAiProfile.Support => PlanSupport(enemyData, commands, playerDataList, enemyDataList),
-            EnemyAiProfile.EliteMelee => PlanEliteMelee(enemyData, commands, playerDataList, roundIndex),
-            EnemyAiProfile.EliteSupport => PlanEliteSupport(enemyData, commands, playerDataList, enemyDataList),
-            _ => PlanBasic(enemyData, commands, playerDataList)
-        };
-    }
-
-    private static EnemyActionPlan PlanBasic(
-        EnemyData enemyData,
-        List<EnemyCommandData> commands,
-        IReadOnlyList<PlayerData> playerDataList)
-    {
-        int slotIndex = FindFirstFreeSlot(enemyData);
-        Vector2I projectedCoord = GetProjectedCoord(enemyData);
-        CombatAreaId projectedAreaId = GetProjectedAreaId(enemyData);
-        List<PlayerData> livingPlayers = playerDataList?
-            .Where(IsAlive)
-            .ToList() ?? new List<PlayerData>();
-
-        PlayerData sameAreaTarget = livingPlayers
-            .Where(player => IsInArea(player, projectedAreaId))
-            .OrderBy(player => player.hp)
-            .FirstOrDefault();
-        PlayerData nearestTarget = livingPlayers
-            .OrderBy(player => Distance(projectedCoord, player.coord))
-            .ThenBy(player => player.hp)
-            .FirstOrDefault();
-
-        EnemyCommandData attackCommand = FindBestCommand(commands, IsAttackCommand);
-        EnemyCommandData moveCommand = FindBestCommand(commands, IsMoveCommand);
-        EnemyCommandData skipCommand = FindBestCommand(commands, IsSkipCommand);
-
-        EnemyCommandData selectedCommand = null;
-        CharacterData targetCharacter = null;
-        Vector2I targetCoord = projectedCoord;
-
-        if (sameAreaTarget != null && attackCommand != null)
-        {
-            selectedCommand = attackCommand;
-            targetCharacter = sameAreaTarget;
-        }
-        else if (nearestTarget != null && moveCommand != null && !IsInArea(nearestTarget, projectedAreaId))
-        {
-            selectedCommand = moveCommand;
-            targetCoord = AreaDefinition.GetLegacyCoordForAreaId(nearestTarget.ResolveCurrentAreaId());
-        }
-        else if (nearestTarget != null && attackCommand != null)
-        {
-            selectedCommand = attackCommand;
-            targetCharacter = nearestTarget;
-        }
-        else if (moveCommand != null)
-        {
-            selectedCommand = moveCommand;
-            targetCoord = FindFallbackMoveCoord(projectedCoord);
-        }
-        else
-        {
-            selectedCommand = skipCommand ?? commands
-                .OrderByDescending(command => SkillDefinition.FromCommandData(command).Priority)
-                .ThenBy(command => command.commandId)
-                .FirstOrDefault();
-        }
-
-        if (selectedCommand == null)
+        PlanningContext context = BuildPlanningContext(enemyData, commands, playerDataList, enemyDataList);
+        if (context.FreeSlots.Count == 0)
         {
             return null;
         }
 
-        return BuildPlan(enemyData, selectedCommand, slotIndex, targetCharacter, targetCoord);
+        return enemyData.aiProfile switch
+        {
+            EnemyAiProfile.Melee => PlanMeleeByGdd(context),
+            EnemyAiProfile.Ranged => PlanRangedByGdd(context),
+            EnemyAiProfile.Assassin => PlanAssassinByGdd(context),
+            EnemyAiProfile.Support => PlanSupportByGdd(context),
+            EnemyAiProfile.EliteMelee => PlanEliteMeleeByGdd(context),
+            EnemyAiProfile.EliteSupport => PlanEliteSupportByGdd(context),
+            _ => PlanBasicByGdd(context)
+        };
     }
 
-    private static EnemyActionPlan PlanMelee(
-        EnemyData enemyData,
-        List<EnemyCommandData> commands,
-        IReadOnlyList<PlayerData> playerDataList)
+    private static EnemyActionPlan PlanBasicByGdd(PlanningContext context)
     {
-        int slotIndex = FindFirstFreeSlot(enemyData);
-        Vector2I projectedCoord = GetProjectedCoord(enemyData);
-        CombatAreaId projectedAreaId = GetProjectedAreaId(enemyData);
-        List<PlayerData> livingPlayers = GetLivingPlayers(playerDataList);
-        PlayerData sameAreaTarget = GetLowestHpPlayer(livingPlayers.Where(player => IsInArea(player, projectedAreaId)));
-        PlayerData nearestTarget = GetNearestPlayer(livingPlayers, projectedCoord);
-        EnemyCommandData chargeCommand = FindCommandById(commands, 4) ?? FindCommandById(commands, 8);
-        EnemyCommandData meleeCommand = FindCommandById(commands, 3) ?? FindCommandById(commands, 9);
-        EnemyCommandData moveCommand = FindBestCommand(commands, IsMoveCommand);
+        List<ReleaseCandidate> candidates = new();
+        EnemyCommandData moveCommand = FindCommandById(context.Commands, 1) ?? FindBestCommand(context.Commands, IsMoveCommand);
+        EnemyCommandData attackCommand = FindBestCommand(context.Commands, IsAttackCommand);
 
-        if (sameAreaTarget != null)
-        {
-            int sameAreaCount = livingPlayers.Count(player => IsInArea(player, projectedAreaId));
-            EnemyCommandData selectedAttack = sameAreaCount > 1 && chargeCommand != null
-                ? chargeCommand
-                : meleeCommand ?? chargeCommand;
-            return BuildPlan(enemyData, selectedAttack, slotIndex, sameAreaTarget, projectedCoord);
-        }
-
-        if (nearestTarget != null && moveCommand != null)
-        {
-            return BuildPlan(enemyData, moveCommand, slotIndex, null, AreaDefinition.GetLegacyCoordForAreaId(nearestTarget.ResolveCurrentAreaId()));
-        }
-
-        return BuildSkipOrFallback(enemyData, commands, slotIndex);
+        AddMoveToPlayerAreaCandidate(candidates, context, moveCommand, maxSlot: Timeline.MaxSlotIndex - 1);
+        AddSameAreaAttackCandidate(candidates, context, attackCommand, randomTargetWhenMultiple: true);
+        return PickCandidateOrSkip(candidates, context);
     }
 
-    private static EnemyActionPlan PlanRanged(
-        EnemyData enemyData,
-        List<EnemyCommandData> commands,
-        IReadOnlyList<PlayerData> playerDataList)
+    private static EnemyActionPlan PlanMeleeByGdd(PlanningContext context)
     {
-        int slotIndex = FindFirstFreeSlot(enemyData);
-        Vector2I projectedCoord = GetProjectedCoord(enemyData);
-        CombatAreaId projectedAreaId = GetProjectedAreaId(enemyData);
-        List<PlayerData> livingPlayers = GetLivingPlayers(playerDataList);
-        bool hasSameAreaPlayer = livingPlayers.Any(player => IsInArea(player, projectedAreaId));
-        EnemyCommandData moveCommand = FindBestCommand(commands, IsMoveCommand);
-        EnemyCommandData rangedCommand = FindCommandById(commands, 5) ?? FindBestCommand(commands, IsRangedCommand);
-        PlayerData target = GetLowestHpPlayer(livingPlayers);
+        List<ReleaseCandidate> candidates = new();
+        EnemyCommandData moveCommand = FindCommandById(context.Commands, 1);
+        EnemyCommandData meleeCommand = FindCommandById(context.Commands, 3) ?? FindCommandById(context.Commands, 9);
+        EnemyCommandData chargeCommand = FindCommandById(context.Commands, 4);
 
-        if (hasSameAreaPlayer && moveCommand != null)
-        {
-            return BuildPlan(enemyData, moveCommand, slotIndex, null, FindSafeCoord(projectedCoord, livingPlayers));
-        }
+        AddMoveToPlayerAreaCandidate(candidates, context, moveCommand, maxSlot: Timeline.MaxSlotIndex - 1);
+        AddSameAreaAttackCandidate(candidates, context, meleeCommand, randomTargetWhenMultiple: true);
+        AddSameAreaAttackCandidate(
+            candidates,
+            context,
+            chargeCommand,
+            randomTargetWhenMultiple: true,
+            maxSlot: Timeline.MaxSlotIndex - 1);
 
-        if (target != null && rangedCommand != null)
-        {
-            return BuildPlan(enemyData, rangedCommand, slotIndex, target, projectedCoord);
-        }
-
-        return BuildSkipOrFallback(enemyData, commands, slotIndex);
+        return PickCandidateOrSkip(candidates, context);
     }
 
-    private static EnemyActionPlan PlanAssassin(
-        EnemyData enemyData,
-        List<EnemyCommandData> commands,
-        IReadOnlyList<PlayerData> playerDataList)
+    private static EnemyActionPlan PlanRangedByGdd(PlanningContext context)
     {
-        int slotIndex = FindFirstFreeSlot(enemyData);
-        Vector2I projectedCoord = GetProjectedCoord(enemyData);
-        CombatAreaId projectedAreaId = GetProjectedAreaId(enemyData);
-        List<PlayerData> livingPlayers = GetLivingPlayers(playerDataList);
-        PlayerData sameAreaTarget = GetLowestHpPlayer(livingPlayers.Where(player => IsInArea(player, projectedAreaId)));
-        PlayerData lowestHpTarget = GetLowestHpPlayer(livingPlayers);
-        EnemyCommandData ambushCommand = FindCommandById(commands, 6);
-        EnemyCommandData meleeCommand = FindCommandById(commands, 3) ?? FindCommandById(commands, 9);
+        List<ReleaseCandidate> candidates = new();
+        EnemyCommandData moveCommand = FindCommandById(context.Commands, 1);
+        EnemyCommandData rangedCommand = FindCommandById(context.Commands, 5) ?? FindBestCommand(context.Commands, IsRangedCommand);
+        bool isTrainingRanged = context.Enemy.characterId == 2;
+        int moveMaxSlot = isTrainingRanged ? Timeline.MaxSlotIndex : Timeline.MaxSlotIndex - 1;
 
-        if (sameAreaTarget == null && lowestHpTarget != null && ambushCommand != null)
+        AddMoveToEmptyAreaCandidate(candidates, context, moveCommand, maxSlot: moveMaxSlot);
+
+        List<int> rangedSlots = isTrainingRanged
+            ? GetFreeSlots(context)
+            : GetFreeSlots(context, slot => !slot.HasSameAreaPlayer);
+        AddCandidate(candidates, rangedCommand, rangedSlots, slot =>
         {
-            return BuildPlan(enemyData, ambushCommand, slotIndex, lowestHpTarget, AreaDefinition.GetLegacyCoordForAreaId(lowestHpTarget.ResolveCurrentAreaId()));
-        }
+            PlayerData target = PickRandom(context.LivingPlayers);
+            return target == null
+                ? null
+                : BuildPlan(context.Enemy, rangedCommand, slot, target, AreaDefinition.GetLegacyCoordForAreaId(target.ResolveCurrentAreaId()));
+        });
 
-        if (sameAreaTarget != null && meleeCommand != null)
-        {
-            return BuildPlan(enemyData, meleeCommand, slotIndex, sameAreaTarget, projectedCoord);
-        }
-
-        return BuildSkipOrFallback(enemyData, commands, slotIndex);
+        return PickCandidateOrSkip(candidates, context);
     }
 
-    private static EnemyActionPlan PlanSupport(
-        EnemyData enemyData,
-        List<EnemyCommandData> commands,
-        IReadOnlyList<PlayerData> playerDataList,
-        IReadOnlyList<EnemyData> enemyDataList)
+    private static EnemyActionPlan PlanAssassinByGdd(PlanningContext context)
     {
-        int slotIndex = FindFirstFreeSlot(enemyData);
-        Vector2I projectedCoord = GetProjectedCoord(enemyData);
-        CombatAreaId projectedAreaId = GetProjectedAreaId(enemyData);
-        List<PlayerData> livingPlayers = GetLivingPlayers(playerDataList);
-        List<EnemyData> livingAllies = GetLivingEnemies(enemyDataList);
-        EnemyData woundedAlly = livingAllies
-            .Where(ally => ally.hp < ally.maxHp)
-            .OrderBy(HealthPercent)
-            .FirstOrDefault();
-        EnemyCommandData healCommand = FindCommandById(commands, 7);
-        EnemyCommandData moveCommand = FindBestCommand(commands, IsMoveCommand);
-        EnemyCommandData rangedCommand = FindCommandById(commands, 5) ?? FindBestCommand(commands, IsRangedCommand);
+        List<ReleaseCandidate> candidates = new();
+        EnemyCommandData ambushCommand = FindCommandById(context.Commands, 6);
+        EnemyCommandData meleeCommand = FindCommandById(context.Commands, 3) ?? FindCommandById(context.Commands, 9);
 
-        if (woundedAlly != null && healCommand != null)
-        {
-            return BuildPlan(enemyData, healCommand, slotIndex, woundedAlly, AreaDefinition.GetLegacyCoordForAreaId(woundedAlly.ResolveCurrentAreaId()));
-        }
+        AddCandidate(
+            candidates,
+            ambushCommand,
+            GetFreeSlots(context, slot => !slot.HasSameAreaPlayer, maxSlot: Timeline.MaxSlotIndex - 1),
+            slot =>
+            {
+                PlayerData target = PickLowestHpPlayer(context.LivingPlayers);
+                return target == null
+                    ? null
+                    : BuildPlan(context.Enemy, ambushCommand, slot, target, AreaDefinition.GetLegacyCoordForAreaId(target.ResolveCurrentAreaId()));
+            });
 
-        if (livingPlayers.Any(player => IsInArea(player, projectedAreaId)) && moveCommand != null)
-        {
-            return BuildPlan(enemyData, moveCommand, slotIndex, null, FindSupportCoord(livingPlayers));
-        }
+        AddCandidate(
+            candidates,
+            meleeCommand,
+            GetFreeSlots(context, slot => slot.HasSameAreaPlayer),
+            slot =>
+            {
+                PlayerData target = GetQueuedAmbushTarget(context);
+                if (target == null || !IsAlive(target))
+                {
+                    target = PickLowestHpPlayer(GetSlot(context, slot).SameAreaPlayers);
+                }
 
-        PlayerData target = GetLowestHpPlayer(livingPlayers);
-        if (target != null && rangedCommand != null)
-        {
-            return BuildPlan(enemyData, rangedCommand, slotIndex, target, projectedCoord);
-        }
+                return target == null
+                    ? null
+                    : BuildPlan(context.Enemy, meleeCommand, slot, target, AreaDefinition.GetLegacyCoordForAreaId(target.ResolveCurrentAreaId()));
+            });
 
-        return BuildSkipOrFallback(enemyData, commands, slotIndex);
+        return PickCandidateOrSkip(candidates, context);
     }
 
-    private static EnemyActionPlan PlanEliteMelee(
-        EnemyData enemyData,
-        List<EnemyCommandData> commands,
-        IReadOnlyList<PlayerData> playerDataList,
-        int roundIndex)
+    private static EnemyActionPlan PlanSupportByGdd(PlanningContext context)
     {
-        EnemyCommandData rageCommand = FindCommandById(commands, 10);
-        if (enemyData.canEnterRage &&
-            !enemyData.rageTriggered &&
-            enemyData.hp <= enemyData.maxHp * 0.5f &&
+        List<ReleaseCandidate> candidates = new();
+        EnemyCommandData moveCommand = FindCommandById(context.Commands, 1);
+        EnemyCommandData healCommand = FindCommandById(context.Commands, 7);
+        EnemyCommandData rangedCommand = FindCommandById(context.Commands, 5) ?? FindBestCommand(context.Commands, IsRangedCommand);
+
+        AddHealCandidate(candidates, context, healCommand, GetFreeSlots(context));
+        AddMoveToEmptyAreaCandidate(candidates, context, moveCommand, maxSlot: Timeline.MaxSlotIndex - 1);
+        AddCandidate(
+            candidates,
+            rangedCommand,
+            GetFreeSlots(context, slot => !slot.HasSameAreaPlayer),
+            slot =>
+            {
+                PlayerData target = PickRandom(context.LivingPlayers);
+                return target == null
+                    ? null
+                    : BuildPlan(context.Enemy, rangedCommand, slot, target, AreaDefinition.GetLegacyCoordForAreaId(target.ResolveCurrentAreaId()));
+            });
+
+        return PickCandidateOrSkip(candidates, context);
+    }
+
+    private static EnemyActionPlan PlanEliteMeleeByGdd(PlanningContext context)
+    {
+        EnemyCommandData rageCommand = FindCommandById(context.Commands, 10);
+        if (context.Enemy.canEnterRage &&
+            !context.Enemy.rageTriggered &&
+            context.Enemy.hp <= context.Enemy.maxHp * 0.5f &&
             rageCommand != null)
         {
-            int rageSlot = IsSlotFree(enemyData, Timeline.MaxSlotIndex)
+            int rageSlot = context.FreeSlots.Contains(Timeline.MaxSlotIndex)
                 ? Timeline.MaxSlotIndex
-                : FindFirstFreeSlot(enemyData);
-            enemyData.rageTriggered = true;
-            return BuildPlan(enemyData, rageCommand, rageSlot, enemyData, AreaDefinition.GetLegacyCoordForAreaId(enemyData.ResolveCurrentAreaId()));
+                : PickRandom(context.FreeSlots);
+            context.Enemy.rageTriggered = true;
+            return BuildPlan(
+                context.Enemy,
+                rageCommand,
+                rageSlot,
+                context.Enemy,
+                AreaDefinition.GetLegacyCoordForAreaId(GetSlot(context, rageSlot).EnemyAreaId));
         }
 
-        if (enemyData.runtimeStatusIds != null && enemyData.runtimeStatusIds.Contains(StatusCatalog.Rage))
+        if (context.Enemy.runtimeStatusIds != null && context.Enemy.runtimeStatusIds.Contains(StatusCatalog.Rage))
         {
-            return PlanRageAction(enemyData, commands, playerDataList, roundIndex);
+            return PlanRageByGdd(context);
         }
 
-        return PlanMelee(enemyData, commands, playerDataList);
+        List<ReleaseCandidate> candidates = new();
+        EnemyCommandData moveCommand = FindCommandById(context.Commands, 1);
+        EnemyCommandData chargeCommand = FindCommandById(context.Commands, 8);
+        EnemyCommandData singleCommand = FindCommandById(context.Commands, 9) ?? FindCommandById(context.Commands, 3);
+
+        List<int> priorityChargeSlots = GetFreeSlots(
+            context,
+            slot => slot.SameAreaPlayers.Count > 1,
+            maxSlot: Timeline.MaxSlotIndex - 1);
+        if (chargeCommand != null && priorityChargeSlots.Count > 0)
+        {
+            AddCandidate(
+                candidates,
+                chargeCommand,
+                priorityChargeSlots,
+                slot => BuildPlanForSameAreaAttack(context, chargeCommand, slot, randomTargetWhenMultiple: true));
+            return PickCandidateOrSkip(candidates, context);
+        }
+
+        AddMoveToPlayerAreaCandidate(candidates, context, moveCommand, maxSlot: 3);
+        AddCandidate(
+            candidates,
+            chargeCommand,
+            GetFreeSlots(context, slot => slot.HasSameAreaPlayer, maxSlot: Timeline.MaxSlotIndex - 1),
+            slot => BuildPlanForSameAreaAttack(context, chargeCommand, slot, randomTargetWhenMultiple: true));
+        AddCandidate(
+            candidates,
+            singleCommand,
+            GetFreeSlots(context, slot => slot.HasSameAreaPlayer),
+            slot => BuildPlanForSameAreaAttack(context, singleCommand, slot, randomTargetWhenMultiple: false));
+
+        return PickCandidateOrSkip(candidates, context);
     }
 
-    private static EnemyActionPlan PlanRageAction(
-        EnemyData enemyData,
-        List<EnemyCommandData> commands,
-        IReadOnlyList<PlayerData> playerDataList,
-        int roundIndex)
+    private static EnemyActionPlan PlanRageByGdd(PlanningContext context)
     {
-        int option = roundIndex % 3;
-        if (option == 1)
+        if (context.HasQueuedCommand(12) || context.HasQueuedCommand(13))
         {
-            return PlanRagePathAction(enemyData, commands, playerDataList, YangCoord, 12);
+            return BuildSkipOrFallback(context);
         }
 
-        if (option == 2)
+        if (context.HasQueuedCommand(1))
         {
-            return PlanRagePathAction(enemyData, commands, playerDataList, YinCoord, 13);
+            return ContinueRagePathPlan(context);
         }
 
-        int slotIndex = FindFirstFreeSlot(enemyData);
-        Vector2I projectedCoord = GetProjectedCoord(enemyData);
-        CombatAreaId projectedAreaId = GetProjectedAreaId(enemyData);
-        List<PlayerData> livingPlayers = GetLivingPlayers(playerDataList);
-        PlayerData sameAreaTarget = GetLowestHpPlayer(livingPlayers.Where(player => IsInArea(player, projectedAreaId)));
-        PlayerData lowestHpTarget = GetLowestHpPlayer(livingPlayers);
-        EnemyCommandData rushCommand = FindCommandById(commands, 11);
-        EnemyCommandData chargeCommand = FindCommandById(commands, 8);
-        EnemyCommandData singleCommand = FindCommandById(commands, 9) ?? FindCommandById(commands, 3);
-
-        if (sameAreaTarget == null && lowestHpTarget != null && rushCommand != null && slotIndex <= 3)
+        if (context.HasQueuedCommand(11) || context.HasQueuedCommand(8) || context.HasQueuedCommand(9))
         {
-            return BuildPlan(enemyData, rushCommand, slotIndex, lowestHpTarget, AreaDefinition.GetLegacyCoordForAreaId(lowestHpTarget.ResolveCurrentAreaId()));
+            return ContinueRageAttackPlan(context);
         }
 
-        if (sameAreaTarget != null && chargeCommand != null && slotIndex <= 4)
+        for (int attempts = 0; attempts < 3; attempts++)
         {
-            return BuildPlan(enemyData, chargeCommand, slotIndex, sameAreaTarget, projectedCoord);
+            int option = Rng.Next(3);
+            EnemyActionPlan plan = option switch
+            {
+                0 => ContinueRageAttackPlan(context),
+                1 => StartRagePathPlan(context, YinPath, 12),
+                2 => StartRagePathPlan(context, YangPath, 13),
+                _ => null
+            };
+            if (plan != null && plan.IsValid)
+            {
+                return plan;
+            }
         }
 
-        if ((sameAreaTarget ?? lowestHpTarget) != null && singleCommand != null)
-        {
-            return BuildPlan(enemyData, singleCommand, slotIndex, sameAreaTarget ?? lowestHpTarget, projectedCoord);
-        }
-
-        return BuildSkipOrFallback(enemyData, commands, slotIndex);
+        return ContinueRageAttackPlan(context) ??
+            StartRagePathPlan(context, YinPath, 12) ??
+            StartRagePathPlan(context, YangPath, 13) ??
+            BuildSkipOrFallback(context);
     }
 
-    private static EnemyActionPlan PlanRagePathAction(
-        EnemyData enemyData,
-        List<EnemyCommandData> commands,
-        IReadOnlyList<PlayerData> playerDataList,
-        Vector2I setupCoord,
-        int pathCommandId)
+    private static EnemyActionPlan ContinueRageAttackPlan(PlanningContext context)
     {
-        int slotIndex = FindFirstFreeSlot(enemyData);
-        EnemyCommandData moveCommand = FindBestCommand(commands, IsMoveCommand);
-        EnemyCommandData pathCommand = FindCommandById(commands, pathCommandId);
-        PlayerData target = GetLowestHpPlayer(GetLivingPlayers(playerDataList));
-        Vector2I projectedCoord = GetProjectedCoord(enemyData);
+        EnemyCommandData rushCommand = FindCommandById(context.Commands, 11);
+        EnemyCommandData chargeCommand = FindCommandById(context.Commands, 8);
+        EnemyCommandData singleCommand = FindCommandById(context.Commands, 9) ?? FindCommandById(context.Commands, 3);
+        QueuedAction rushAction = context.GetFirstQueuedAction(11);
+        QueuedAction chargeAction = context.GetFirstQueuedAction(8);
 
-        if (projectedCoord != setupCoord && moveCommand != null && slotIndex == 1)
+        if (rushAction == null && !context.HasQueuedCommand(8) && !context.HasQueuedCommand(9))
         {
-            return BuildPlan(enemyData, moveCommand, slotIndex, null, setupCoord);
+            List<int> rushSlots = GetFreeSlots(context, slot => !slot.HasSameAreaPlayer, minSlot: 1, maxSlot: 3);
+            if (rushCommand != null && rushSlots.Count > 0)
+            {
+                PlayerData target = PickLowestHpPlayer(context.LivingPlayers);
+                if (target != null)
+                {
+                    int slot = PickRandom(rushSlots);
+                    return BuildPlan(context.Enemy, rushCommand, slot, target, AreaDefinition.GetLegacyCoordForAreaId(target.ResolveCurrentAreaId()));
+                }
+            }
         }
 
-        if (pathCommand != null && target != null)
+        if (chargeAction == null && chargeCommand != null)
         {
-            return BuildPlan(enemyData, pathCommand, slotIndex, target, AreaDefinition.GetLegacyCoordForAreaId(target.ResolveCurrentAreaId()));
+            int minChargeSlot = rushAction == null ? 1 : rushAction.SlotIndex + 1;
+            int maxChargeSlot = rushAction == null ? 3 : 4;
+            List<int> chargeSlots = GetFreeSlots(
+                context,
+                slot => slot.HasSameAreaPlayer,
+                minSlot: minChargeSlot,
+                maxSlot: maxChargeSlot);
+            if (chargeSlots.Count > 0)
+            {
+                int slot = PickRandom(chargeSlots);
+                return BuildPlanForSameAreaAttack(context, chargeCommand, slot, randomTargetWhenMultiple: true);
+            }
         }
 
-        return PlanRageAction(enemyData, commands, playerDataList, 0);
+        int queuedSingleCount = context.CountQueuedCommand(9);
+        int maxSingleCount = rushAction == null ? 2 : 1;
+        if (singleCommand != null && queuedSingleCount < maxSingleCount)
+        {
+            int minSingleSlot = rushAction == null
+                ? 4
+                : Math.Max(rushAction.SlotIndex + 1, (chargeAction?.SlotIndex ?? rushAction.SlotIndex) + 1);
+            List<int> singleSlots = GetFreeSlots(context, minSlot: minSingleSlot, maxSlot: Timeline.MaxSlotIndex);
+            if (singleSlots.Count > 0)
+            {
+                int slot = PickRandom(singleSlots);
+                PlayerData target = rushAction?.CommandInfo?.targetCharacterData as PlayerData;
+                if (target == null || !IsAlive(target))
+                {
+                    SlotProjection projection = GetSlot(context, slot);
+                    target = projection.HasSameAreaPlayer
+                        ? PickRandom(projection.SameAreaPlayers)
+                        : PickRandom(context.LivingPlayers);
+                }
+
+                return target == null
+                    ? null
+                    : BuildPlan(context.Enemy, singleCommand, slot, target, AreaDefinition.GetLegacyCoordForAreaId(target.ResolveCurrentAreaId()));
+            }
+        }
+
+        return BuildSkipOrFallback(context);
     }
 
-    private static EnemyActionPlan PlanEliteSupport(
-        EnemyData enemyData,
-        List<EnemyCommandData> commands,
-        IReadOnlyList<PlayerData> playerDataList,
-        IReadOnlyList<EnemyData> enemyDataList)
+    private static EnemyActionPlan StartRagePathPlan(PlanningContext context, CombatAreaId[] path, int pathCommandId)
     {
-        int slotIndex = FindFirstFreeSlot(enemyData);
-        Vector2I projectedCoord = GetProjectedCoord(enemyData);
-        CombatAreaId projectedAreaId = GetProjectedAreaId(enemyData);
-        List<PlayerData> livingPlayers = GetLivingPlayers(playerDataList);
-        List<EnemyData> livingAllies = GetLivingEnemies(enemyDataList);
-        EnemyData woundedAlly = livingAllies
-            .Where(ally => ally.hp < ally.maxHp)
-            .OrderBy(HealthPercent)
-            .FirstOrDefault();
-        EnemyCommandData healCommand = FindCommandById(commands, 7);
-        EnemyCommandData areaRangedCommand = FindCommandById(commands, 14);
-        EnemyCommandData rangedCommand = FindCommandById(commands, 5) ?? areaRangedCommand;
-        EnemyCommandData moveCommand = FindBestCommand(commands, IsMoveCommand);
-
-        if (woundedAlly != null && healCommand != null && projectedAreaId == CombatAreaId.Kan)
+        EnemyCommandData moveCommand = FindCommandById(context.Commands, 1);
+        PlayerData target = PickLowestHpPlayer(context.LivingPlayers);
+        if (target == null)
         {
-            return BuildPlan(enemyData, healCommand, slotIndex, woundedAlly, AreaDefinition.GetLegacyCoordForAreaId(woundedAlly.ResolveCurrentAreaId()));
+            return null;
         }
 
-        if (woundedAlly != null && healCommand != null && moveCommand != null && !livingPlayers.Any(player => IsInArea(player, CombatAreaId.Kan)))
+        CombatAreaId setupArea = GetPreviousAreaInPath(path, target.ResolveCurrentAreaId());
+        if (setupArea == CombatAreaId.Unknown)
         {
-            return BuildPlan(enemyData, moveCommand, slotIndex, null, new Vector2I(1, 2));
+            return null;
         }
 
-        PlayerData target = GetLowestHpPlayer(livingPlayers);
-        if (target != null && projectedAreaId == CombatAreaId.Dui && areaRangedCommand != null)
+        if (GetSlot(context, 1)?.IsFree == true &&
+            moveCommand != null &&
+            GetSlot(context, 1).EnemyAreaId != setupArea)
         {
-            return BuildPlan(enemyData, areaRangedCommand, slotIndex, target, AreaDefinition.GetLegacyCoordForAreaId(target.ResolveCurrentAreaId()));
+            return BuildPlan(context.Enemy, moveCommand, 1, null, AreaDefinition.GetLegacyCoordForAreaId(setupArea));
         }
 
-        if (target != null && rangedCommand != null)
+        return BuildRagePathAttack(context, pathCommandId);
+    }
+
+    private static EnemyActionPlan ContinueRagePathPlan(PlanningContext context)
+    {
+        PlayerData target = PickLowestHpPlayer(context.LivingPlayers);
+        CombatAreaId targetAreaId = target?.ResolveCurrentAreaId() ?? CombatAreaId.Unknown;
+        QueuedAction setupMove = context.GetFirstQueuedAction(1);
+        CombatAreaId setupAreaId = setupMove == null
+            ? CombatAreaId.Unknown
+            : ResolveCommandTargetArea(setupMove.CommandInfo);
+
+        int pathCommandId = 0;
+        if (targetAreaId != CombatAreaId.Unknown && setupAreaId == GetPreviousAreaInPath(YinPath, targetAreaId))
         {
-            return BuildPlan(enemyData, rangedCommand, slotIndex, target, projectedCoord);
+            pathCommandId = 12;
+        }
+        else if (targetAreaId != CombatAreaId.Unknown && setupAreaId == GetPreviousAreaInPath(YangPath, targetAreaId))
+        {
+            pathCommandId = 13;
+        }
+        else
+        {
+            pathCommandId = PickRandom(new[] { 12, 13 });
         }
 
-        return PlanSupport(enemyData, commands, playerDataList, enemyDataList);
+        return BuildRagePathAttack(context, pathCommandId);
+    }
+
+    private static EnemyActionPlan BuildRagePathAttack(PlanningContext context, int pathCommandId)
+    {
+        EnemyCommandData pathCommand = FindCommandById(context.Commands, pathCommandId);
+        List<int> slots = GetFreeSlots(context, minSlot: 2, maxSlot: 3);
+        PlayerData target = PickLowestHpPlayer(context.LivingPlayers);
+        if (pathCommand == null || slots.Count == 0 || target == null)
+        {
+            return null;
+        }
+
+        int slot = PickRandom(slots);
+        return BuildPlan(context.Enemy, pathCommand, slot, target, AreaDefinition.GetLegacyCoordForAreaId(target.ResolveCurrentAreaId()));
+    }
+
+    private static EnemyActionPlan PlanEliteSupportByGdd(PlanningContext context)
+    {
+        EnemyCommandData moveCommand = FindCommandById(context.Commands, 1);
+        EnemyCommandData healCommand = FindCommandById(context.Commands, 7);
+        EnemyCommandData rangedCommand = FindCommandById(context.Commands, 5);
+        EnemyCommandData areaRangedCommand = FindCommandById(context.Commands, 14);
+
+        List<ReleaseCandidate> priorityCandidates = new();
+        AddHealCandidate(
+            priorityCandidates,
+            context,
+            healCommand,
+            GetFreeSlots(context, slot => slot.EnemyAreaId == CombatAreaId.Kan));
+        AddRangedTargetCandidate(
+            priorityCandidates,
+            context,
+            rangedCommand,
+            GetFreeSlots(context, slot => slot.EnemyAreaId == CombatAreaId.Dui));
+        AddRangedTargetCandidate(
+            priorityCandidates,
+            context,
+            areaRangedCommand,
+            GetFreeSlots(context, slot => slot.EnemyAreaId == CombatAreaId.Dui));
+        if (priorityCandidates.Count > 0)
+        {
+            return PickCandidateOrSkip(priorityCandidates, context);
+        }
+
+        List<ReleaseCandidate> candidates = new();
+        AddHealCandidate(candidates, context, healCommand, GetFreeSlots(context));
+        AddCandidate(
+            candidates,
+            moveCommand,
+            GetFreeSlots(context, slot => slot.HasSameAreaPlayer),
+            slot =>
+            {
+                CombatAreaId targetAreaId = PickEliteSupportMoveTarget(context);
+                return targetAreaId == CombatAreaId.Unknown
+                    ? null
+                    : BuildPlan(context.Enemy, moveCommand, slot, null, AreaDefinition.GetLegacyCoordForAreaId(targetAreaId));
+            });
+        AddRangedTargetCandidate(candidates, context, rangedCommand, GetFreeSlots(context));
+        AddRangedTargetCandidate(candidates, context, areaRangedCommand, GetFreeSlots(context));
+
+        return PickCandidateOrSkip(candidates, context);
+    }
+
+    private static void AddMoveToPlayerAreaCandidate(
+        List<ReleaseCandidate> candidates,
+        PlanningContext context,
+        EnemyCommandData moveCommand,
+        int maxSlot)
+    {
+        AddCandidate(
+            candidates,
+            moveCommand,
+            GetFreeSlots(context, slot => !slot.HasSameAreaPlayer, maxSlot: maxSlot),
+            slot =>
+            {
+                CombatAreaId targetAreaId = PickRandomPlayerArea(context);
+                return targetAreaId == CombatAreaId.Unknown
+                    ? null
+                    : BuildPlan(context.Enemy, moveCommand, slot, null, AreaDefinition.GetLegacyCoordForAreaId(targetAreaId));
+            });
+    }
+
+    private static void AddMoveToEmptyAreaCandidate(
+        List<ReleaseCandidate> candidates,
+        PlanningContext context,
+        EnemyCommandData moveCommand,
+        int maxSlot)
+    {
+        AddCandidate(
+            candidates,
+            moveCommand,
+            GetFreeSlots(context, slot => slot.HasSameAreaPlayer, maxSlot: maxSlot),
+            slot =>
+            {
+                CombatAreaId targetAreaId = PickRandomAreaWithoutPlayers(context);
+                return targetAreaId == CombatAreaId.Unknown
+                    ? null
+                    : BuildPlan(context.Enemy, moveCommand, slot, null, AreaDefinition.GetLegacyCoordForAreaId(targetAreaId));
+            });
+    }
+
+    private static void AddSameAreaAttackCandidate(
+        List<ReleaseCandidate> candidates,
+        PlanningContext context,
+        EnemyCommandData attackCommand,
+        bool randomTargetWhenMultiple,
+        int maxSlot = Timeline.MaxSlotIndex)
+    {
+        AddCandidate(
+            candidates,
+            attackCommand,
+            GetFreeSlots(context, slot => slot.HasSameAreaPlayer, maxSlot: maxSlot),
+            slot => BuildPlanForSameAreaAttack(context, attackCommand, slot, randomTargetWhenMultiple));
+    }
+
+    private static void AddHealCandidate(
+        List<ReleaseCandidate> candidates,
+        PlanningContext context,
+        EnemyCommandData healCommand,
+        List<int> slots)
+    {
+        if (context.HasQueuedCommand(7))
+        {
+            return;
+        }
+
+        AddCandidate(candidates, healCommand, slots, slot =>
+        {
+            EnemyData target = PickLowestHealthPercentEnemy(context.LivingEnemies.Where(enemy => enemy.hp < enemy.maxHp));
+            return target == null
+                ? null
+                : BuildPlan(context.Enemy, healCommand, slot, target, AreaDefinition.GetLegacyCoordForAreaId(target.ResolveCurrentAreaId()));
+        });
+    }
+
+    private static void AddRangedTargetCandidate(
+        List<ReleaseCandidate> candidates,
+        PlanningContext context,
+        EnemyCommandData rangedCommand,
+        List<int> slots)
+    {
+        AddCandidate(candidates, rangedCommand, slots, slot =>
+        {
+            PlayerData target = PickRandom(context.LivingPlayers);
+            return target == null
+                ? null
+                : BuildPlan(context.Enemy, rangedCommand, slot, target, AreaDefinition.GetLegacyCoordForAreaId(target.ResolveCurrentAreaId()));
+        });
+    }
+
+    private static EnemyActionPlan BuildPlanForSameAreaAttack(
+        PlanningContext context,
+        EnemyCommandData attackCommand,
+        int slot,
+        bool randomTargetWhenMultiple)
+    {
+        SlotProjection projection = GetSlot(context, slot);
+        PlayerData target = randomTargetWhenMultiple
+            ? PickRandom(projection.SameAreaPlayers)
+            : PickLowestHpPlayer(projection.SameAreaPlayers);
+        return target == null
+            ? null
+            : BuildPlan(context.Enemy, attackCommand, slot, target, AreaDefinition.GetLegacyCoordForAreaId(target.ResolveCurrentAreaId()));
+    }
+
+    private static void AddCandidate(
+        List<ReleaseCandidate> candidates,
+        EnemyCommandData command,
+        List<int> slotIndexes,
+        Func<int, EnemyActionPlan> buildPlan)
+    {
+        if (command == null || slotIndexes == null || slotIndexes.Count == 0 || buildPlan == null)
+        {
+            return;
+        }
+
+        candidates.Add(new ReleaseCandidate(command, slotIndexes, buildPlan));
+    }
+
+    private static EnemyActionPlan PickCandidateOrSkip(List<ReleaseCandidate> candidates, PlanningContext context)
+    {
+        EnemyActionPlan plan = PickCandidate(candidates);
+        return plan != null && plan.IsValid
+            ? plan
+            : BuildSkipOrFallback(context);
+    }
+
+    private static EnemyActionPlan PickCandidate(List<ReleaseCandidate> candidates)
+    {
+        List<ReleaseCandidate> remaining = candidates?
+            .Where(candidate => candidate?.SlotIndexes?.Count > 0)
+            .ToList() ?? new List<ReleaseCandidate>();
+
+        while (remaining.Count > 0)
+        {
+            int index = Rng.Next(remaining.Count);
+            ReleaseCandidate candidate = remaining[index];
+            EnemyActionPlan plan = candidate.BuildRandomPlan();
+            if (plan != null && plan.IsValid)
+            {
+                return plan;
+            }
+
+            remaining.RemoveAt(index);
+        }
+
+        return null;
     }
 
     private static EnemyActionPlan BuildPlan(
@@ -399,7 +624,7 @@ public class EnemyActionPlanner
         CharacterData targetCharacter,
         Vector2I targetCoord)
     {
-        if (selectedCommand == null || slotIndex < Timeline.MinSlotIndex)
+        if (selectedCommand == null || slotIndex < Timeline.MinSlotIndex || slotIndex > Timeline.MaxSlotIndex)
         {
             return null;
         }
@@ -422,100 +647,184 @@ public class EnemyActionPlanner
         };
     }
 
-    private static EnemyActionPlan BuildSkipOrFallback(
+    private static EnemyActionPlan BuildSkipOrFallback(PlanningContext context)
+    {
+        EnemyCommandData skipCommand = FindBestCommand(context.Commands, IsSkipCommand);
+        if (skipCommand == null || context.FreeSlots.Count == 0)
+        {
+            return null;
+        }
+
+        int slot = PickRandom(context.FreeSlots);
+        CombatAreaId areaId = GetSlot(context, slot)?.EnemyAreaId ?? context.Enemy.ResolveCurrentAreaId();
+        return BuildPlan(context.Enemy, skipCommand, slot, null, AreaDefinition.GetLegacyCoordForAreaId(areaId));
+    }
+
+    private static PlanningContext BuildPlanningContext(
         EnemyData enemyData,
         List<EnemyCommandData> commands,
-        int slotIndex)
+        IReadOnlyList<PlayerData> playerDataList,
+        IReadOnlyList<EnemyData> enemyDataList)
     {
-        EnemyCommandData selectedCommand = FindBestCommand(commands, IsSkipCommand) ?? commands
-            .OrderByDescending(command => SkillDefinition.FromCommandData(command).Priority)
-            .ThenBy(command => command.commandId)
-            .FirstOrDefault();
-        return selectedCommand == null
-            ? null
-            : BuildPlan(enemyData, selectedCommand, slotIndex, null, GetProjectedCoord(enemyData));
-    }
-
-    private static int FindFirstFreeSlot(EnemyData enemyData)
-    {
-        if (enemyData.commandQueue == null)
+        PlanningContext context = new()
         {
-            return -1;
+            Enemy = enemyData,
+            Commands = commands,
+            LivingPlayers = GetLivingPlayers(playerDataList),
+            LivingEnemies = GetLivingEnemies(enemyDataList)
+        };
+
+        CombatAreaId projectedAreaId = enemyData.ResolveCurrentAreaId();
+        if (projectedAreaId == CombatAreaId.Unknown)
+        {
+            projectedAreaId = CombatAreaId.Yang;
         }
 
-        for (int i = 0; i < enemyData.commandQueue.Count && i < Timeline.MaxSlotIndex; i++)
+        for (int slotIndex = Timeline.MinSlotIndex; slotIndex <= Timeline.MaxSlotIndex; slotIndex++)
         {
-            if (enemyData.commandQueue[i] == null || enemyData.commandQueue[i].isDefault)
+            CommandExecuteInfo queuedCommand = GetQueuedCommand(enemyData, slotIndex);
+            bool isFree = queuedCommand == null || queuedCommand.isDefault;
+            List<PlayerData> sameAreaPlayers = context.LivingPlayers
+                .Where(player => player.ResolveCurrentAreaId() == projectedAreaId)
+                .ToList();
+
+            context.Slots.Add(new SlotProjection
             {
-                return i + 1;
+                SlotIndex = slotIndex,
+                EnemyAreaId = projectedAreaId,
+                SameAreaPlayers = sameAreaPlayers,
+                IsFree = isFree
+            });
+
+            if (isFree)
+            {
+                context.FreeSlots.Add(slotIndex);
+            }
+            else
+            {
+                context.QueuedActions.Add(new QueuedAction
+                {
+                    SlotIndex = slotIndex,
+                    CommandInfo = queuedCommand
+                });
+
+                SkillDefinition skill = SkillDefinition.FromCommandData(queuedCommand.commandData);
+                if (skill.HasTag(SkillTag.Move))
+                {
+                    CombatAreaId targetAreaId = ResolveCommandTargetArea(queuedCommand);
+                    if (targetAreaId != CombatAreaId.Unknown)
+                    {
+                        projectedAreaId = targetAreaId;
+                    }
+                }
             }
         }
 
-        return -1;
+        return context;
     }
 
-    private static bool IsSlotFree(EnemyData enemyData, int slotIndex)
+    private static CommandExecuteInfo GetQueuedCommand(EnemyData enemyData, int slotIndex)
     {
         int queueIndex = slotIndex - 1;
-        return enemyData?.commandQueue != null &&
-            queueIndex >= 0 &&
-            queueIndex < enemyData.commandQueue.Count &&
-            (enemyData.commandQueue[queueIndex] == null || enemyData.commandQueue[queueIndex].isDefault);
+        if (enemyData?.commandQueue == null ||
+            queueIndex < 0 ||
+            queueIndex >= enemyData.commandQueue.Count)
+        {
+            return null;
+        }
+
+        return enemyData.commandQueue[queueIndex];
     }
 
-    private static Vector2I GetProjectedCoord(EnemyData enemyData)
+    private static List<int> GetFreeSlots(
+        PlanningContext context,
+        Func<SlotProjection, bool> predicate = null,
+        int minSlot = Timeline.MinSlotIndex,
+        int maxSlot = Timeline.MaxSlotIndex,
+        IEnumerable<int> excludedSlots = null)
     {
-        Vector2I projectedCoord = AreaDefinition.GetLegacyCoordForAreaId(enemyData.ResolveCurrentAreaId());
-        if (enemyData.commandQueue == null)
-        {
-            return projectedCoord;
-        }
-
-        foreach (CommandExecuteInfo command in enemyData.commandQueue)
-        {
-            if (command == null || command.isDefault || command.commandData == null)
-            {
-                continue;
-            }
-
-            SkillDefinition skill = SkillDefinition.FromCommandData(command.commandData);
-            if (skill.HasTag(SkillTag.Move))
-            {
-                CombatAreaId projectedAreaId = command.targetAreaId != CombatAreaId.Unknown
-                    ? command.targetAreaId
-                    : AreaDefinition.GetAreaIdForLegacyCoord(command.targetCoord);
-                projectedCoord = AreaDefinition.GetLegacyCoordForAreaId(projectedAreaId);
-            }
-        }
-
-        return projectedCoord;
+        HashSet<int> excluded = new(excludedSlots ?? Enumerable.Empty<int>());
+        return context.Slots
+            .Where(slot =>
+                slot.IsFree &&
+                slot.SlotIndex >= minSlot &&
+                slot.SlotIndex <= maxSlot &&
+                !excluded.Contains(slot.SlotIndex) &&
+                (predicate == null || predicate(slot)))
+            .Select(slot => slot.SlotIndex)
+            .ToList();
     }
 
-    private static CombatAreaId GetProjectedAreaId(EnemyData enemyData)
+    private static SlotProjection GetSlot(PlanningContext context, int slotIndex)
     {
-        CombatAreaId projectedAreaId = enemyData.ResolveCurrentAreaId();
-        if (enemyData.commandQueue == null)
+        return context?.Slots?.FirstOrDefault(slot => slot.SlotIndex == slotIndex);
+    }
+
+    private static CombatAreaId PickRandomPlayerArea(PlanningContext context)
+    {
+        List<CombatAreaId> areas = context.LivingPlayers
+            .Select(player => player.ResolveCurrentAreaId())
+            .Where(area => area != CombatAreaId.Unknown)
+            .Distinct()
+            .ToList();
+        return PickRandom(areas);
+    }
+
+    private static CombatAreaId PickRandomAreaWithoutPlayers(PlanningContext context)
+    {
+        List<CombatAreaId> areas = AllAreas
+            .Where(area => !AreaHasLivingPlayer(context, area))
+            .ToList();
+        return PickRandom(areas);
+    }
+
+    private static CombatAreaId PickEliteSupportMoveTarget(PlanningContext context)
+    {
+        bool hasWoundedBelowHalf = context.LivingEnemies.Any(enemy => enemy.hp < enemy.maxHp * 0.5f);
+        if (hasWoundedBelowHalf && !AreaHasLivingPlayer(context, CombatAreaId.Kan))
         {
-            return projectedAreaId;
+            return CombatAreaId.Kan;
         }
 
-        foreach (CommandExecuteInfo command in enemyData.commandQueue)
+        List<CombatAreaId> preferredAreas = new[] { CombatAreaId.Qian, CombatAreaId.Dui }
+            .Where(area => !AreaHasLivingPlayer(context, area))
+            .ToList();
+        if (preferredAreas.Count > 0)
         {
-            if (command == null || command.isDefault || command.commandData == null)
-            {
-                continue;
-            }
-
-            SkillDefinition skill = SkillDefinition.FromCommandData(command.commandData);
-            if (skill.HasTag(SkillTag.Move))
-            {
-                projectedAreaId = command.targetAreaId != CombatAreaId.Unknown
-                    ? command.targetAreaId
-                    : AreaDefinition.GetAreaIdForLegacyCoord(command.targetCoord);
-            }
+            return PickRandom(preferredAreas);
         }
 
-        return projectedAreaId;
+        return PickRandomAreaWithoutPlayers(context);
+    }
+
+    private static bool AreaHasLivingPlayer(PlanningContext context, CombatAreaId areaId)
+    {
+        return context.LivingPlayers.Any(player => player.ResolveCurrentAreaId() == areaId);
+    }
+
+    private static PlayerData GetQueuedAmbushTarget(PlanningContext context)
+    {
+        return context.GetFirstQueuedAction(6)?.CommandInfo?.targetCharacterData as PlayerData;
+    }
+
+    private static CombatAreaId ResolveCommandTargetArea(CommandExecuteInfo command)
+    {
+        if (command == null)
+        {
+            return CombatAreaId.Unknown;
+        }
+
+        if (command.targetAreaId != CombatAreaId.Unknown)
+        {
+            return command.targetAreaId;
+        }
+
+        if (command.targetCharacterData != null)
+        {
+            return command.targetCharacterData.ResolveCurrentAreaId();
+        }
+
+        return AreaDefinition.GetAreaIdForLegacyCoord(command.targetCoord);
     }
 
     private static CombatAreaId ResolveTargetAreaId(CharacterData targetCharacter, Vector2I targetCoord)
@@ -532,19 +841,29 @@ public class EnemyActionPlanner
         return AreaDefinition.GetAreaIdForLegacyCoord(targetCoord);
     }
 
-    private static bool IsInArea(CharacterData characterData, CombatAreaId areaId)
+    private static CombatAreaId GetPreviousAreaInPath(CombatAreaId[] path, CombatAreaId targetAreaId)
     {
-        return characterData != null &&
-            areaId != CombatAreaId.Unknown &&
-            characterData.ResolveCurrentAreaId() == areaId;
+        if (path == null || path.Length == 0 || targetAreaId == CombatAreaId.Unknown)
+        {
+            return CombatAreaId.Unknown;
+        }
+
+        int index = Array.IndexOf(path, targetAreaId);
+        if (index < 0)
+        {
+            return CombatAreaId.Unknown;
+        }
+
+        int previousIndex = index == 0 ? path.Length - 1 : index - 1;
+        return path[previousIndex];
     }
 
     private static EnemyCommandData FindBestCommand(
         IEnumerable<EnemyCommandData> commands,
         Func<EnemyCommandData, bool> predicate)
     {
-        return commands
-            .Where(predicate)
+        return commands?
+            .Where(command => command != null && predicate(command))
             .OrderByDescending(command => SkillDefinition.FromCommandData(command).Priority)
             .ThenBy(command => command.commandId)
             .FirstOrDefault();
@@ -602,22 +921,28 @@ public class EnemyActionPlanner
         return enemyDataList?.Where(IsAlive).ToList() ?? new List<EnemyData>();
     }
 
-    private static PlayerData GetLowestHpPlayer(IEnumerable<PlayerData> players)
+    private static PlayerData PickLowestHpPlayer(IEnumerable<PlayerData> players)
     {
-        return players?
-            .Where(IsAlive)
-            .OrderBy(HealthPercent)
-            .ThenBy(player => player.hp)
-            .FirstOrDefault();
+        List<PlayerData> livingPlayers = players?.Where(IsAlive).ToList() ?? new List<PlayerData>();
+        if (livingPlayers.Count == 0)
+        {
+            return null;
+        }
+
+        float lowestHp = livingPlayers.Min(player => player.hp);
+        return PickRandom(livingPlayers.Where(player => Math.Abs(player.hp - lowestHp) < 0.001f).ToList());
     }
 
-    private static PlayerData GetNearestPlayer(IEnumerable<PlayerData> players, Vector2I origin)
+    private static EnemyData PickLowestHealthPercentEnemy(IEnumerable<EnemyData> enemies)
     {
-        return players?
-            .Where(IsAlive)
-            .OrderBy(player => Distance(origin, player.coord))
-            .ThenBy(HealthPercent)
-            .FirstOrDefault();
+        List<EnemyData> livingEnemies = enemies?.Where(IsAlive).ToList() ?? new List<EnemyData>();
+        if (livingEnemies.Count == 0)
+        {
+            return null;
+        }
+
+        float lowestPercent = livingEnemies.Min(HealthPercent);
+        return PickRandom(livingEnemies.Where(enemy => Math.Abs(HealthPercent(enemy) - lowestPercent) < 0.001f).ToList());
     }
 
     private static float HealthPercent(CharacterData characterData)
@@ -627,43 +952,80 @@ public class EnemyActionPlanner
             : characterData.hp / characterData.maxHp;
     }
 
-    private static Vector2I FindFallbackMoveCoord(Vector2I currentCoord)
+    private static T PickRandom<T>(IReadOnlyList<T> items)
     {
-        return FallbackMoveCoords.FirstOrDefault(coord => coord != currentCoord);
+        return items == null || items.Count == 0
+            ? default
+            : items[Rng.Next(items.Count)];
     }
 
-    private static Vector2I FindSafeCoord(Vector2I currentCoord, IReadOnlyList<PlayerData> livingPlayers)
+    private sealed class PlanningContext
     {
-        return FallbackMoveCoords.FirstOrDefault(coord =>
-            coord != currentCoord &&
-            (livingPlayers == null || !livingPlayers.Any(player => player.coord == coord)));
+        public EnemyData Enemy { get; set; }
+        public List<EnemyCommandData> Commands { get; set; } = new();
+        public List<PlayerData> LivingPlayers { get; set; } = new();
+        public List<EnemyData> LivingEnemies { get; set; } = new();
+        public List<SlotProjection> Slots { get; } = new();
+        public List<int> FreeSlots { get; } = new();
+        public List<QueuedAction> QueuedActions { get; } = new();
+
+        public bool HasQueuedCommand(int commandId)
+        {
+            return QueuedActions.Any(action => action.CommandId == commandId);
+        }
+
+        public int CountQueuedCommand(int commandId)
+        {
+            return QueuedActions.Count(action => action.CommandId == commandId);
+        }
+
+        public QueuedAction GetFirstQueuedAction(int commandId)
+        {
+            return QueuedActions
+                .Where(action => action.CommandId == commandId)
+                .OrderBy(action => action.SlotIndex)
+                .FirstOrDefault();
+        }
     }
 
-    private static Vector2I FindSupportCoord(IReadOnlyList<PlayerData> livingPlayers)
+    private sealed class SlotProjection
     {
-        Vector2I kanCoord = new(1, 2);
-        if (livingPlayers == null || !livingPlayers.Any(player => player.coord == kanCoord))
-        {
-            return kanCoord;
-        }
-
-        Vector2I duiCoord = new(0, 1);
-        if (!livingPlayers.Any(player => player.coord == duiCoord))
-        {
-            return duiCoord;
-        }
-
-        Vector2I qianCoord = new(0, 0);
-        if (!livingPlayers.Any(player => player.coord == qianCoord))
-        {
-            return qianCoord;
-        }
-
-        return FindSafeCoord(kanCoord, livingPlayers);
+        public int SlotIndex { get; set; }
+        public CombatAreaId EnemyAreaId { get; set; } = CombatAreaId.Unknown;
+        public List<PlayerData> SameAreaPlayers { get; set; } = new();
+        public bool IsFree { get; set; }
+        public bool HasSameAreaPlayer => SameAreaPlayers.Count > 0;
     }
 
-    private static int Distance(Vector2I a, Vector2I b)
+    private sealed class QueuedAction
     {
-        return Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
+        public int SlotIndex { get; set; }
+        public CommandExecuteInfo CommandInfo { get; set; }
+        public int CommandId => CommandInfo?.commandData?.commandId ?? -1;
+    }
+
+    private sealed class ReleaseCandidate
+    {
+        public EnemyCommandData Command { get; }
+        public List<int> SlotIndexes { get; }
+        private Func<int, EnemyActionPlan> BuildPlan { get; }
+
+        public ReleaseCandidate(
+            EnemyCommandData command,
+            List<int> slotIndexes,
+            Func<int, EnemyActionPlan> buildPlan)
+        {
+            Command = command;
+            SlotIndexes = slotIndexes;
+            BuildPlan = buildPlan;
+        }
+
+        public EnemyActionPlan BuildRandomPlan()
+        {
+            int slot = PickRandom(SlotIndexes);
+            return slot < Timeline.MinSlotIndex
+                ? null
+                : BuildPlan(slot);
+        }
     }
 }

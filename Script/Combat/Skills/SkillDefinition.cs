@@ -134,7 +134,7 @@ public class SkillDefinition
                 definition.Tags = SkillTag.Melee | SkillTag.Area;
                 definition.MpCost = 30;
                 definition.DurationSlots = 2;
-                definition.Effects.Add(SkillEffectDefinition.Damage(1.0f, excludeSource: true, delaySlots: 1));
+                definition.Effects.Add(SkillEffectDefinition.Damage(1.0f, excludeSource: true, delaySlots: 1, resolveWithActionPriority: true, requiresLivingSourceOnTrigger: true));
                 break;
             case 10:
                 definition.TargetType = SkillTargetType.Enemy;
@@ -168,14 +168,14 @@ public class SkillDefinition
                 definition.Tags = SkillTag.Ranged | SkillTag.Area | SkillTag.Special;
                 definition.MpCost = 30;
                 definition.DurationSlots = 4;
-                definition.Effects.Add(SkillEffectDefinition.Damage(1.0f));
+                definition.Effects.Add(SkillEffectDefinition.Damage(1.0f, delaySlots: 4, snapshotTargetAreaOnSchedule: true));
                 break;
             case 15:
                 definition.TargetType = SkillTargetType.Enemy;
                 definition.Tags = SkillTag.Ranged | SkillTag.Area | SkillTag.Special;
                 definition.MpCost = 30;
                 definition.DurationSlots = 4;
-                definition.Effects.Add(SkillEffectDefinition.Damage(1.0f));
+                definition.Effects.Add(SkillEffectDefinition.Damage(1.0f, delaySlots: 4, snapshotTargetAreaOnSchedule: true));
                 break;
             case 16:
                 definition.TargetType = SkillTargetType.Enemy;
@@ -207,7 +207,7 @@ public class SkillDefinition
                 definition.Tags = SkillTag.Heal | SkillTag.Area | SkillTag.Special;
                 definition.MpCost = 30;
                 definition.DurationSlots = 4;
-                definition.Effects.Add(SkillEffectDefinition.Heal(1.0f));
+                definition.Effects.Add(SkillEffectDefinition.Heal(1.0f, delaySlots: 4, snapshotTargetAreaOnSchedule: true));
                 break;
             case 21:
                 definition.TargetType = SkillTargetType.Self;
@@ -269,7 +269,7 @@ public class SkillDefinition
                 definition.TargetType = SkillTargetType.Enemy;
                 definition.Tags = SkillTag.Melee | SkillTag.SingleTarget;
                 definition.DurationSlots = 2;
-                definition.Effects.Add(SkillEffectDefinition.Damage(2.0f));
+                definition.Effects.Add(SkillEffectDefinition.Damage(2.0f, delaySlots: 1, resolveWithActionPriority: true, requiresLivingSourceOnTrigger: true));
                 break;
             case 5:
                 definition.TargetType = SkillTargetType.Enemy;
@@ -290,7 +290,7 @@ public class SkillDefinition
                 definition.TargetType = SkillTargetType.Enemy;
                 definition.Tags = SkillTag.Melee | SkillTag.Area;
                 definition.DurationSlots = 2;
-                definition.Effects.Add(SkillEffectDefinition.Damage(1.5f, excludeSource: true));
+                definition.Effects.Add(SkillEffectDefinition.Damage(1.5f, excludeSource: true, delaySlots: 1, resolveWithActionPriority: true, requiresLivingSourceOnTrigger: true));
                 break;
             case 9:
                 definition.TargetType = SkillTargetType.Enemy;
@@ -324,7 +324,7 @@ public class SkillDefinition
                 definition.TargetType = SkillTargetType.Enemy;
                 definition.Tags = SkillTag.Ranged | SkillTag.Area | SkillTag.Special;
                 definition.DurationSlots = 4;
-                definition.Effects.Add(SkillEffectDefinition.Damage(1.0f, excludeSource: true));
+                definition.Effects.Add(SkillEffectDefinition.Damage(1.0f, excludeSource: true, delaySlots: 4, snapshotTargetAreaOnSchedule: true));
                 break;
             default:
                 definition.TargetType = SkillTargetType.None;
@@ -340,30 +340,51 @@ public class SkillEffectDefinition
     public float Value { get; set; }
     public string StatusId { get; set; } = string.Empty;
     public int DelaySlots { get; set; }
+    public bool ResolveWithActionPriority { get; set; }
+    public bool RequiresLivingSourceOnTrigger { get; set; }
+    public bool SnapshotTargetAreaOnSchedule { get; set; }
     public CombatAreaId TargetAreaId { get; set; } = CombatAreaId.Unknown;
     public bool ExcludeSource { get; set; }
     public bool AffectAllies { get; set; }
     public string Message { get; set; } = string.Empty;
 
-    public static SkillEffectDefinition Damage(float multiplier, bool excludeSource = false, int delaySlots = 0)
+    public static SkillEffectDefinition Damage(
+        float multiplier,
+        bool excludeSource = false,
+        int delaySlots = 0,
+        bool resolveWithActionPriority = false,
+        bool requiresLivingSourceOnTrigger = false,
+        bool snapshotTargetAreaOnSchedule = false)
     {
         return new SkillEffectDefinition
         {
             EffectType = SkillEffectType.Damage,
             Value = multiplier,
             ExcludeSource = excludeSource,
-            DelaySlots = delaySlots
+            DelaySlots = delaySlots,
+            ResolveWithActionPriority = resolveWithActionPriority,
+            RequiresLivingSourceOnTrigger = requiresLivingSourceOnTrigger,
+            SnapshotTargetAreaOnSchedule = snapshotTargetAreaOnSchedule
         };
     }
 
-    public static SkillEffectDefinition Heal(float multiplier, bool affectAllies = false, int delaySlots = 0)
+    public static SkillEffectDefinition Heal(
+        float multiplier,
+        bool affectAllies = false,
+        int delaySlots = 0,
+        bool resolveWithActionPriority = false,
+        bool requiresLivingSourceOnTrigger = false,
+        bool snapshotTargetAreaOnSchedule = false)
     {
         return new SkillEffectDefinition
         {
             EffectType = SkillEffectType.Heal,
             Value = multiplier,
             AffectAllies = affectAllies,
-            DelaySlots = delaySlots
+            DelaySlots = delaySlots,
+            ResolveWithActionPriority = resolveWithActionPriority,
+            RequiresLivingSourceOnTrigger = requiresLivingSourceOnTrigger,
+            SnapshotTargetAreaOnSchedule = snapshotTargetAreaOnSchedule
         };
     }
 

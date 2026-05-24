@@ -153,7 +153,8 @@ public partial class CommandItemUIControl : Control
 
 		if (commandData is EnemyCommandData)
 		{
-			SetEnemyActionRevealed(false);
+			bool revealed = Autoloads.sceneSingleton?.cmdQueueUIControl?.IsEnemySlotRevealed(cmdIdxInQueue + 1) == true;
+			SetEnemyActionRevealed(revealed);
 			return;
 		}
 
@@ -206,7 +207,7 @@ public partial class CommandItemUIControl : Control
 		}
 
 		isOnset = true;
-		commandItemState = CommandItemState.HIGHLIGHT;
+		commandItemState = CommandItemState.NORMAL;
 	}
 
 	public bool CanAcceptPlacement()
@@ -312,6 +313,10 @@ public partial class CommandItemUIControl : Control
 		string sourceName = currentPlayer.characterName;
 		string commandName = currentCommand.commandName;
 		currentPlayer.SetCommand(1, cmdIdxInQueue, cei);
+		if (currentCommand is PlayerCommandData playerCommandData)
+		{
+			sS.cmdQueueUIControl?.ApplyRevealCommand(playerCommandData, cmdIdxInQueue + 1);
+		}
 		sS.enemyCharacterHeadListUIControl?.ChangeToUninteractable();
 		sS.cmdQueueUIControl?.ResetCommandSelectionContext(
 			"指令已设置",

@@ -3,6 +3,20 @@ using System.Collections.Generic;
 
 public partial class ChessBoard : Node
 {
+	private static readonly CombatAreaId[] SceneAnchorAreaOrder =
+	{
+		CombatAreaId.Qian,
+		CombatAreaId.Kan,
+		CombatAreaId.Gen,
+		CombatAreaId.Dui,
+		CombatAreaId.Yang,
+		CombatAreaId.Yin,
+		CombatAreaId.Zhen,
+		CombatAreaId.Kun,
+		CombatAreaId.Li,
+		CombatAreaId.Xun
+	};
+
 	public List<List<ChessCell>> chessCellList;
 	public ChessBoardUIControl chessBoardUIControl;
 
@@ -36,20 +50,23 @@ public partial class ChessBoard : Node
 			return;
 		}
 
-		int anchorIndex = 0;
-		foreach (List<ChessCell> row in chessCellList)
+		for (int anchorIndex = 0; anchorIndex < SceneAnchorAreaOrder.Length; anchorIndex++)
 		{
-			foreach (ChessCell chessCell in row)
+			if (anchorIndex >= areaAnchors.Length)
 			{
-				if (anchorIndex >= areaAnchors.Length)
-				{
-					GD.PrintErr("区域锚点数量不足，部分区域无法显示角色。");
-					return;
-				}
-
-				chessCell.chessCellUIControl = areaAnchors[anchorIndex];
-				anchorIndex++;
+				GD.PrintErr("区域锚点数量不足，部分区域无法显示角色。");
+				return;
 			}
+
+			CombatAreaId areaId = SceneAnchorAreaOrder[anchorIndex];
+			ChessCell chessCell = GetChessCellByAreaId(areaId);
+			if (chessCell == null)
+			{
+				GD.PrintErr($"找不到区域 {areaId} 对应的逻辑格。");
+				continue;
+			}
+
+			chessCell.chessCellUIControl = areaAnchors[anchorIndex];
 		}
 	}
 

@@ -33,6 +33,8 @@ public partial class CmdQueueUIControl : Node
 	private Label battleInfoLabel;
 	private ConfirmationDialog startSettlementDialog;
 	private readonly Dictionary<CharacterData, TimelineUnitInfo> timelineUnitInfoMap = new();
+	private readonly HashSet<int> revealedEnemySlotsThisTurn = new();
+	private readonly HashSet<int> revealedEnemySlotsNextTurn = new();
 	private bool timelineControlSignalsConnected;
 
 	private sealed class TimelineUnitInfo
@@ -614,6 +616,116 @@ public partial class CmdQueueUIControl : Node
 		}
 		ShowCommandDetail("怪物行动揭示", "怪物行动已揭示，可检视优先级、描述和目标。");
 		Autoloads.sceneSingleton.tutorialOverlayControl?.Notify(TutorialWaitCondition.EnemyActionsRevealed);
+	}
+
+	public void BeginPrepareTurnRevealState()
+	{
+		revealedEnemySlotsThisTurn.Clear();
+		foreach (int slotIndex in revealedEnemySlotsNextTurn)
+		{
+			if (IsValidSlotIndex(slotIndex))
+			{
+				revealedEnemySlotsThisTurn.Add(slotIndex);
+			}
+		}
+		revealedEnemySlotsNextTurn.Clear();
+		RefreshRevealedEnemySlots();
+	}
+
+	public bool ApplyRevealCommand(PlayerCommandData commandData, int placedSlotIndex)
+	{
+		if (commandData == null || !TryGetRevealRange(commandData.commandId, placedSlotIndex, out int startSlot, out int endSlot))
+		{
+			return false;
+		}
+
+		bool changed = false;
+		for (int slotIndex = startSlot; slotIndex <= endSlot; slotIndex++)
+		{
+			if (slotIndex < Timeline.MinSlotIndex)
+			{
+				continue;
+			}
+
+			if (slotIndex <= Timeline.MaxSlotIndex)
+			{
+				changed |= revealedEnemySlotsThisTurn.Add(slotIndex);
+				continue;
+			}
+
+			int nextTurnSlotIndex = slotIndex - Timeline.MaxSlotIndex;
+			if (IsValidSlotIndex(nextTurnSlotIndex))
+			{
+				changed |= revealedEnemySlotsNextTurn.Add(nextTurnSlotIndex);
+			}
+		}
+
+		RefreshRevealedEnemySlots();
+		if (changed)
+		{
+			Autoloads.sceneSingleton.tutorialOverlayControl?.Notify(TutorialWaitCondition.EnemyActionsRevealed);
+		}
+		return true;
+	}
+
+	public bool IsEnemySlotRevealed(int slotIndex)
+	{
+		return IsValidSlotIndex(slotIndex) && revealedEnemySlotsThisTurn.Contains(slotIndex);
+	}
+
+	private void RefreshRevealedEnemySlots()
+	{
+		if (commandItemUIControlMatrix == null)
+		{
+			return;
+		}
+
+		foreach (int slotIndex in revealedEnemySlotsThisTurn)
+		{
+			int matrixIndex = slotIndex - 1;
+			if (matrixIndex < 0 || matrixIndex >= commandItemUIControlMatrix.Count)
+			{
+				continue;
+			}
+
+			foreach (CommandItemUIControl commandItemUIControl in commandItemUIControlMatrix[matrixIndex])
+			{
+				commandItemUIControl.RevealEnemyAction();
+			}
+		}
+	}
+
+	private static bool TryGetRevealRange(int commandId, int placedSlotIndex, out int startSlot, out int endSlot)
+	{
+		startSlot = placedSlotIndex;
+		endSlot = placedSlotIndex;
+		if (!IsValidSlotIndex(placedSlotIndex))
+		{
+			return false;
+		}
+
+		switch (commandId)
+		{
+			case 21:
+				startSlot = placedSlotIndex - 4;
+				endSlot = placedSlotIndex;
+				return true;
+			case 22:
+				startSlot = placedSlotIndex - 2;
+				endSlot = placedSlotIndex + 2;
+				return true;
+			case 23:
+				startSlot = placedSlotIndex;
+				endSlot = placedSlotIndex + 4;
+				return true;
+			default:
+				return false;
+		}
+	}
+
+	private static bool IsValidSlotIndex(int slotIndex)
+	{
+		return slotIndex >= Timeline.MinSlotIndex && slotIndex <= Timeline.MaxSlotIndex;
 	}
 
 	public void ShowStartSettlementButton(bool visible)

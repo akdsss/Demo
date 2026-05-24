@@ -5,7 +5,13 @@ using System.Linq;
 
 public class CombatResolver
 {
-    public List<CombatEvent> ResolveRound(IEnumerable<PlannedAction> actions, int roundIndex, IEnumerable<CharacterData> allCharacters = null)
+    public List<ScheduledCombatEffect> PendingScheduledEffectsForNextRound { get; } = new();
+
+    public List<CombatEvent> ResolveRound(
+        IEnumerable<PlannedAction> actions,
+        int roundIndex,
+        IEnumerable<CharacterData> allCharacters = null,
+        IEnumerable<ScheduledCombatEffect> carryoverScheduledEffects = null)
     {
         Dictionary<CharacterData, CharacterState> statesByLegacyCharacter = BuildStateDictionary(allCharacters);
         List<PlannedAction> normalizedActions = NormalizeActions(actions, roundIndex, statesByLegacyCharacter);
@@ -21,20 +27,36 @@ public class CombatResolver
         };
 
         CombatAreaRules.ApplyRoundStart(roundStates, roundIndex, events);
-        Dictionary<int, List<ScheduledCombatEffect>> scheduledEffectsBySlot = new();
+        Dictionary<int, List<ScheduledCombatEffect>> priorityScheduledEffectsBySlot = new();
+        Dictionary<int, List<ScheduledCombatEffect>> slotEndScheduledEffectsBySlot = new();
+        QueueCarryoverScheduledEffects(
+            carryoverScheduledEffects,
+            roundIndex,
+            statesByLegacyCharacter,
+            priorityScheduledEffectsBySlot,
+            slotEndScheduledEffectsBySlot,
+            PendingScheduledEffectsForNextRound);
 
         for (int slotIndex = Timeline.MinSlotIndex; slotIndex <= Timeline.MaxSlotIndex; slotIndex++)
         {
-            IEnumerable<PlannedAction> slotActions = normalizedActions
-                .Where(action => action.SlotIndex == slotIndex && !action.IsDefault)
-                .OrderByDescending(CombatAreaRules.GetAdjustedPriority);
+            List<SlotResolutionItem> slotItems = BuildSlotResolutionItems(
+                normalizedActions,
+                priorityScheduledEffectsBySlot,
+                slotIndex);
 
-            foreach (PlannedAction action in slotActions)
+            foreach (SlotResolutionItem item in slotItems)
             {
-                ResolveAction(action, events, roundStates, scheduledEffectsBySlot);
+                if (item.ScheduledEffect != null)
+                {
+                    ResolveScheduledEffect(item.ScheduledEffect, events, roundStates, priorityScheduledEffectsBySlot, slotEndScheduledEffectsBySlot, PendingScheduledEffectsForNextRound);
+                }
+                else
+                {
+                    ResolveAction(item.Action, events, roundStates, priorityScheduledEffectsBySlot, slotEndScheduledEffectsBySlot, PendingScheduledEffectsForNextRound);
+                }
             }
 
-            ResolveScheduledEffects(slotIndex, scheduledEffectsBySlot, events, roundStates);
+            ResolveSlotEndScheduledEffects(slotIndex, slotEndScheduledEffectsBySlot, events, roundStates, priorityScheduledEffectsBySlot, PendingScheduledEffectsForNextRound);
             TickSlotStatuses(roundStates, roundIndex, events);
         }
 
@@ -127,7 +149,9 @@ public class CombatResolver
         PlannedAction action,
         List<CombatEvent> events,
         IReadOnlyList<CharacterState> roundStates,
-        Dictionary<int, List<ScheduledCombatEffect>> scheduledEffectsBySlot)
+        Dictionary<int, List<ScheduledCombatEffect>> priorityScheduledEffectsBySlot,
+        Dictionary<int, List<ScheduledCombatEffect>> slotEndScheduledEffectsBySlot,
+        List<ScheduledCombatEffect> nextRoundScheduledEffects)
     {
         SkillFailReason failReason = GetResolutionFailReason(action);
         if (failReason != SkillFailReason.None)
@@ -146,7 +170,7 @@ public class CombatResolver
 
         foreach (SkillEffectDefinition effect in action.Skill.Effects)
         {
-            ResolveEffect(action, effect, events, roundStates, scheduledEffectsBySlot);
+            ResolveEffect(action, effect, events, roundStates, priorityScheduledEffectsBySlot, slotEndScheduledEffectsBySlot, nextRoundScheduledEffects);
         }
     }
 
@@ -270,7 +294,9 @@ public class CombatResolver
         SkillEffectDefinition effect,
         List<CombatEvent> events,
         IReadOnlyList<CharacterState> roundStates,
-        Dictionary<int, List<ScheduledCombatEffect>> scheduledEffectsBySlot)
+        Dictionary<int, List<ScheduledCombatEffect>> priorityScheduledEffectsBySlot,
+        Dictionary<int, List<ScheduledCombatEffect>> slotEndScheduledEffectsBySlot,
+        List<ScheduledCombatEffect> nextRoundScheduledEffects)
     {
         if (effect == null)
         {
@@ -279,7 +305,7 @@ public class CombatResolver
 
         if (effect.DelaySlots > 0)
         {
-            ScheduleEffect(action, effect, events, scheduledEffectsBySlot);
+            ScheduleEffect(action, effect, events, priorityScheduledEffectsBySlot, slotEndScheduledEffectsBySlot, nextRoundScheduledEffects);
             return;
         }
 
@@ -332,16 +358,6 @@ public class CombatResolver
                 events.Add(statusAppliedEvent);
                 break;
             case SkillEffectType.RevealIntent:
-                events.Add(new CombatEvent
-                {
-                    EventType = CombatEventType.IntentRevealed,
-                    RoundIndex = action.RoundIndex,
-                    SlotIndex = action.SlotIndex,
-                    Source = action.Source,
-                    SourceLegacyCharacterData = action.Source?.LegacyCharacterData,
-                    Skill = action.Skill,
-                    Message = $"{action.Source?.DisplayName ?? "未知角色"} 揭示敌方意图：{effect.Message}"
-                });
                 break;
             case SkillEffectType.RemoveStatus:
                 CombatEvent statusRemovedEvent = BuildEffectEvent(CombatEventType.StatusRemoved, SkillEffectType.RemoveStatus, action);
@@ -407,15 +423,7 @@ public class CombatResolver
         List<CombatEvent> events,
         IReadOnlyList<CharacterState> roundStates)
     {
-        CombatAreaId targetAreaId = action.TargetCharacter?.CurrentAreaId ?? CombatAreaId.Unknown;
-        if (targetAreaId == CombatAreaId.Unknown)
-        {
-            targetAreaId = action.TargetAreaId;
-        }
-        if (targetAreaId == CombatAreaId.Unknown)
-        {
-            targetAreaId = action.TargetArea?.AreaId ?? action.Source?.CurrentAreaId ?? CombatAreaId.Unknown;
-        }
+        CombatAreaId targetAreaId = ResolveAreaDamageTargetAreaId(action);
         List<CharacterState> targets = roundStates?
             .Where(state =>
                 state != null &&
@@ -435,6 +443,35 @@ public class CombatResolver
         {
             ResolveDamage(action, effect, events, target);
         }
+    }
+
+    private static CombatAreaId ResolveAreaDamageTargetAreaId(PlannedAction action)
+    {
+        if (action?.Skill != null &&
+            action.Skill.HasTag(SkillTag.Melee) &&
+            action.Skill.HasTag(SkillTag.Area) &&
+            action.Source != null)
+        {
+            return action.Source.CurrentAreaId;
+        }
+
+        CombatAreaId targetAreaId = action?.TargetAreaId ?? CombatAreaId.Unknown;
+        if (targetAreaId != CombatAreaId.Unknown)
+        {
+            return targetAreaId;
+        }
+
+        if (action?.TargetArea != null)
+        {
+            return action.TargetArea.AreaId;
+        }
+
+        if (action?.TargetCharacter != null)
+        {
+            return action.TargetCharacter.CurrentAreaId;
+        }
+
+        return action?.Source?.CurrentAreaId ?? CombatAreaId.Unknown;
     }
 
     private static void ResolveHeal(PlannedAction action, SkillEffectDefinition effect, List<CombatEvent> events)
@@ -727,40 +764,283 @@ public class CombatResolver
         PlannedAction action,
         SkillEffectDefinition effect,
         List<CombatEvent> events,
-        Dictionary<int, List<ScheduledCombatEffect>> scheduledEffectsBySlot)
+        Dictionary<int, List<ScheduledCombatEffect>> priorityScheduledEffectsBySlot,
+        Dictionary<int, List<ScheduledCombatEffect>> slotEndScheduledEffectsBySlot,
+        List<ScheduledCombatEffect> nextRoundScheduledEffects)
     {
-        int dueSlot = action.SlotIndex + effect.DelaySlots;
         events.Add(BuildEffectEvent(CombatEventType.ScheduledEffectCreated, SkillEffectType.ScheduledEffect, action));
-        if (dueSlot > Timeline.MaxSlotIndex)
+        ResolveDueTiming(action.RoundIndex, action.SlotIndex, effect.DelaySlots, out int dueRound, out int dueSlot);
+        PlannedAction scheduledAction = CloneActionForScheduledEffect(action);
+        scheduledAction.RoundIndex = dueRound;
+        scheduledAction.SlotIndex = dueSlot;
+
+        if (effect.SnapshotTargetAreaOnSchedule)
         {
-            return;
+            CombatAreaId snapshotAreaId = ResolveScheduledSnapshotAreaId(action);
+            if (snapshotAreaId != CombatAreaId.Unknown)
+            {
+                scheduledAction.TargetAreaId = snapshotAreaId;
+                scheduledAction.TargetArea = AreaDefinition.FromKnownArea(snapshotAreaId);
+                scheduledAction.TargetCoord = AreaDefinition.GetLegacyCoordForAreaId(snapshotAreaId);
+            }
         }
 
-        if (!scheduledEffectsBySlot.TryGetValue(dueSlot, out List<ScheduledCombatEffect> effects))
+        ScheduledCombatEffect scheduledEffect = new()
         {
-            effects = new List<ScheduledCombatEffect>();
-            scheduledEffectsBySlot[dueSlot] = effects;
-        }
+            Action = scheduledAction,
+            Effect = CloneWithoutDelay(effect),
+            DueRoundIndex = dueRound,
+            DueSlotIndex = dueSlot,
+            Priority = effect.ResolveWithActionPriority ? CombatAreaRules.GetAdjustedPriority(scheduledAction) : 10,
+            Faction = scheduledAction.Faction,
+            ResolveWithActionPriority = effect.ResolveWithActionPriority,
+            RequiresLivingSource = effect.RequiresLivingSourceOnTrigger
+        };
 
-        effects.Add(new ScheduledCombatEffect(action, CloneWithoutDelay(effect)));
+        QueueScheduledEffect(scheduledEffect, action.RoundIndex, priorityScheduledEffectsBySlot, slotEndScheduledEffectsBySlot, nextRoundScheduledEffects);
     }
 
-    private static void ResolveScheduledEffects(
+    private static void ResolveSlotEndScheduledEffects(
         int slotIndex,
-        Dictionary<int, List<ScheduledCombatEffect>> scheduledEffectsBySlot,
+        Dictionary<int, List<ScheduledCombatEffect>> slotEndScheduledEffectsBySlot,
         List<CombatEvent> events,
-        IReadOnlyList<CharacterState> roundStates)
+        IReadOnlyList<CharacterState> roundStates,
+        Dictionary<int, List<ScheduledCombatEffect>> priorityScheduledEffectsBySlot,
+        List<ScheduledCombatEffect> nextRoundScheduledEffects)
     {
-        if (!scheduledEffectsBySlot.TryGetValue(slotIndex, out List<ScheduledCombatEffect> effects))
+        if (!slotEndScheduledEffectsBySlot.TryGetValue(slotIndex, out List<ScheduledCombatEffect> effects))
         {
             return;
         }
 
-        foreach (ScheduledCombatEffect scheduledEffect in effects)
+        foreach (ScheduledCombatEffect scheduledEffect in effects
+            .OrderBy(FactionSortValue)
+            .ThenBy(effect => effect.Sequence))
         {
-            scheduledEffect.Action.SlotIndex = slotIndex;
-            ResolveEffect(scheduledEffect.Action, scheduledEffect.Effect, events, roundStates, scheduledEffectsBySlot);
+            ResolveScheduledEffect(scheduledEffect, events, roundStates, priorityScheduledEffectsBySlot, slotEndScheduledEffectsBySlot, nextRoundScheduledEffects);
         }
+    }
+
+    private static void ResolveScheduledEffect(
+        ScheduledCombatEffect scheduledEffect,
+        List<CombatEvent> events,
+        IReadOnlyList<CharacterState> roundStates,
+        Dictionary<int, List<ScheduledCombatEffect>> priorityScheduledEffectsBySlot,
+        Dictionary<int, List<ScheduledCombatEffect>> slotEndScheduledEffectsBySlot,
+        List<ScheduledCombatEffect> nextRoundScheduledEffects)
+    {
+        if (scheduledEffect?.Action == null || scheduledEffect.Effect == null)
+        {
+            return;
+        }
+
+        PlannedAction action = scheduledEffect.Action;
+        action.RoundIndex = scheduledEffect.DueRoundIndex;
+        action.SlotIndex = scheduledEffect.DueSlotIndex;
+        if (scheduledEffect.RequiresLivingSource)
+        {
+            SkillFailReason failReason = GetScheduledTriggerFailReason(action);
+            if (failReason != SkillFailReason.None)
+            {
+                events.Add(BuildSkillFailedEvent(action, failReason));
+                return;
+            }
+        }
+
+        ResolveEffect(action, scheduledEffect.Effect, events, roundStates, priorityScheduledEffectsBySlot, slotEndScheduledEffectsBySlot, nextRoundScheduledEffects);
+    }
+
+    private static void QueueCarryoverScheduledEffects(
+        IEnumerable<ScheduledCombatEffect> carryoverScheduledEffects,
+        int roundIndex,
+        Dictionary<CharacterData, CharacterState> statesByLegacyCharacter,
+        Dictionary<int, List<ScheduledCombatEffect>> priorityScheduledEffectsBySlot,
+        Dictionary<int, List<ScheduledCombatEffect>> slotEndScheduledEffectsBySlot,
+        List<ScheduledCombatEffect> nextRoundScheduledEffects)
+    {
+        foreach (ScheduledCombatEffect scheduledEffect in carryoverScheduledEffects ?? Enumerable.Empty<ScheduledCombatEffect>())
+        {
+            if (scheduledEffect == null)
+            {
+                continue;
+            }
+
+            scheduledEffect.Action = NormalizeScheduledAction(scheduledEffect.Action, statesByLegacyCharacter);
+            QueueScheduledEffect(scheduledEffect, roundIndex, priorityScheduledEffectsBySlot, slotEndScheduledEffectsBySlot, nextRoundScheduledEffects);
+        }
+    }
+
+    private static void QueueScheduledEffect(
+        ScheduledCombatEffect scheduledEffect,
+        int currentRoundIndex,
+        Dictionary<int, List<ScheduledCombatEffect>> priorityScheduledEffectsBySlot,
+        Dictionary<int, List<ScheduledCombatEffect>> slotEndScheduledEffectsBySlot,
+        List<ScheduledCombatEffect> nextRoundScheduledEffects)
+    {
+        if (scheduledEffect == null)
+        {
+            return;
+        }
+
+        if (scheduledEffect.DueRoundIndex > currentRoundIndex)
+        {
+            nextRoundScheduledEffects.Add(scheduledEffect);
+            return;
+        }
+
+        Dictionary<int, List<ScheduledCombatEffect>> targetDictionary = scheduledEffect.ResolveWithActionPriority
+            ? priorityScheduledEffectsBySlot
+            : slotEndScheduledEffectsBySlot;
+        if (!targetDictionary.TryGetValue(scheduledEffect.DueSlotIndex, out List<ScheduledCombatEffect> effects))
+        {
+            effects = new List<ScheduledCombatEffect>();
+            targetDictionary[scheduledEffect.DueSlotIndex] = effects;
+        }
+
+        scheduledEffect.Sequence = effects.Count;
+        effects.Add(scheduledEffect);
+    }
+
+    private static PlannedAction NormalizeScheduledAction(
+        PlannedAction action,
+        Dictionary<CharacterData, CharacterState> statesByLegacyCharacter)
+    {
+        if (action == null)
+        {
+            return null;
+        }
+
+        action.Source = ResolveSharedState(action.Source, statesByLegacyCharacter);
+        action.TargetCharacter = ResolveSharedState(action.TargetCharacter, statesByLegacyCharacter);
+        return action;
+    }
+
+    private static List<SlotResolutionItem> BuildSlotResolutionItems(
+        IEnumerable<PlannedAction> normalizedActions,
+        Dictionary<int, List<ScheduledCombatEffect>> priorityScheduledEffectsBySlot,
+        int slotIndex)
+    {
+        List<SlotResolutionItem> items = new();
+        int sequence = 0;
+        foreach (PlannedAction action in normalizedActions
+            .Where(action => action.SlotIndex == slotIndex && !action.IsDefault))
+        {
+            items.Add(new SlotResolutionItem
+            {
+                Action = action,
+                Priority = CombatAreaRules.GetAdjustedPriority(action),
+                Faction = action.Faction,
+                Sequence = sequence++
+            });
+        }
+
+        if (priorityScheduledEffectsBySlot.TryGetValue(slotIndex, out List<ScheduledCombatEffect> scheduledEffects))
+        {
+            foreach (ScheduledCombatEffect scheduledEffect in scheduledEffects)
+            {
+                items.Add(new SlotResolutionItem
+                {
+                    ScheduledEffect = scheduledEffect,
+                    Priority = scheduledEffect.Priority,
+                    Faction = scheduledEffect.Faction,
+                    Sequence = sequence++
+                });
+            }
+        }
+
+        return items
+            .OrderByDescending(item => item.Priority)
+            .ThenBy(FactionSortValue)
+            .ThenBy(item => item.Sequence)
+            .ToList();
+    }
+
+    private static int FactionSortValue(SlotResolutionItem item)
+    {
+        return item?.Faction == CombatFaction.Player ? 0 : 1;
+    }
+
+    private static int FactionSortValue(ScheduledCombatEffect effect)
+    {
+        return effect?.Faction == CombatFaction.Player ? 0 : 1;
+    }
+
+    private static void ResolveDueTiming(int roundIndex, int slotIndex, int delaySlots, out int dueRound, out int dueSlot)
+    {
+        int zeroBasedDueSlot = slotIndex - Timeline.MinSlotIndex + delaySlots;
+        int roundOffset = zeroBasedDueSlot / Timeline.MaxSlotIndex;
+        dueRound = roundIndex + roundOffset;
+        dueSlot = Timeline.MinSlotIndex + zeroBasedDueSlot % Timeline.MaxSlotIndex;
+    }
+
+    private static SkillFailReason GetScheduledTriggerFailReason(PlannedAction action)
+    {
+        if (action == null || action.IsDefault || action.Skill == null)
+        {
+            return SkillFailReason.MissingSkill;
+        }
+
+        if (action.Source == null || action.Source.LegacyCharacterData == null)
+        {
+            return SkillFailReason.MissingSource;
+        }
+
+        if (action.Source.IsDefeated)
+        {
+            return SkillFailReason.SourceDefeated;
+        }
+
+        if (action.TargetCharacter != null &&
+            !action.Skill.HasTag(SkillTag.Area) &&
+            action.TargetCharacter.IsDefeated)
+        {
+            return SkillFailReason.TargetDefeated;
+        }
+
+        if (action.Skill.HasTag(SkillTag.Melee) &&
+            !action.Skill.HasTag(SkillTag.Move) &&
+            !action.Skill.HasTag(SkillTag.Area) &&
+            IsMeleeTargetInDifferentArea(action))
+        {
+            return SkillFailReason.MeleeTargetNotInSameArea;
+        }
+
+        if (CombatAreaRules.TryEvade(action))
+        {
+            return SkillFailReason.TargetEvaded;
+        }
+
+        return SkillFailReason.None;
+    }
+
+    private static CombatAreaId ResolveScheduledSnapshotAreaId(PlannedAction action)
+    {
+        if (action?.TargetCharacter != null)
+        {
+            return action.TargetCharacter.CurrentAreaId;
+        }
+
+        return ResolveTargetAreaId(action);
+    }
+
+    private static PlannedAction CloneActionForScheduledEffect(PlannedAction action)
+    {
+        return new PlannedAction
+        {
+            ActionId = action.ActionId,
+            IsDefault = action.IsDefault,
+            RoundIndex = action.RoundIndex,
+            SlotIndex = action.SlotIndex,
+            Faction = action.Faction,
+            Source = action.Source,
+            Skill = action.Skill,
+            TargetCharacter = action.TargetCharacter,
+            TargetArea = action.TargetArea,
+            TargetAreaId = action.TargetAreaId,
+            TargetCoord = action.TargetCoord,
+            IsRevealed = action.IsRevealed,
+            LegacyCommandExecuteInfo = action.LegacyCommandExecuteInfo
+        };
     }
 
     private static SkillEffectDefinition CloneWithoutDelay(SkillEffectDefinition effect)
@@ -771,6 +1051,9 @@ public class CombatResolver
             Value = effect.Value,
             StatusId = effect.StatusId,
             TargetAreaId = effect.TargetAreaId,
+            ResolveWithActionPriority = effect.ResolveWithActionPriority,
+            RequiresLivingSourceOnTrigger = effect.RequiresLivingSourceOnTrigger,
+            SnapshotTargetAreaOnSchedule = effect.SnapshotTargetAreaOnSchedule,
             ExcludeSource = effect.ExcludeSource,
             AffectAllies = effect.AffectAllies,
             Message = effect.Message
@@ -829,15 +1112,25 @@ public class CombatResolver
         }
     }
 
-    private sealed class ScheduledCombatEffect
+    private sealed class SlotResolutionItem
     {
-        public PlannedAction Action { get; }
-        public SkillEffectDefinition Effect { get; }
-
-        public ScheduledCombatEffect(PlannedAction action, SkillEffectDefinition effect)
-        {
-            Action = action;
-            Effect = effect;
-        }
+        public PlannedAction Action { get; set; }
+        public ScheduledCombatEffect ScheduledEffect { get; set; }
+        public int Priority { get; set; }
+        public CombatFaction Faction { get; set; } = CombatFaction.Unknown;
+        public int Sequence { get; set; }
     }
+}
+
+public sealed class ScheduledCombatEffect
+{
+    public PlannedAction Action { get; set; }
+    public SkillEffectDefinition Effect { get; set; }
+    public int DueRoundIndex { get; set; }
+    public int DueSlotIndex { get; set; }
+    public int Priority { get; set; }
+    public CombatFaction Faction { get; set; } = CombatFaction.Unknown;
+    public bool ResolveWithActionPriority { get; set; }
+    public bool RequiresLivingSource { get; set; }
+    public int Sequence { get; set; }
 }

@@ -11,6 +11,7 @@ public partial class BattleManager : Node
 	public List<EnemyData> battleEnemyDataList;
 	private LevelData currentLevelData;
 	private List<CombatEvent> pendingCombatEvents = new();
+	private List<ScheduledCombatEffect> carryoverScheduledEffects = new();
 	private bool startSettlementRequested;
 	private readonly EnemyActionPlanner enemyActionPlanner = new();
 
@@ -41,6 +42,7 @@ public partial class BattleManager : Node
 
 		battlePlayerDataList = new();
 		battleEnemyDataList = new();
+		carryoverScheduledEffects = new();
 		foreach (var playerInfo in levelData.playerInfoInLevelArray)
 		{
 			battlePlayerDataList.Add(playerInfo.playerData);
@@ -225,7 +227,8 @@ public partial class BattleManager : Node
 			characterData.currentRestActionTimes = GetActionTimesForRound(characterData);
 			characterData.ResetCommandQueue();
 		}
-		Autoloads.sceneSingleton.cmdQueueUIControl.UpdateCmdMatrix();
+		Autoloads.sceneSingleton.cmdQueueUIControl?.BeginPrepareTurnRevealState();
+		Autoloads.sceneSingleton.cmdQueueUIControl?.UpdateCmdMatrix();
 		Autoloads.sceneSingleton.enemyCharacterHeadListUIControl.UpdateEnemyPrepareDisplays();
 		Autoloads.sceneSingleton.cmdQueueUIControl?.ShowStartSettlementButton(false);
 		Autoloads.sceneSingleton.cmdQueueUIControl?.SetPlayerActionBannerVisible(false);
@@ -268,7 +271,8 @@ public partial class BattleManager : Node
 	{
 		List<PlannedAction> plannedActions = LegacyCommandAdapter.ToPlannedActions(battleCharacterDataList);
 		CombatResolver resolver = new();
-		pendingCombatEvents = resolver.ResolveRound(plannedActions, turnNum, battleCharacterDataList);
+		pendingCombatEvents = resolver.ResolveRound(plannedActions, turnNum, battleCharacterDataList, carryoverScheduledEffects);
+		carryoverScheduledEffects = new List<ScheduledCombatEffect>(resolver.PendingScheduledEffectsForNextRound);
 		PubTool.instance.PrintToCmdAndTitle($"后台结算完成：{pendingCombatEvents.Count} 个事件");
 	}
 	private async Task WaitForStartSettlement()
