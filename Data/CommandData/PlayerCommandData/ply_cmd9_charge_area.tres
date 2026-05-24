@@ -6,6 +6,6 @@
 script = ExtResource("1_script")
 commandId = 9
 commandName = "蓄力范围"
-commandDescription = "覆盖2个时点。蓄力1个时点后，对所处区域除自己外的所有单位造成（1.0）攻击力的范围近战伤害。"
+commandDescription = "该技能覆盖2个时点。蓄力1个时点后，对所处区域除自己外的所有单位造成（1.0）攻击力 的范围近战伤害。"
 priority = 40
 metadata/_custom_type_script = "uid://bjb2y4dhdh5gg"

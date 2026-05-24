@@ -6,6 +6,6 @@
 script = ExtResource("1_script")
 commandId = 14
 commandName = "区域范围"
-commandDescription = "对目标区域造成（1.0）攻击力的范围远程伤害。"
+commandDescription = "4个时点后，对目标区域造成（1.0）攻击力的范围远程伤害。"
 priority = 10
 metadata/_custom_type_script = "uid://bjb2y4dhdh5gg"

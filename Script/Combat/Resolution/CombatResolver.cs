@@ -358,6 +358,16 @@ public class CombatResolver
                 events.Add(statusAppliedEvent);
                 break;
             case SkillEffectType.RevealIntent:
+                events.Add(new CombatEvent
+                {
+                    EventType = CombatEventType.IntentRevealed,
+                    RoundIndex = action.RoundIndex,
+                    SlotIndex = action.SlotIndex,
+                    Source = action.Source,
+                    SourceLegacyCharacterData = action.Source?.LegacyCharacterData,
+                    Skill = action.Skill,
+                    Message = $"{action.Source?.DisplayName ?? "未知角色"} 揭示敌方意图：{effect.Message}"
+                });
                 break;
             case SkillEffectType.RemoveStatus:
                 CombatEvent statusRemovedEvent = BuildEffectEvent(CombatEventType.StatusRemoved, SkillEffectType.RemoveStatus, action);

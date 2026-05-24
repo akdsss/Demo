@@ -6,6 +6,6 @@
 script = ExtResource("1_script")
 commandId = 8
 commandName = "精英蓄力"
-commandDescription = "蓄力1个时点后，对所处区域除自己外的所有单位造成（1.5）攻击力的范围近战伤害。当前兼容层先按1.5倍近战伤害结算。"
+commandDescription = "该技能覆盖2个时点。蓄力1个时点后，对所处区域除自己外的所有单位造成（1.5）攻击力 的范围近战伤害。"
 priority = 40
 metadata/_custom_type_script = "uid://c4mec8i6hyxs7"

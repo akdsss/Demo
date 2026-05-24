@@ -6,6 +6,6 @@
 script = ExtResource("1_script")
 commandId = 20
 commandName = "区域治疗"
-commandDescription = "对指定目标所在区域的友方恢复（1.0）攻击力的生命。"
+commandDescription = "4个时点后，对指定目标所在区域造成（1.0）攻击力 的治疗。"
 priority = 50
 metadata/_custom_type_script = "uid://bjb2y4dhdh5gg"
