@@ -1,7 +1,10 @@
 using Godot;
+using System.Collections.Generic;
 
 public partial class PubTool : Node
 {
+	private const int MaxPrintHistoryLines = 800;
+	private readonly List<string> printHistory = new();
 	public GameMode gameMode = GameMode.Normal;
 	private static PubTool _instance;
 	public static PubTool instance
@@ -29,9 +32,23 @@ public partial class PubTool : Node
 	public void PrintToCmdAndTitle(string content)
 	{
 		GD.Print(content);
+		AppendPrintHistory(content);
+		Autoloads.sceneSingleton?.battleLogOverlayControl?.RefreshLogText();
 		if (Autoloads.sceneSingleton?.gameStateLable != null)
 		{
 			Autoloads.sceneSingleton.gameStateLable.Text = content;
+		}
+	}
+	public string GetPrintHistoryText()
+	{
+		return string.Join("\n", printHistory);
+	}
+	private void AppendPrintHistory(string content)
+	{
+		printHistory.Add(content ?? string.Empty);
+		if (printHistory.Count > MaxPrintHistoryLines)
+		{
+			printHistory.RemoveRange(0, printHistory.Count - MaxPrintHistoryLines);
 		}
 	}
 	public async void PrintToTitleForTime(string content, float time)

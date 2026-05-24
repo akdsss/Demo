@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://bs2iuk2fyrsgp" path="res://Script/UIControl/MainUIControl.cs" id="1_ht100"]
 [ext_resource type="Texture2D" uid="uid://bwvtee5brsh66" path="res://Asset/ui image/set_gear.png" id="2_mtny8"]
-[ext_resource type="Texture2D" uid="uid://dfwhei5sjmw88" path="res://Asset/ui image/close.png" id="5_a6gju"]
 [ext_resource type="PackedScene" uid="uid://b0mnse4n3h5if" path="res://Scene/UI/ActionButton.tscn" id="5_ttkx3"]
 [ext_resource type="Texture2D" path="res://Asset/character/unknown.png" id="6_ttkx3"]
 [ext_resource type="Script" uid="uid://ddlv0r2f80vpr" path="res://Script/UIControl/ChessBoardUIControl.cs" id="7_75wr5"]
@@ -1373,41 +1372,6 @@ text = "百科"
 layout_mode = 2
 text = "退出游戏"
 
-[node name="Button" type="Button" parent="Panel/SetPanel" unique_id=340455370]
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -59.600037
-offset_top = 3.199997
-offset_right = -3.0
-offset_bottom = 61.399994
-grow_horizontal = 0
-
-[node name="ColorRect" type="ColorRect" parent="Panel/SetPanel/Button" unique_id=398259452]
-self_modulate = Color(0.9375, 0.83862305, 0.83862305, 1)
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 1
-
-[node name="TextureRect" type="TextureRect" parent="Panel/SetPanel/Button/ColorRect" unique_id=1237622469]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -3.6999512
-offset_top = -2.9000015
-offset_right = 3.7000122
-offset_bottom = 2.9000015
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("5_a6gju")
-
 [connection signal="pressed" from="Panel/VBoxContainer/TopPanel/Button" to="." method="SetPanelOpenButtonClicked"]
-[connection signal="pressed" from="Panel/SetPanel/Button" to="." method="SetPanelCloseButtonClicked"]
 [connection signal="pressed" from="Panel/SetPanel/VBoxContainer/EncyclopediaButton" to="." method="EncyclopediaButtonClicked"]
 [connection signal="pressed" from="Panel/SetPanel/VBoxContainer/ExitGameButton" to="." method="ExitGameButtonClicked"]

@@ -132,6 +132,7 @@ public partial class CmdQueueUIControl : Node
 			}
 			enemyTimelineHost.CustomMinimumSize = new Vector2(GetTimelineTotalWidth(), 0);
 			enemyTimelineHost.AddThemeConstantOverride("separation", TimelineHostRowSeparation);
+			enemyTimelineHost.MouseFilter = Control.MouseFilterEnum.Ignore;
 			SetTimelineHostBounds(enemyTimelineHost, TimelinePanelVerticalPadding, -TimelinePanelVerticalPadding);
 		}
 
@@ -175,11 +176,13 @@ public partial class CmdQueueUIControl : Node
 			}
 			playerTimelineHost.CustomMinimumSize = new Vector2(GetTimelineTotalWidth(), 0);
 			playerTimelineHost.AddThemeConstantOverride("separation", TimelineHostRowSeparation);
+			playerTimelineHost.MouseFilter = Control.MouseFilterEnum.Ignore;
 			SetTimelineHostBounds(playerTimelineHost, PlayerBannerHeight + 8f, -TimelinePanelVerticalPadding);
 		}
 
 		EnsureLeftInteractionHost();
 		EnsureRightInfoPanel();
+		Autoloads.sceneSingleton?.mainUIControl?.EnsureSettingsClickTargets();
 	}
 
 	private void EnsureLeftInteractionHost()
@@ -300,7 +303,8 @@ public partial class CmdQueueUIControl : Node
 			{
 				CustomMinimumSize = new Vector2(0, TimelineSlotHeight),
 				SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
-				SizeFlagsVertical = Control.SizeFlags.ShrinkCenter
+				SizeFlagsVertical = Control.SizeFlags.ShrinkCenter,
+				MouseFilter = Control.MouseFilterEnum.Ignore
 			};
 			host.AddChild(row);
 
@@ -312,7 +316,8 @@ public partial class CmdQueueUIControl : Node
 			{
 				CustomMinimumSize = new Vector2(TimelineWidth, TimelineSlotHeight),
 				SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter,
-				SizeFlagsVertical = Control.SizeFlags.ShrinkCenter
+				SizeFlagsVertical = Control.SizeFlags.ShrinkCenter,
+				MouseFilter = Control.MouseFilterEnum.Ignore
 			};
 			slotRow.AddThemeConstantOverride("separation", (int)TimelineTrackSeparation);
 			row.AddChild(slotRow);

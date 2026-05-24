@@ -14,6 +14,7 @@ public partial class SceneSingleton : Node
 	public EncyclopediaOverlayControl encyclopediaOverlayControl;
 	public GrowthRewardOverlayControl growthRewardOverlayControl;
 	public AreaTargetMenuControl areaTargetMenuControl;
+	public BattleLogOverlayControl battleLogOverlayControl;
 	public int gameQueueLength = 6;
 	public int gameCharacterNum = 7;
 	// Called when the node enters the scene tree for the first time.

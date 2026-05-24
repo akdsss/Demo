@@ -6,5 +6,5 @@
 [resource]
 script = ExtResource("2_vev5w")
 playerData = ExtResource("1_vkmf1")
-coord = Vector2i(1, 1)
+coord = Vector2i(1, 0)
 metadata/_custom_type_script = "uid://c5cvmqiy66klq"

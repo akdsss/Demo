@@ -21,7 +21,7 @@ public partial class LevelData : Resource
 
         foreach (EnemyInfoInLevel enemyInfo in enemyInfoInLevelArray)
 		{
-			CombatAreaId areaId = CombatAreaId.Yang;
+			CombatAreaId areaId = ResolveAreaId(enemyInfo.areaId, enemyInfo.coord);
 			enemyInfo.enemyData.initialAreaId = areaId;
 			chessBoard.SetCharacterToArea(enemyInfo.enemyData, areaId);
 		}
