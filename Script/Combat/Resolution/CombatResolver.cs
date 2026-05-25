@@ -409,7 +409,6 @@ public class CombatResolver
         {
             amount *= 0.5f;
         }
-        amount = CombatAreaRules.AbsorbShield(target, amount, action.RoundIndex, events);
         target.Hp = Math.Max(0, target.Hp - amount);
 
         CombatEvent damageEvent = BuildEffectEvent(CombatEventType.DamageApplied, SkillEffectType.Damage, action, target);
@@ -417,6 +416,7 @@ public class CombatResolver
         damageEvent.TargetHpAfter = target.Hp;
         events.Add(damageEvent);
         CombatAreaRules.ApplyAfterDamage(action, target, amount, action.RoundIndex, events);
+        CombatAreaRules.ConsumeMeleeCarryoversAfterDamage(action, action.RoundIndex, events);
 
         if (target.Hp <= 0 && target.BattleState != CharacterBattleState.DEAD)
         {
@@ -601,7 +601,7 @@ public class CombatResolver
         moveEvent.FromAreaId = fromAreaId;
         moveEvent.ToAreaId = targetAreaId;
         events.Add(moveEvent);
-        CombatAreaRules.ApplyAfterMove(action, fromArea, action.Source.CurrentArea, action.RoundIndex, events);
+        CombatAreaRules.ApplyAfterMove(action.Source, action, fromArea, action.Source.CurrentArea, action.RoundIndex, events);
     }
 
     private static void ResolveMoveTarget(PlannedAction action, List<CombatEvent> events)
@@ -660,7 +660,7 @@ public class CombatResolver
         moveEvent.FromAreaId = fromAreaId;
         moveEvent.ToAreaId = targetAreaId;
         events.Add(moveEvent);
-        CombatAreaRules.ApplyAfterMove(action, fromArea, movingCharacter.CurrentArea, action.RoundIndex, events);
+        CombatAreaRules.ApplyAfterMove(movingCharacter, action, fromArea, movingCharacter.CurrentArea, action.RoundIndex, events);
     }
 
     private static CombatAreaId ResolveTargetAreaId(PlannedAction action)
@@ -733,7 +733,7 @@ public class CombatResolver
 
         float counterAmount = SkillEffectMath.CalculatePowerAmount(target.Attack, ResolveCounterDamageEffect(counterStatus));
         CharacterState attacker = action.Source;
-        counterAmount = CombatAreaRules.AbsorbShield(attacker, counterAmount, action.RoundIndex, events);
+        counterAmount *= CombatAreaRules.GetDamageMultiplier(target, SkillTag.Melee | SkillTag.SingleTarget, attacker);
         attacker.Hp = Math.Max(0, attacker.Hp - counterAmount);
         CombatEvent counterDamageEvent = new()
         {

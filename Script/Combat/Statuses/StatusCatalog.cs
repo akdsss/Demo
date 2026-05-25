@@ -2,12 +2,12 @@ public static class StatusCatalog
 {
     public const string Mark = "刻印";
     public const string Burn = "燃烧";
+    public const string XunDodge = "飒踏";
     public const string Dodge = "闪避";
     public const string Defense = "防御";
     public const string CounterSingleMelee = "断锋";
     public const string CounterMelee = "千军断";
     public const string PowerUp = "天机加护";
-    public const string Shield = "护盾";
     public const string Gale = "罡风";
     public const string GaleImmune = "罡风免疫";
     public const string MoveBlocked = "湍扼";
@@ -37,13 +37,21 @@ public static class StatusCatalog
                 DurationValue = 1,
                 StackMode = StatusStackMode.RefreshDuration
             },
+            XunDodge => new StatusDefinition
+            {
+                Id = XunDodge,
+                DisplayName = XunDodge,
+                Description = "位于巽时获得闪避；离开巽后移除。",
+                DurationType = StatusDurationType.UntilRemoved,
+                StackMode = StatusStackMode.Unique
+            },
             Dodge => new StatusDefinition
             {
                 Id = Dodge,
                 DisplayName = Dodge,
                 Description = "闪避单体远程攻击。",
-                DurationType = StatusDurationType.Rounds,
-                DurationValue = 1,
+                DurationType = StatusDurationType.Slots,
+                DurationValue = 2,
                 StackMode = StatusStackMode.RefreshDuration
             },
             Defense => new StatusDefinition
@@ -84,15 +92,6 @@ public static class StatusCatalog
                 Description = "造成伤害+50%，持续3时点。",
                 DurationType = StatusDurationType.Slots,
                 DurationValue = 3,
-                StackMode = StatusStackMode.RefreshDuration
-            },
-            Shield => new StatusDefinition
-            {
-                Id = Shield,
-                DisplayName = Shield,
-                Description = "受伤时优先扣除护盾以代替生命值。回合开始时清零。",
-                DurationType = StatusDurationType.Rounds,
-                DurationValue = 1,
                 StackMode = StatusStackMode.RefreshDuration
             },
             Gale => new StatusDefinition

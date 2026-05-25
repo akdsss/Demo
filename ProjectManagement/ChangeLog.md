@@ -1,5 +1,12 @@
 # ChangeLog
 
+## 2026-05-25 指令长按确认时间缩短
+
+- 玩家在时间轴空白槽位放置指令的长按确认时间从 `1.2` 秒缩短为 `0.5` 秒。
+- 同步更新设置指令提示、点击空白槽位提示、选择区域目标后的提示，以及角色目标选择后进入放置阶段的提示。
+- 同步更新教学第 6 步和 `RefactorCodeGuide.md` 中的当前长按时间说明。
+- 验证：`dotnet build .\Demo\Demo.csproj --no-restore` 通过；Godot Mono headless 打开 `res://Scene/MainScene.tscn` 可进入第 1 轮准备阶段，未发现 `ERROR`、`Exception`、`NullReference` 或 C# 编译错误。
+
 ## 2026-05-25 18:15 百科面板背景图接入
 - `EncyclopediaOverlayControl` 将百科正文区域拆成左侧条目列表区与右侧详情区，两侧各自添加铺满容器的 `TextureRect` 背景：左侧加载 `res://Asset/ui image/Encyclopedia_left.png`，右侧加载 `res://Asset/ui image/Encyclopedia_right.png`。
 - 背景图使用 `FullRect` 锚点与 `StretchModeEnum.Scale`，随左右区域尺寸自动填充；条目按钮和详情文本通过 `MarginContainer` 叠放在背景图上方。

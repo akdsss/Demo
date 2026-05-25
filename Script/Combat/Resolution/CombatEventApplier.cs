@@ -78,10 +78,6 @@ public static class CombatEventApplier
         }
 
         combatEvent.TargetLegacyCharacterData.hp = combatEvent.TargetHpAfter;
-        if (combatEvent.Target != null)
-        {
-            combatEvent.TargetLegacyCharacterData.runtimeShieldValue = combatEvent.Target.ShieldValue;
-        }
         UpdateCharacterDisplays();
     }
 
@@ -118,10 +114,6 @@ public static class CombatEventApplier
             target.runtimeStatusStacks.Add(stackCount);
         }
 
-        if (combatEvent.StatusId == StatusCatalog.Shield && combatEvent.Target != null)
-        {
-            target.runtimeShieldValue = combatEvent.Target.ShieldValue;
-        }
         UpdateCharacterDisplays();
     }
 
@@ -141,10 +133,6 @@ public static class CombatEventApplier
             target.runtimeStatusStacks.RemoveAt(index);
         }
 
-        if (combatEvent.StatusId == StatusCatalog.Shield)
-        {
-            target.runtimeShieldValue = 0;
-        }
         UpdateCharacterDisplays();
     }
 

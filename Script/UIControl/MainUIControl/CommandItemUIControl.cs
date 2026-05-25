@@ -21,7 +21,7 @@ public partial class CommandItemUIControl : Control
 	private bool isHoldingForPlacement;
 	private bool holdCompletedThisPress;
 	private double holdElapsedSeconds;
-	private const double HoldToPlaceSeconds = 1.2;
+	private const double HoldToPlaceSeconds = 0.5;
 	static readonly string playerNormalColor = "c1cfeb";
 	static readonly string enemyNormalColor = "ebc1c1";
 	static readonly string normalColor = "ffffff";
@@ -38,6 +38,7 @@ public partial class CommandItemUIControl : Control
 	};
 	public CommandItemState commandItemState = CommandItemState.NORMAL;
 	public bool isOnset = false;
+	private bool isRowHoverHighlighted;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -84,6 +85,10 @@ public partial class CommandItemUIControl : Control
 			// 颜色插值并赋值给节点
 			Color interpolatedColor = normal.Lerp(highlight, t);
 			colorRect.Color = interpolatedColor;
+		}
+		else if (isRowHoverHighlighted)
+		{
+			colorRect.Color = GetStateColor().Lerp(new Color(highlightColor), 0.55f);
 		}
 		else
 		{
@@ -141,7 +146,7 @@ public partial class CommandItemUIControl : Control
 
 		if (isOnset == true)
 		{
-			Autoloads.sceneSingleton.cmdQueueUIControl?.ShowCommandDetail("放置指令", "请长按空白时点 1.2 秒确认指令。");
+			Autoloads.sceneSingleton.cmdQueueUIControl?.ShowCommandDetail("放置指令", "请长按空白时点 0.5 秒确认指令。");
 		}
 
 	}
@@ -176,8 +181,14 @@ public partial class CommandItemUIControl : Control
 		holdElapsedSeconds = 0;
 		isOnset = false;
 		commandItemState = CommandItemState.NORMAL;
+		isRowHoverHighlighted = false;
 		label.Text = defaultText;
 		UpdateHoldProgressBar();
+	}
+
+	public void SetRowHoverHighlighted(bool highlighted)
+	{
+		isRowHoverHighlighted = highlighted;
 	}
 
 	public void SetEnemyActionRevealed(bool revealed)

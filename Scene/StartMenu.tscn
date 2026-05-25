@@ -1,11 +1,9 @@
 [gd_scene format=3 uid="uid://ci8two2bnmjhn"]
 
 [ext_resource type="Script" uid="uid://bgkwl1m8460n4" path="res://Script/UIControl/StartMenuContol.cs" id="1_y846o"]
-[ext_resource type="Texture2D" uid="uid://dfwhei5sjmw88" path="res://Asset/ui image/close.png" id="2_7dlpr"]
 
-[node name="StartMenu" type="CanvasLayer" unique_id=468574188 node_paths=PackedStringArray("SystemSetPanel")]
+[node name="StartMenu" type="CanvasLayer" unique_id=468574188]
 script = ExtResource("1_y846o")
-SystemSetPanel = NodePath("SystemSetPanel")
 
 [node name="Panel" type="Panel" parent="." unique_id=1631699685]
 self_modulate = Color(18.892157, 18.892157, 18.892157, 1)
@@ -37,72 +35,11 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "开始游戏"
 
-[node name="Button2" type="Button" parent="Panel/VBoxContainer" unique_id=1665108991]
-custom_minimum_size = Vector2(0, 62)
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "设置"
-
 [node name="Button3" type="Button" parent="Panel/VBoxContainer" unique_id=1584112462]
 custom_minimum_size = Vector2(0, 62)
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
 text = "退出"
 
-[node name="SystemSetPanel" type="Panel" parent="." unique_id=644664660]
-visible = false
-anchors_preset = -1
-anchor_left = 0.24
-anchor_top = 0.18
-anchor_right = 0.76
-anchor_bottom = 0.82
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="ColorRect" type="ColorRect" parent="SystemSetPanel" unique_id=1765541468]
-self_modulate = Color(0.69384766, 0.7163048, 0.79296875, 1)
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Button" type="Button" parent="SystemSetPanel" unique_id=48908661]
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -76.0
-offset_top = 12.0
-offset_right = -12.0
-offset_bottom = 76.0
-grow_horizontal = 0
-
-[node name="ColorRect" type="ColorRect" parent="SystemSetPanel/Button" unique_id=1790602694]
-self_modulate = Color(0.9375, 0.83862305, 0.83862305, 1)
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 1
-
-[node name="TextureRect" type="TextureRect" parent="SystemSetPanel/Button/ColorRect" unique_id=355034011]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -3.6999512
-offset_top = -2.9000015
-offset_right = 3.7000122
-offset_bottom = 2.9000015
-grow_horizontal = 2
-grow_vertical = 2
-texture = ExtResource("2_7dlpr")
-
 [connection signal="pressed" from="Panel/VBoxContainer/Button" to="." method="StartGameButtonClicked"]
-[connection signal="pressed" from="Panel/VBoxContainer/Button2" to="." method="SetButtonClicked"]
 [connection signal="pressed" from="Panel/VBoxContainer/Button3" to="." method="ExitButtonClicked"]
-[connection signal="pressed" from="SystemSetPanel/Button" to="." method="SetPanelCloseButtonClicked"]

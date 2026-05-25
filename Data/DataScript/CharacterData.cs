@@ -23,7 +23,6 @@ public partial class CharacterData : Resource
 	public bool hasPrepared;
 	public List<string> runtimeStatusIds = new();
 	public List<int> runtimeStatusStacks = new();
-	public float runtimeShieldValue;
 
 	public virtual void CharacterInitialize()
 	{
@@ -35,7 +34,6 @@ public partial class CharacterData : Resource
 		hasPrepared = false;
 		runtimeStatusIds.Clear();
 		runtimeStatusStacks.Clear();
-		runtimeShieldValue = 0;
 		if (CurrentAreaId == CombatAreaId.Unknown)
 		{
 			CurrentAreaId = ResolveCurrentAreaId();

@@ -36,9 +36,13 @@ public partial class CmdQueueUIControl : Node
 	private readonly HashSet<int> revealedEnemySlotsThisTurn = new();
 	private readonly HashSet<int> revealedEnemySlotsNextTurn = new();
 	private bool timelineControlSignalsConnected;
+	private bool isCommandSubmenuOpen;
+	private CharacterData hoveredTimelineRowCharacter;
+	private static readonly Color TimelineRowHoverModulate = new(1.18f, 1.12f, 0.86f, 1f);
 
 	private sealed class TimelineUnitInfo
 	{
+		public Control Root;
 		public Label HpLabel;
 		public Label MpLabel;
 		public Label ActionLabel;
@@ -284,6 +288,7 @@ public partial class CmdQueueUIControl : Node
 
 		PubTool.instance.ClearChildren(enemyTimelineHost);
 		PubTool.instance.ClearChildren(playerTimelineHost);
+		hoveredTimelineRowCharacter = null;
 
 		List<PlayerData> players = Autoloads.sceneSingleton?.battleManager?.battlePlayerDataList ?? new List<PlayerData>();
 		List<EnemyData> enemies = Autoloads.sceneSingleton?.battleManager?.battleEnemyDataList ?? new List<EnemyData>();
@@ -438,6 +443,7 @@ public partial class CmdQueueUIControl : Node
 
 		timelineUnitInfoMap[characterData] = new TimelineUnitInfo
 		{
+			Root = infoRoot,
 			HpLabel = hpLabel,
 			MpLabel = mpLabel
 		};
@@ -598,7 +604,7 @@ public partial class CmdQueueUIControl : Node
 
 			commandItemUIControlList[playerIdx].EnablePlacement();
 		}
-		ShowCommandDetail("设置指令", "选择空白时点并长按 1.2 秒确认。已设置指令不可覆盖。");
+		ShowCommandDetail("设置指令", "选择空白时点并长按 0.5 秒确认。已设置指令不可覆盖。");
 		Autoloads.sceneSingleton.tutorialOverlayControl?.Notify(TutorialWaitCondition.EnterTimelinePlacement);
 	}
 	public void SwitchOffPlayerCommandSet()
@@ -617,6 +623,78 @@ public partial class CmdQueueUIControl : Node
 				{
 					commandItemUIControl.commandItemState = CommandItemState.NORMAL;
 				}
+			}
+		}
+	}
+
+	public void SetCommandSubmenuOpen(bool open)
+	{
+		EnsureTimelineControlBar();
+		isCommandSubmenuOpen = open;
+		if (timelineControlBar != null)
+		{
+			timelineControlBar.Visible = !open;
+		}
+		if (!open)
+		{
+			ClearHoveredTimelineRow();
+		}
+	}
+
+	public void SetHoveredTimelineRow(CharacterData characterData)
+	{
+		if (hoveredTimelineRowCharacter == characterData)
+		{
+			return;
+		}
+
+		ClearHoveredTimelineRow();
+		hoveredTimelineRowCharacter = characterData;
+		ApplyTimelineRowHover(characterData, true);
+	}
+
+	public void ClearHoveredTimelineRow(CharacterData characterData = null)
+	{
+		if (characterData != null && hoveredTimelineRowCharacter != characterData)
+		{
+			return;
+		}
+
+		ApplyTimelineRowHover(hoveredTimelineRowCharacter, false);
+		hoveredTimelineRowCharacter = null;
+	}
+
+	private void ApplyTimelineRowHover(CharacterData characterData, bool highlighted)
+	{
+		if (characterData == null)
+		{
+			return;
+		}
+
+		if (commandItemUIControlMatrix != null)
+		{
+			foreach (List<CommandItemUIControl> slotColumn in commandItemUIControlMatrix)
+			{
+				foreach (CommandItemUIControl commandItem in slotColumn)
+				{
+					if (commandItem?.ownerCharacterData == characterData)
+					{
+						commandItem.SetRowHoverHighlighted(highlighted);
+					}
+				}
+			}
+		}
+
+		if (timelineUnitInfoMap.TryGetValue(characterData, out TimelineUnitInfo info))
+		{
+			Color modulate = highlighted ? TimelineRowHoverModulate : Colors.White;
+			if (info.Root != null)
+			{
+				info.Root.Modulate = modulate;
+			}
+			if (info.ActionLabel != null)
+			{
+				info.ActionLabel.Modulate = modulate;
 			}
 		}
 	}
@@ -750,12 +828,24 @@ public partial class CmdQueueUIControl : Node
 		startSettlementButton.Visible = visible;
 		if (visible)
 		{
+			isCommandSubmenuOpen = false;
+			if (timelineControlBar != null)
+			{
+				timelineControlBar.Visible = true;
+			}
 			setCommandButton.Visible = false;
 			inspectButton.Visible = false;
 			SwitchOffPlayerCommandSet();
 			if (Autoloads.sceneSingleton?.playerActionChoseList != null)
 			{
-				Autoloads.sceneSingleton.playerActionChoseList.Visible = false;
+				if (Autoloads.sceneSingleton.playerActionChoseList is PlayerChoseListPanelControl choicePanel)
+				{
+					choicePanel.DismissPanel();
+				}
+				else
+				{
+					Autoloads.sceneSingleton.playerActionChoseList.Visible = false;
+				}
 			}
 			Autoloads.sceneSingleton?.areaTargetMenuControl?.Dismiss();
 			Autoloads.sceneSingleton?.enemyCharacterHeadListUIControl?.ChangeToUninteractable();
@@ -781,11 +871,19 @@ public partial class CmdQueueUIControl : Node
 		EnsureTimelineControlBar();
 		if (!visible)
 		{
+			SetCommandSubmenuOpen(false);
 			setCommandButton.Visible = false;
 			inspectButton.Visible = false;
 			if (Autoloads.sceneSingleton?.playerActionChoseList != null)
 			{
-				Autoloads.sceneSingleton.playerActionChoseList.Visible = false;
+				if (Autoloads.sceneSingleton.playerActionChoseList is PlayerChoseListPanelControl choicePanel)
+				{
+					choicePanel.DismissPanel();
+				}
+				else
+				{
+					Autoloads.sceneSingleton.playerActionChoseList.Visible = false;
+				}
 			}
 			return;
 		}
@@ -828,8 +926,16 @@ public partial class CmdQueueUIControl : Node
 
 		if (sceneSingleton.playerActionChoseList != null)
 		{
-			sceneSingleton.playerActionChoseList.Visible = false;
+			if (sceneSingleton.playerActionChoseList is PlayerChoseListPanelControl choicePanel)
+			{
+				choicePanel.DismissPanel();
+			}
+			else
+			{
+				sceneSingleton.playerActionChoseList.Visible = false;
+			}
 		}
+		SetCommandSubmenuOpen(false);
 		sceneSingleton.areaTargetMenuControl?.Dismiss();
 		sceneSingleton.enemyCharacterHeadListUIControl?.ChangeToUninteractable();
 		ClearPendingCommandRequest(clearCurrentPlayer);
@@ -852,6 +958,22 @@ public partial class CmdQueueUIControl : Node
 	public void RefreshPrepareControlVisibility()
 	{
 		EnsureTimelineControlBar();
+		if (isCommandSubmenuOpen)
+		{
+			if (timelineControlBar != null)
+			{
+				timelineControlBar.Visible = false;
+			}
+			setCommandButton.Visible = false;
+			inspectButton.Visible = false;
+			startSettlementButton.Visible = false;
+			return;
+		}
+
+		if (timelineControlBar != null)
+		{
+			timelineControlBar.Visible = true;
+		}
 		bool isPlayerPrepare = Autoloads.sceneSingleton?.battleManager?.prepareTurnState == PrepareTurnState.PLAYER_PRE;
 		if (isPlayerPrepare && startSettlementButton != null)
 		{
@@ -978,6 +1100,7 @@ public partial class CmdQueueUIControl : Node
 		ClearPendingCommandRequest(true);
 		Autoloads.sceneSingleton.battleManager.eventManager.currentMainPlayer = null;
 		Autoloads.sceneSingleton.playerActionChoseList.Visible = true;
+		SetCommandSubmenuOpen(true);
 		(Autoloads.sceneSingleton.playerActionChoseList as PlayerChoseListPanelControl)?.ShowPlayerSelectPanel(Autoloads.sceneSingleton.battleManager.battlePlayerDataList);
 		PlayerData playerData = Autoloads.sceneSingleton?.battleManager?.eventManager?.currentMainPlayer;
 		ShowCommandDetail("设置指令", "请先选择仍有行动次数的我方角色。");

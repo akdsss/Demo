@@ -23,7 +23,7 @@
 | 关卡加载 | `Data/DataScript/LevelData.cs` | 将关卡中的玩家/敌人放入 `CurrentAreaId` 指定的区域。旧 `coord` 只作为兼容坐标。 |
 | 战斗循环 | `Script/GameLogic/BattleManager.cs` | 回合初始化、敌方准备、我方准备、后台结算、等待“开始结算”、演出事件播放。 |
 | 敌方行动 | `Script/Combat/AI/EnemyActionPlanner.cs` | 根据 AI profile 生成 `CommandExecuteInfo`，再进入统一时间轴。 |
-| 我方行动 | `Script/UIControl/CmdQueueUIControl.cs` + `CommandItemUIControl.cs` | 左侧选择技能/目标，在我方时间轴空白时点长按 1.2 秒放置。 |
+| 我方行动 | `Script/UIControl/CmdQueueUIControl.cs` + `CommandItemUIControl.cs` | 左侧选择技能/目标，在我方时间轴空白时点长按 0.5 秒放置。 |
 | 后台结算 | `Script/Combat/Resolution/CombatResolver.cs` | 输入 `PlannedAction`，按 1-6 时点与优先级输出 `CombatEvent`。 |
 | 演出应用 | `Script/Combat/Resolution/CombatEventApplier.cs` | 消费 `CombatEvent`，同步旧资源对象上的 HP、MP、状态与区域显示。 |
 

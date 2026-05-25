@@ -185,7 +185,7 @@ public partial class AreaTargetMenuControl : Control
             : null;
 
         sceneSingleton.cmdQueueUIControl?.SwitchOnPlayerCommandSet();
-        sceneSingleton.cmdQueueUIControl?.ShowCommandDetail("目标区域", $"已选择 {AreaDefinition.GetDisplayName(areaId)}。请选择空白时点并长按 1.2 秒确认。");
+        sceneSingleton.cmdQueueUIControl?.ShowCommandDetail("目标区域", $"已选择 {AreaDefinition.GetDisplayName(areaId)}。请选择空白时点并长按 0.5 秒确认。");
         HideAndClear();
     }
 

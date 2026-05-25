@@ -112,7 +112,7 @@ public partial class TutorialOverlayControl : Control
         dimRect = new ColorRect
         {
             Name = "TutorialDim",
-            Color = new Color(0, 0, 0, 0.42f),
+            Color = new Color(0, 0, 0, 0f),
             MouseFilter = MouseFilterEnum.Ignore
         };
         dimRect.SetAnchorsPreset(LayoutPreset.FullRect);

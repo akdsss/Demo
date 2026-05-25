@@ -23,20 +23,13 @@ public static class CombatAreaRules
         {
             RemoveStatus(state, StatusCatalog.MoveBlocked, roundIndex, events);
 
-            if (state.ShieldValue > 0)
-            {
-                state.ShieldValue = 0;
-                events.Add(BuildStatusEvent(CombatEventType.StatusRemoved, state, StatusCatalog.Shield, roundIndex));
-            }
-
-            if (state.CurrentAreaId == CombatAreaId.Gen)
-            {
-                ApplyShield(state, roundIndex, events);
-            }
-
             if (state.CurrentAreaId == CombatAreaId.Xun)
             {
-                ApplyStatus(state, StatusCatalog.Dodge, roundIndex, events);
+                ApplyStatus(state, StatusCatalog.XunDodge, roundIndex, events);
+            }
+            else
+            {
+                RemoveStatus(state, StatusCatalog.XunDodge, roundIndex, events);
             }
         }
     }
@@ -61,7 +54,7 @@ public static class CombatAreaRules
         bool isSingleRanged = action.Skill.HasTag(SkillTag.Ranged) &&
             action.Skill.HasTag(SkillTag.SingleTarget);
         return isSingleRanged &&
-            action.TargetCharacter.HasStatus(StatusCatalog.Dodge) &&
+            HasActiveDodge(action.TargetCharacter) &&
             !action.TargetCharacter.HasStatus(StatusCatalog.Mark);
     }
 
@@ -72,32 +65,47 @@ public static class CombatAreaRules
             return 1.0f;
         }
 
+        return GetDamageMultiplier(action.Source, action.Skill.Tags, target);
+    }
+
+    public static float GetDamageMultiplier(CharacterState source, SkillTag skillTags, CharacterState target)
+    {
+        if (source == null)
+        {
+            return 1.0f;
+        }
+
         float multiplier = 1.0f;
-        CombatAreaId sourceArea = action.Source.CurrentAreaId;
+        CombatAreaId sourceArea = source.CurrentAreaId;
         CombatAreaId targetArea = target?.CurrentAreaId ?? CombatAreaId.Unknown;
-        SkillDefinition skill = action.Skill;
 
-        if (action.Source.HasStatus(StatusCatalog.Rage))
+        if (source.HasStatus(StatusCatalog.Rage))
         {
             multiplier *= 1.5f;
         }
 
-        if (action.Source.HasStatus(StatusCatalog.PowerUp))
+        if (source.HasStatus(StatusCatalog.PowerUp))
         {
             multiplier *= 1.5f;
         }
 
-        if (target != null && target.HasStatus(StatusCatalog.Rage))
+        if (sourceArea == CombatAreaId.Yin)
         {
-            multiplier *= 1.5f;
+            multiplier *= 0.85f;
+        }
+        else if (sourceArea == CombatAreaId.Yang)
+        {
+            multiplier *= 1.15f;
         }
 
-        if (sourceArea == CombatAreaId.Qian && skill.HasTag(SkillTag.Area))
+        multiplier *= GetDamageTakenMultiplier(target);
+
+        if (sourceArea == CombatAreaId.Qian && HasTag(skillTags, SkillTag.Area))
         {
             multiplier *= 1.3f;
         }
 
-        if (sourceArea == CombatAreaId.Dui && skill.HasTag(SkillTag.Ranged))
+        if (sourceArea == CombatAreaId.Dui && HasTag(skillTags, SkillTag.Ranged))
         {
             multiplier *= 1.2f;
         }
@@ -112,13 +120,42 @@ public static class CombatAreaRules
             multiplier *= 1.5f;
         }
 
-        if (sourceArea == CombatAreaId.Gen && skill.HasTag(SkillTag.Melee))
+        if (sourceArea == CombatAreaId.Gen && HasTag(skillTags, SkillTag.Melee))
         {
             multiplier *= 1.3f;
         }
-        else if (skill.HasTag(SkillTag.Melee) && action.Source.HasStatus(StatusCatalog.GenMeleeCarryover))
+        else if (HasTag(skillTags, SkillTag.Melee) && source.HasStatus(StatusCatalog.GenMeleeCarryover))
         {
             multiplier *= 1.3f;
+        }
+
+        return multiplier;
+    }
+
+    public static float GetDamageTakenMultiplier(CharacterState target)
+    {
+        if (target == null)
+        {
+            return 1.0f;
+        }
+
+        float multiplier = 1.0f;
+        if (target.HasStatus(StatusCatalog.Rage))
+        {
+            multiplier *= 1.5f;
+        }
+
+        if (target.CurrentAreaId == CombatAreaId.Yin)
+        {
+            multiplier *= 0.85f;
+        }
+        else if (target.CurrentAreaId == CombatAreaId.Yang)
+        {
+            multiplier *= 1.15f;
+        }
+        else if (target.CurrentAreaId == CombatAreaId.Gen)
+        {
+            multiplier *= 0.9f;
         }
 
         return multiplier;
@@ -132,24 +169,6 @@ public static class CombatAreaRules
         }
 
         return 1.0f;
-    }
-
-    public static float AbsorbShield(CharacterState target, float incomingAmount, int roundIndex, List<CombatEvent> events)
-    {
-        if (target == null || target.ShieldValue <= 0 || incomingAmount <= 0)
-        {
-            return incomingAmount;
-        }
-
-        float absorbed = Math.Min(target.ShieldValue, incomingAmount);
-        target.ShieldValue -= absorbed;
-        if (target.ShieldValue <= 0)
-        {
-            target.RemoveStatus(StatusCatalog.Shield);
-            events.Add(BuildStatusEvent(CombatEventType.StatusRemoved, target, StatusCatalog.Shield, roundIndex));
-        }
-
-        return incomingAmount - absorbed;
     }
 
     public static void ApplyAfterDamage(PlannedAction action, CharacterState target, float dealtDamage, int roundIndex, List<CombatEvent> events)
@@ -177,11 +196,9 @@ public static class CombatAreaRules
             ApplyHpAndMpRestore(action.Source, dealtDamage * 0.1f, roundIndex, events);
         }
 
-        bool consumeKunCarryover = false;
         if (action.Skill.HasTag(SkillTag.Melee) &&
             (sourceArea == CombatAreaId.Kun || action.Source.HasStatus(StatusCatalog.KunMeleeDrainCarryover)))
         {
-            consumeKunCarryover = action.Source.HasStatus(StatusCatalog.KunMeleeDrainCarryover);
             ApplyHeal(action.Source, dealtDamage * 0.15f, roundIndex, events, action.Source);
         }
 
@@ -190,44 +207,58 @@ public static class CombatAreaRules
             ApplyStatus(target, StatusCatalog.MoveBlocked, roundIndex, events, target);
         }
 
-        if (action.Skill.HasTag(SkillTag.Melee) && action.Source.HasStatus(StatusCatalog.GenMeleeCarryover))
-        {
-            RemoveStatus(action.Source, StatusCatalog.GenMeleeCarryover, roundIndex, events);
-        }
-
-        if (consumeKunCarryover)
-        {
-            RemoveStatus(action.Source, StatusCatalog.KunMeleeDrainCarryover, roundIndex, events);
-        }
     }
 
-    public static void ApplyAfterMove(PlannedAction action, AreaDefinition fromArea, AreaDefinition toArea, int roundIndex, List<CombatEvent> events)
+    public static void ConsumeMeleeCarryoversAfterDamage(PlannedAction action, int roundIndex, List<CombatEvent> events)
     {
-        CharacterState source = action?.Source;
-        if (source == null)
+        if (action?.Source == null || action.Skill == null || !action.Skill.HasTag(SkillTag.Melee))
+        {
+            return;
+        }
+
+        RemoveStatus(action.Source, StatusCatalog.GenMeleeCarryover, roundIndex, events);
+        RemoveStatus(action.Source, StatusCatalog.KunMeleeDrainCarryover, roundIndex, events);
+    }
+
+    public static void ApplyAfterMove(CharacterState movingCharacter, PlannedAction action, AreaDefinition fromArea, AreaDefinition toArea, int roundIndex, List<CombatEvent> events)
+    {
+        CharacterState mover = movingCharacter ?? action?.Source;
+        if (mover == null)
         {
             return;
         }
 
         if (fromArea?.AreaId == CombatAreaId.Gen && toArea?.AreaId != CombatAreaId.Gen)
         {
-            ApplyStatus(source, StatusCatalog.GenMeleeCarryover, roundIndex, events, source);
+            ApplyStatus(mover, StatusCatalog.GenMeleeCarryover, roundIndex, events, mover);
         }
 
         if (fromArea?.AreaId == CombatAreaId.Kun && toArea?.AreaId != CombatAreaId.Kun)
         {
-            ApplyStatus(source, StatusCatalog.KunMeleeDrainCarryover, roundIndex, events, source);
+            ApplyStatus(mover, StatusCatalog.KunMeleeDrainCarryover, roundIndex, events, mover);
         }
 
-        if (toArea?.AreaId == CombatAreaId.Gen)
+        if (fromArea?.AreaId == CombatAreaId.Xun && toArea?.AreaId != CombatAreaId.Xun)
         {
-            ApplyShield(source, roundIndex, events);
+            RemoveStatus(mover, StatusCatalog.XunDodge, roundIndex, events);
         }
 
         if (toArea?.AreaId == CombatAreaId.Xun)
         {
-            ApplyStatus(source, StatusCatalog.Dodge, roundIndex, events, source);
+            ApplyStatus(mover, StatusCatalog.XunDodge, roundIndex, events);
         }
+    }
+
+    private static bool HasActiveDodge(CharacterState target)
+    {
+        if (target == null)
+        {
+            return false;
+        }
+
+        return target.CurrentAreaId == CombatAreaId.Xun ||
+            target.HasStatus(StatusCatalog.XunDodge) ||
+            target.HasStatus(StatusCatalog.Dodge);
     }
 
     public static CombatEvent BuildStatusEvent(CombatEventType eventType, CharacterState target, string statusId, int roundIndex)
@@ -285,13 +316,6 @@ public static class CombatAreaRules
             ApplyDamage(state, state.MaxHp * 0.4f, roundIndex, events, StatusCatalog.Gale);
             ApplyStatus(state, StatusCatalog.GaleImmune, roundIndex, events, state);
         }
-    }
-
-    private static void ApplyShield(CharacterState target, int roundIndex, List<CombatEvent> events)
-    {
-        target.ShieldValue = Math.Max(target.ShieldValue, target.MaxHp * 0.12f);
-        target.AddOrRefreshStatus(StatusCatalog.Create(StatusCatalog.Shield), target);
-        events.Add(BuildStatusEvent(CombatEventType.StatusApplied, target, StatusCatalog.Shield, roundIndex));
     }
 
     private static void ApplyStatus(CharacterState target, string statusId, int roundIndex, List<CombatEvent> events, CharacterState source = null)
@@ -355,15 +379,15 @@ public static class CombatAreaRules
             return;
         }
 
-        float finalAmount = AbsorbShield(target, amount, roundIndex, events);
-        target.Hp = Math.Max(0, target.Hp - finalAmount);
+        amount *= GetDamageTakenMultiplier(target);
+        target.Hp = Math.Max(0, target.Hp - amount);
         events.Add(new CombatEvent
         {
             EventType = CombatEventType.DamageApplied,
             RoundIndex = roundIndex,
             Target = target,
             TargetLegacyCharacterData = target.LegacyCharacterData,
-            Amount = finalAmount,
+            Amount = amount,
             TargetHpAfter = target.Hp,
             StatusId = sourceStatus
         });
@@ -385,5 +409,10 @@ public static class CombatAreaRules
     private static IEnumerable<CharacterState> EnumerateLivingStates(IEnumerable<CharacterState> states)
     {
         return states?.Where(state => state != null && !state.IsDefeated) ?? Enumerable.Empty<CharacterState>();
+    }
+
+    private static bool HasTag(SkillTag tags, SkillTag tag)
+    {
+        return (tags & tag) == tag;
     }
 }
