@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_script")
 commandId = 5
-commandName = "单体治疗"
+commandName = "续命术"
 commandDescription = "为目标恢复（1.0）攻击力的生命。"
 priority = 50
 metadata/_custom_type_script = "uid://bjb2y4dhdh5gg"

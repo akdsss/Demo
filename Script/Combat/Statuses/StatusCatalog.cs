@@ -4,16 +4,16 @@ public static class StatusCatalog
     public const string Burn = "燃烧";
     public const string Dodge = "闪避";
     public const string Defense = "防御";
-    public const string CounterSingleMelee = "反击";
-    public const string CounterMelee = "反击+";
-    public const string PowerUp = "强化";
+    public const string CounterSingleMelee = "断锋";
+    public const string CounterMelee = "千军断";
+    public const string PowerUp = "天机加护";
     public const string Shield = "护盾";
     public const string Gale = "罡风";
     public const string GaleImmune = "罡风免疫";
     public const string MoveBlocked = "湍扼";
     public const string GenMeleeCarryover = "压顶残留";
     public const string KunMeleeDrainCarryover = "丰壤残留";
-    public const string Rage = "狂怒";
+    public const string Rage = "血煞";
 
     public static StatusDefinition Create(string statusId)
     {

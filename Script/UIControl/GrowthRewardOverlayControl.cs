@@ -77,10 +77,10 @@ public partial class GrowthRewardOverlayControl : Control
         {
             Name = "GrowthMargin"
         };
-        margin.AddThemeConstantOverride("margin_left", 18);
-        margin.AddThemeConstantOverride("margin_right", 18);
-        margin.AddThemeConstantOverride("margin_top", 16);
-        margin.AddThemeConstantOverride("margin_bottom", 16);
+        margin.AddThemeConstantOverride("margin_left", 28);
+        margin.AddThemeConstantOverride("margin_right", 28);
+        margin.AddThemeConstantOverride("margin_top", 24);
+        margin.AddThemeConstantOverride("margin_bottom", 24);
         panel.AddChild(margin);
 
         VBoxContainer content = new()
@@ -95,6 +95,7 @@ public partial class GrowthRewardOverlayControl : Control
             Text = "胜利结算",
             HorizontalAlignment = HorizontalAlignment.Center
         };
+        titleLabel.AddThemeFontSizeOverride("font_size", 26);
         content.AddChild(titleLabel);
 
         summaryLabel = new Label
@@ -102,6 +103,7 @@ public partial class GrowthRewardOverlayControl : Control
             Name = "SummaryLabel",
             AutowrapMode = TextServer.AutowrapMode.WordSmart
         };
+        summaryLabel.AddThemeFontSizeOverride("font_size", 18);
         content.AddChild(summaryLabel);
 
         ScrollContainer scrollContainer = new()
@@ -122,6 +124,8 @@ public partial class GrowthRewardOverlayControl : Control
             Name = "ContinueButton",
             Text = "继续"
         };
+        continueButton.CustomMinimumSize = new Vector2(0, 52);
+        continueButton.AddThemeFontSizeOverride("font_size", 20);
         continueButton.Pressed += OnContinuePressed;
         content.AddChild(continueButton);
     }
@@ -143,7 +147,7 @@ public partial class GrowthRewardOverlayControl : Control
         TextureRect portrait = new()
         {
             Name = "Portrait",
-            CustomMinimumSize = new Vector2(56, 56),
+            CustomMinimumSize = new Vector2(80, 80),
             Texture = character?.characterHeadImage ?? Autoloads.sceneSingleton?.defaultCharacterImage
         };
         row.AddChild(portrait);
@@ -160,6 +164,7 @@ public partial class GrowthRewardOverlayControl : Control
             Name = "NameLabel",
             Text = character?.characterName ?? "未指定角色"
         };
+        nameLabel.AddThemeFontSizeOverride("font_size", 20);
         texts.AddChild(nameLabel);
 
         Label statLabel = new()
@@ -168,6 +173,7 @@ public partial class GrowthRewardOverlayControl : Control
             Text = string.IsNullOrEmpty(statChange) ? "属性变化：暂无" : $"属性变化：{statChange}",
             AutowrapMode = TextServer.AutowrapMode.WordSmart
         };
+        statLabel.AddThemeFontSizeOverride("font_size", 17);
         texts.AddChild(statLabel);
 
         Label skillLabel = new()
@@ -176,6 +182,7 @@ public partial class GrowthRewardOverlayControl : Control
             Text = string.IsNullOrEmpty(unlockSkill) ? "新技能：暂无" : $"新技能：{unlockSkill}",
             AutowrapMode = TextServer.AutowrapMode.WordSmart
         };
+        skillLabel.AddThemeFontSizeOverride("font_size", 17);
         texts.AddChild(skillLabel);
     }
 

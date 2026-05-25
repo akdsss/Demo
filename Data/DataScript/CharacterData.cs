@@ -32,6 +32,7 @@ public partial class CharacterData : Resource
 		mp = maxMp;
 		characterBattleState = CharacterBattleState.ALIVE;
 		currentRestActionTimes = turnInitialActionTimes;
+		hasPrepared = false;
 		runtimeStatusIds.Clear();
 		runtimeStatusStacks.Clear();
 		runtimeShieldValue = 0;
@@ -54,6 +55,18 @@ public partial class CharacterData : Resource
 		}
 
 		return AreaDefinition.GetAreaIdForLegacyCoord(coord);
+	}
+
+	public bool HasRemainingActionChance()
+	{
+		return characterBattleState == CharacterBattleState.ALIVE &&
+			hp > 0 &&
+			currentRestActionTimes > 0;
+	}
+
+	public bool CanPrepareActionThisRound()
+	{
+		return HasRemainingActionChance() && !hasPrepared;
 	}
 
 	public void SetCurrentArea(CombatAreaId areaId)
@@ -84,6 +97,7 @@ public partial class CharacterData : Resource
 	}
 	public void SetCommand(int actionPointCost, CharacterHeadButtonControl characterHeadButtonControl, int cmdQueueIdx, CommandExecuteInfo commandExecuteInfo, CommandItemUIControl cmdItemUIControl)
 	{
+		hasPrepared = true;
 		currentRestActionTimes -= actionPointCost;
 		characterHeadButtonControl?.UpdateUIDisplay();
 		if (currentRestActionTimes <= 0)

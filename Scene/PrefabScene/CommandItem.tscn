@@ -11,10 +11,11 @@
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6vnb6"]
 
 [node name="Control" type="Control" unique_id=1151502167 node_paths=PackedStringArray("label", "colorRect")]
+custom_minimum_size = Vector2(0, 34)
 layout_mode = 3
 anchors_preset = 0
-offset_right = 155.0
-offset_bottom = 22.0
+offset_right = 126.0
+offset_bottom = 34.0
 size_flags_vertical = 3
 script = ExtResource("1_0cb7s")
 label = NodePath("ColorRect/Label")
@@ -38,7 +39,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 14
 text = "进攻意图"
 horizontal_alignment = 1
 vertical_alignment = 1

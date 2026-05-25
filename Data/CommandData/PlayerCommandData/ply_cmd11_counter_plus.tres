@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_script")
 commandId = 11
-commandName = "反击+"
+commandName = "千军断"
 commandDescription = "格挡1次近战攻击，并对攻击者造成（1.0）攻击力的单体近战伤害。"
 priority = 50
 metadata/_custom_type_script = "uid://bjb2y4dhdh5gg"

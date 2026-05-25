@@ -22,6 +22,7 @@ public partial class CharacterHeadButtonControl : Control
 
     public override void _Ready()
     {
+        ApplyFullHdLayout();
         if (characterData == null)
         {
             Visible = false;
@@ -79,6 +80,32 @@ public partial class CharacterHeadButtonControl : Control
         hpLabel.Text = characterData.hp.ToString();
         hpLabel.Visible = true;
         hpBar.Visible = true;
+    }
+
+    private void ApplyFullHdLayout()
+    {
+        CustomMinimumSize = new Vector2(220, 72);
+        if (button != null)
+        {
+            button.SetAnchorsPreset(LayoutPreset.FullRect);
+            button.OffsetLeft = 0;
+            button.OffsetTop = 0;
+            button.OffsetRight = 0;
+            button.OffsetBottom = 0;
+        }
+        actionStateLabel?.AddThemeFontSizeOverride("font_size", 16);
+        hpLabel?.AddThemeFontSizeOverride("font_size", 13);
+        if (focusTrangle != null)
+        {
+            focusTrangle.AnchorLeft = 1f;
+            focusTrangle.AnchorRight = 1f;
+            focusTrangle.AnchorTop = 0.5f;
+            focusTrangle.AnchorBottom = 0.5f;
+            focusTrangle.OffsetLeft = 8f;
+            focusTrangle.OffsetRight = 36f;
+            focusTrangle.OffsetTop = -16f;
+            focusTrangle.OffsetBottom = 16f;
+        }
     }
     public void UpdateUIDisplay()
     {
@@ -138,6 +165,15 @@ public partial class CharacterHeadButtonControl : Control
             {
                 //PubTool.instance.PrintToCmdAndTitle("点击了角色头像");
                 // 设置当前选中角色
+                if (!playerData.CanPrepareActionThisRound())
+                {
+                    button.ButtonPressed = false;
+                    focusTrangle.Visible = false;
+                    Autoloads.sceneSingleton.playerActionChoseList.Visible = false;
+                    Autoloads.sceneSingleton.battleManager.eventManager.currentMainPlayer = null;
+                    Autoloads.sceneSingleton.cmdQueueUIControl?.ShowCommandDetail("无法行动", "该角色本轮次已行动或已无行动次数。");
+                    return;
+                }
                 Autoloads.sceneSingleton.battleManager.eventManager.currentMainPlayer = playerData;
                 // GD.Print($"当前选中角色：{Autoloads.sceneSingleton.battleManager.eventManager.currentMainPlayer.characterName}");
                 // if (characterData is PlayerData)

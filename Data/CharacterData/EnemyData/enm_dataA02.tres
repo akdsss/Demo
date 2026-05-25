@@ -10,8 +10,8 @@
 script = ExtResource("3_hhxjn")
 enemyCommandDataArray = Array[Object]([ExtResource("4_move"), ExtResource("5_attack"), ExtResource("6_skip")])
 characterId = 2
-characterName = "远程训练人偶"
-characterDescription = "教学关远程训练敌人。每回合2次行动机会，生命44，攻击力10。"
+characterName = "连弩车"
+characterDescription = "教学关连弩车。每回合2次行动机会，生命44，攻击力10。"
 characterHeadImage = ExtResource("1_head")
 hp = 44.0
 maxHp = 44.0

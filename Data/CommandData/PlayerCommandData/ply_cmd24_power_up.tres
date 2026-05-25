@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_script")
 commandId = 24
-commandName = "强化"
+commandName = "天机加护"
 commandDescription = "指定友方造成伤害增加50%，持续3时点。"
 priority = 50
 metadata/_custom_type_script = "uid://bjb2y4dhdh5gg"

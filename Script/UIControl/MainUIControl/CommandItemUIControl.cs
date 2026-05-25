@@ -44,7 +44,7 @@ public partial class CommandItemUIControl : Control
 	{
 		if (label != null)
 		{
-			label.AddThemeFontSizeOverride("font_size", 8);
+			label.AddThemeFontSizeOverride("font_size", 14);
 			label.AutowrapMode = TextServer.AutowrapMode.WordSmart;
 		}
 		slotButton = GetNodeOrNull<Button>("Button");
@@ -272,7 +272,7 @@ public partial class CommandItemUIControl : Control
 
 		EventManager eventManager = sS.battleManager.eventManager;
 		PlayerData currentPlayer = eventManager.currentMainPlayer;
-		if (currentPlayer.characterBattleState != CharacterBattleState.ALIVE || currentPlayer.currentRestActionTimes <= 0)
+		if (!currentPlayer.CanPrepareActionThisRound())
 		{
 			sS.cmdQueueUIControl?.ResetCommandSelectionContext("无法设置指令", "该角色已无行动次数。", true);
 			return;
@@ -364,7 +364,7 @@ public partial class CommandItemUIControl : Control
 		holdProgressBar.AnchorTop = 1;
 		holdProgressBar.AnchorRight = 1;
 		holdProgressBar.AnchorBottom = 1;
-		holdProgressBar.OffsetTop = -3;
+		holdProgressBar.OffsetTop = -5;
 		holdProgressBar.OffsetBottom = 0;
 		AddChild(holdProgressBar);
 	}

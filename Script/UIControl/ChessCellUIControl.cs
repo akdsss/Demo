@@ -2,14 +2,27 @@ using Godot;
 using System.Linq;
 using System.Collections.Generic;
 
+[Tool]
 public partial class ChessCellUIControl : Control
 {
     [Export] public TextureRect[] allCharacterPointArray;
     [Export] public Button chessCellButton;
+    [Export] public bool ShowEmptyAnchorsForDebug = false;
+    [Export] public float CharacterAnchorDisplayScale = 1f;
     private Dictionary<CharacterData, TextureRect> characterDisplayMap = new();
+    private readonly Dictionary<TextureRect, Texture2D> anchorDefaultTextureMap = new();
+    private static ShaderMaterial circularAvatarMaterial;
 
     public override void _Ready()
     {
+        CacheDefaultAnchorTextures();
+        ApplyCharacterAnchorDisplayScale();
+        if (Engine.IsEditorHint())
+        {
+            RefreshEmptyAnchorDisplays();
+            return;
+        }
+
         RemoveAllCharacterDisplay();
         if (chessCellButton != null)
         {
@@ -55,14 +68,13 @@ public partial class ChessCellUIControl : Control
             }
         }
         characterDisplayMap.Clear();
-        foreach (TextureRect textureRect in allCharacterPointArray)
+        foreach (TextureRect textureRect in allCharacterPointArray ?? System.Array.Empty<TextureRect>())
         {
             if (textureRect == null)
             {
                 continue;
             }
-            textureRect.Visible = false;
-            textureRect.Texture = null;
+            ResetEmptyAnchorDisplay(textureRect);
         }
     }
 
@@ -77,8 +89,7 @@ public partial class ChessCellUIControl : Control
         {
             if (textureRect != null)
             {
-                textureRect.Visible = false;
-                textureRect.Texture = null;
+                ResetEmptyAnchorDisplay(textureRect);
             }
             characterDisplayMap.Remove(characterData);
             characterData.AreaAnchorIndex = -1;
@@ -109,10 +120,11 @@ public partial class ChessCellUIControl : Control
             {
                 continue;
             }
-            if (textureRect.Visible == false)
+            if (!characterDisplayMap.ContainsValue(textureRect))
             {
                 textureRect.Visible = true;
                 textureRect.Texture = characterData.characterHeadImage;
+                textureRect.Material = GetCircularAvatarMaterial();
                 characterDisplayMap[characterData] = textureRect;
                 characterData.AreaAnchorIndex = i;
                 return i;
@@ -120,5 +132,113 @@ public partial class ChessCellUIControl : Control
         }
         GD.PrintErr("AddCharacterDisplay Error: 无可用显示位置");
         return -1;
+    }
+
+    public void SetEmptyAnchorsForDebug(bool visible)
+    {
+        ShowEmptyAnchorsForDebug = visible;
+        RefreshEmptyAnchorDisplays();
+    }
+
+    public void SetCharacterAnchorDisplayScale(float scale)
+    {
+        CharacterAnchorDisplayScale = Mathf.Max(0.01f, scale);
+        ApplyCharacterAnchorDisplayScale();
+    }
+
+    private void ApplyCharacterAnchorDisplayScale()
+    {
+        foreach (TextureRect textureRect in allCharacterPointArray ?? System.Array.Empty<TextureRect>())
+        {
+            if (textureRect == null)
+            {
+                continue;
+            }
+
+            textureRect.PivotOffset = textureRect.Size * 0.5f;
+            textureRect.Scale = Vector2.One * CharacterAnchorDisplayScale;
+        }
+    }
+
+    private void RefreshEmptyAnchorDisplays()
+    {
+        foreach (TextureRect textureRect in allCharacterPointArray ?? System.Array.Empty<TextureRect>())
+        {
+            if (textureRect == null || characterDisplayMap.ContainsValue(textureRect))
+            {
+                continue;
+            }
+
+            ResetEmptyAnchorDisplay(textureRect);
+        }
+    }
+
+    private void ResetEmptyAnchorDisplay(TextureRect textureRect)
+    {
+        if (textureRect == null)
+        {
+            return;
+        }
+
+        textureRect.Visible = ShowEmptyAnchorsForDebug;
+        textureRect.Material = null;
+        textureRect.Texture = ShowEmptyAnchorsForDebug
+            ? GetAnchorDefaultTexture(textureRect)
+            : null;
+    }
+
+    private void CacheDefaultAnchorTextures()
+    {
+        anchorDefaultTextureMap.Clear();
+        foreach (TextureRect textureRect in allCharacterPointArray ?? System.Array.Empty<TextureRect>())
+        {
+            if (textureRect != null)
+            {
+                anchorDefaultTextureMap[textureRect] = textureRect.Texture;
+            }
+        }
+    }
+
+    private Texture2D GetAnchorDefaultTexture(TextureRect textureRect)
+    {
+        if (textureRect == null)
+        {
+            return null;
+        }
+
+        if (anchorDefaultTextureMap.TryGetValue(textureRect, out Texture2D texture) && texture != null)
+        {
+            return texture;
+        }
+
+        return textureRect.Texture;
+    }
+
+    private static ShaderMaterial GetCircularAvatarMaterial()
+    {
+        if (circularAvatarMaterial != null)
+        {
+            return circularAvatarMaterial;
+        }
+
+        Shader shader = new()
+        {
+            Code = @"
+shader_type canvas_item;
+
+void fragment() {
+	vec2 centered_uv = UV - vec2(0.5);
+	if (length(centered_uv) > 0.5) {
+		discard;
+	}
+	COLOR = texture(TEXTURE, UV) * COLOR;
+}
+"
+        };
+        circularAvatarMaterial = new ShaderMaterial
+        {
+            Shader = shader
+        };
+        return circularAvatarMaterial;
     }
 }

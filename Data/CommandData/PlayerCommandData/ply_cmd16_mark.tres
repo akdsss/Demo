@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_script")
 commandId = 16
-commandName = "追踪"
+commandName = "牵丝缠"
 commandDescription = "对目标施加刻印，持续6时点。"
 priority = 50
 metadata/_custom_type_script = "uid://bjb2y4dhdh5gg"

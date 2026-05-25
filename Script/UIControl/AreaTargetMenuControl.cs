@@ -85,10 +85,10 @@ public partial class AreaTargetMenuControl : Control
             MouseFilter = MouseFilterEnum.Stop
         };
         panel.GuiInput += OnCancelSurfaceGuiInput;
-        panel.AnchorLeft = 0.24f;
-        panel.AnchorRight = 0.76f;
+        panel.AnchorLeft = 0.28f;
+        panel.AnchorRight = 0.72f;
         panel.AnchorTop = 0.24f;
-        panel.AnchorBottom = 0.70f;
+        panel.AnchorBottom = 0.68f;
         AddChild(panel);
 
         VBoxContainer content = new()
@@ -97,10 +97,10 @@ public partial class AreaTargetMenuControl : Control
             MouseFilter = MouseFilterEnum.Pass
         };
         content.SetAnchorsPreset(LayoutPreset.FullRect);
-        content.OffsetLeft = 18;
-        content.OffsetRight = -18;
-        content.OffsetTop = 16;
-        content.OffsetBottom = -16;
+        content.OffsetLeft = 28;
+        content.OffsetRight = -28;
+        content.OffsetTop = 24;
+        content.OffsetBottom = -24;
         panel.AddChild(content);
 
         titleLabel = new Label
@@ -109,6 +109,7 @@ public partial class AreaTargetMenuControl : Control
             Text = "选择目标区域",
             HorizontalAlignment = HorizontalAlignment.Center
         };
+        titleLabel.AddThemeFontSizeOverride("font_size", 22);
         content.AddChild(titleLabel);
 
         buttonGrid = new GridContainer
@@ -126,9 +127,10 @@ public partial class AreaTargetMenuControl : Control
             {
                 Name = $"{areaId}Button",
                 Text = AreaDefinition.GetDisplayName(areaId),
-                CustomMinimumSize = new Vector2(96, 44),
+                CustomMinimumSize = new Vector2(140, 64),
                 MouseFilter = MouseFilterEnum.Stop
             };
+            button.AddThemeFontSizeOverride("font_size", 18);
             button.Pressed += () => ConfirmArea(areaId);
             buttonGrid.AddChild(button);
         }

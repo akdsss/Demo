@@ -14,13 +14,13 @@
 script = ExtResource("2_7w7sr")
 playerCommandDataList = Array[Object]([ExtResource("3_dnfav"), ExtResource("2_y02dh"), ExtResource("6_dodge"), ExtResource("5_mp"), ExtResource("4_ranged"), ExtResource("7_area"), ExtResource("8_mark")])
 characterId = 1
-characterName = "我方远程"
-characterDescription = "教学关远程角色。初始生命19，攻击力10，每回合2次行动。"
+characterName = "戏中人"
+characterDescription = "教学关戏中人。初始生命19，攻击力10，每回合2次行动。"
 characterHeadImage = ExtResource("1_head")
 hp = 19.0
 maxHp = 19.0
 mp = 60
 maxMp = 60
-atk = 100.0
+atk = 10.0
 turnInitialActionTimes = 2
 metadata/_custom_type_script = "uid://bw07j5wfv22k0"

@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_charge")
 commandId = 4
-commandName = "蓄力"
+commandName = "百战摧城"
 commandDescription = "该技能覆盖2个时点。蓄力1个时点后，对目标造成 （2.0）攻击力 的单体近战伤害。"
 priority = 40
 metadata/_custom_type_script = "uid://c4mec8i6hyxs7"

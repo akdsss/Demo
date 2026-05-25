@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" path="res://Asset/character/enemyB03.png" id="1_head"]
 [ext_resource type="Script" uid="uid://di57v3n6x1ras" path="res://Data/DataScript/EnemyData.cs" id="2_script"]
 [ext_resource type="Resource" uid="uid://m5rambushcmd01" path="res://Data/CommandData/EnemyCommandData/enm_cmd6.tres" id="3_ambush"]
-[ext_resource type="Resource" uid="uid://boap4niecmhwa" path="res://Data/CommandData/EnemyCommandData/enm_cmd3.tres" id="4_melee"]
+[ext_resource type="Resource" uid="uid://m5rassassinmelee" path="res://Data/CommandData/EnemyCommandData/enm_cmd3_assassin_melee.tres" id="4_melee"]
 [ext_resource type="Resource" uid="uid://dp1ltok4008ow" path="res://Data/CommandData/EnemyCommandData/enm_cmd2.tres" id="5_skip"]
 
 [resource]
@@ -11,8 +11,8 @@ script = ExtResource("2_script")
 enemyCommandDataArray = Array[Object]([ExtResource("3_ambush"), ExtResource("4_melee"), ExtResource("5_skip")])
 aiProfile = 3
 characterId = 103
-characterName = "小型刺客敌人"
-characterDescription = "第二关小型敌方团体成员：突袭和近战。"
+characterName = "空青"
+characterDescription = "第二关空青：目标突袭和影杀。"
 characterHeadImage = ExtResource("1_head")
 hp = 85.0
 maxHp = 85.0

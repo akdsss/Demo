@@ -15,8 +15,8 @@
 script = ExtResource("1_script")
 playerCommandDataList = Array[Object]([ExtResource("3_move"), ExtResource("4_defense"), ExtResource("7_dodge"), ExtResource("6_mp"), ExtResource("5_ranged"), ExtResource("8_area"), ExtResource("9_target_area"), ExtResource("10_mark")])
 characterId = 1
-characterName = "我方远程"
-characterDescription = "第2关远程角色。关卡1结束后：生命29，攻击力10，MP60，每回合2次行动。"
+characterName = "戏中人"
+characterDescription = "第2关戏中人。关卡1结束后：生命29，攻击力10，MP60，每回合2次行动。"
 characterHeadImage = ExtResource("2_head")
 hp = 29.0
 maxHp = 29.0

@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_heal")
 commandId = 7
-commandName = "治疗"
+commandName = "玄丹济命"
 commandDescription = "对目标造成（1.0）攻击力的治疗。"
 priority = 50
 metadata/_custom_type_script = "uid://c4mec8i6hyxs7"

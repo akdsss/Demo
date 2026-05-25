@@ -3,8 +3,10 @@
 [ext_resource type="Script" uid="uid://dtbwk2qsbrus3" path="res://Script/UIControl/MainUIControl/PlayerActionButtonControl.cs" id="1_4hvo7"]
 
 [node name="ActionButton" type="Button" unique_id=1430029491]
-offset_right = 117.0
-offset_bottom = 31.0
+custom_minimum_size = Vector2(0, 44)
+offset_right = 180.0
+offset_bottom = 44.0
+theme_override_font_sizes/font_size = 18
 text = "攻击"
 script = ExtResource("1_4hvo7")
 

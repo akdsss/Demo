@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" path="res://Asset/character/enemyC01.png" id="1_head"]
 [ext_resource type="Script" uid="uid://di57v3n6x1ras" path="res://Data/DataScript/EnemyData.cs" id="2_script"]
-[ext_resource type="Resource" uid="uid://qinongqwiyl6" path="res://Data/CommandData/EnemyCommandData/enm_cmd1.tres" id="3_move"]
+[ext_resource type="Resource" uid="uid://m5relitemove" path="res://Data/CommandData/EnemyCommandData/enm_cmd1_elite_move.tres" id="3_move"]
 [ext_resource type="Resource" uid="uid://m5relitecharge" path="res://Data/CommandData/EnemyCommandData/enm_cmd8.tres" id="4_charge"]
 [ext_resource type="Resource" uid="uid://m5relitesingle" path="res://Data/CommandData/EnemyCommandData/enm_cmd9.tres" id="5_single"]
 [ext_resource type="Resource" uid="uid://m5reliterage01" path="res://Data/CommandData/EnemyCommandData/enm_cmd10.tres" id="6_rage"]
@@ -20,8 +20,8 @@ useOddEvenActionPattern = true
 oddRoundActionTimes = 2
 evenRoundActionTimes = 3
 characterId = 201
-characterName = "强力近战精英"
-characterDescription = "第三关双精英战成员：半血狂怒、位移、蓄力、单体、冲锋、至阴和至阳。奇偶回合行动次数与狂怒方案留给后续 AI 逻辑。"
+characterName = "虎贲将军"
+characterDescription = "第三关双精英战成员：半血血煞、区域突袭、虎贲破军、裂阵戟、摧锋陷阵、阴巡八荒和阳巡八荒。奇偶回合行动次数与血煞方案留给后续 AI 逻辑。"
 characterHeadImage = ExtResource("1_head")
 hp = 300.0
 maxHp = 300.0

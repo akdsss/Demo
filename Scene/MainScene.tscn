@@ -18,8 +18,609 @@ defaultCharacterImage = ExtResource("7_j5k17")
 
 [node name="MainUi" parent="." unique_id=1092813157 instance=ExtResource("1_uptpg")]
 
-[node name="EnemyCHContent" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/RightRegion" parent_id_path=PackedInt32Array(1092813157, 600154088) index="0" unique_id=208221730]
-theme_override_constants/separation = 10
+[node name="ChessBoard" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion" parent_id_path=PackedInt32Array(1092813157, 1600460319) index="0" unique_id=1772981741]
+position = Vector2(454.92233, 369.42896)
+scale = Vector2(0.89659315, 0.8965932)
+
+[node name="ChessCell" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard" index="0" unique_id=1752298667]
+ShowEmptyAnchorsForDebug = true
+CharacterAnchorDisplayScale = 3.3
+
+[node name="Anchor0" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/ChessCell" index="0"]
+offset_left = 20.540932
+offset_top = -25.504377
+offset_right = 38.54093
+offset_bottom = -7.5043774
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor1" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/ChessCell" index="1"]
+offset_left = -36.277878
+offset_top = -40.23519
+offset_right = -18.277878
+offset_bottom = -22.235191
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor2" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/ChessCell" index="2"]
+offset_left = 18.436571
+offset_top = -80.92029
+offset_right = 36.436573
+offset_bottom = -62.920288
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9.000001, 9)
+
+[node name="Anchor3" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/ChessCell" index="3"]
+offset_left = -18.03975
+offset_top = 15.180725
+offset_right = -0.039749146
+offset_bottom = 33.180725
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9.000001)
+
+[node name="Anchor4" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/ChessCell" index="4"]
+offset_left = 59.121666
+offset_top = 12.374858
+offset_right = 77.12167
+offset_bottom = 30.374859
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9.000002, 9)
+
+[node name="Anchor5" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/ChessCell" index="5"]
+offset_left = 19.839466
+offset_top = 52.358494
+offset_right = 37.839466
+offset_bottom = 70.35849
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 8.999998)
+
+[node name="Anchor6" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/ChessCell" index="6"]
+offset_left = -75.56006
+offset_top = 17.285128
+offset_right = -57.56006
+offset_bottom = 35.28513
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9.000001)
+
+[node name="Control2" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard" index="1" unique_id=161448986]
+ShowEmptyAnchorsForDebug = true
+CharacterAnchorDisplayScale = 3.3
+
+[node name="Anchor0" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control2" index="0"]
+offset_left = -31.347395
+offset_top = -59.050552
+offset_right = -13.347395
+offset_bottom = -41.050552
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor1" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control2" index="1"]
+offset_left = 31.083195
+offset_top = -61.154976
+offset_right = 49.08319
+offset_bottom = -43.154976
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor2" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control2" index="2"]
+offset_left = 93.51387
+offset_top = -59.75203
+offset_right = 111.51387
+offset_bottom = -41.75203
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor3" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control2" index="3"]
+offset_left = 3.0245233
+offset_top = -15.5595875
+offset_right = 21.024523
+offset_bottom = 2.4404125
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor4" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control2" index="4"]
+offset_left = 62.649216
+offset_top = -14.858123
+offset_right = 80.649216
+offset_bottom = 3.1418772
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor5" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control2" index="5"]
+offset_left = 5.128903
+offset_top = 39.15486
+offset_right = 23.128902
+offset_bottom = 57.15486
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor6" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control2" index="6"]
+offset_left = 60.544903
+offset_top = 40.557796
+offset_right = 78.54491
+offset_bottom = 58.557796
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9.000002, 9)
+
+[node name="Control3" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard" index="2" unique_id=880889782]
+ShowEmptyAnchorsForDebug = true
+CharacterAnchorDisplayScale = 3.3
+
+[node name="Anchor0" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control3" index="0"]
+offset_left = 32.92429
+offset_top = -27.096363
+offset_right = 50.92429
+offset_bottom = -9.096363
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor1" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control3" index="1"]
+offset_left = 89.04162
+offset_top = -39.72278
+offset_right = 107.04162
+offset_bottom = -21.722778
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor2" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control3" index="2"]
+offset_left = 39.237473
+offset_top = -83.21373
+offset_right = 57.237473
+offset_bottom = -65.21373
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor3" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control3" index="3"]
+offset_left = -0.7462063
+offset_top = 17.096085
+offset_right = 17.253794
+offset_bottom = 35.096085
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor4" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control3" index="4"]
+offset_left = 133.93555
+offset_top = 19.200485
+offset_right = 151.93555
+offset_bottom = 37.200485
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 8.999999)
+
+[node name="Anchor5" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control3" index="5"]
+offset_left = 42.043365
+offset_top = 54.27385
+offset_right = 60.043365
+offset_bottom = 72.27385
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor6" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control3" index="6"]
+offset_left = 78.51961
+offset_top = 14.991671
+offset_right = 96.51961
+offset_bottom = 32.99167
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Control4" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard" index="3" unique_id=630824215]
+ShowEmptyAnchorsForDebug = true
+CharacterAnchorDisplayScale = 3.3
+
+[node name="Anchor0" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control4" index="0"]
+offset_left = -52.381912
+offset_top = -25.902079
+offset_right = -34.381912
+offset_bottom = -7.9020786
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor1" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control4" index="1"]
+offset_left = 45.122
+offset_top = 1.4551477
+offset_right = 63.122
+offset_bottom = 19.455147
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor2" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control4" index="2"]
+offset_left = 42.31613
+offset_top = 58.274002
+offset_right = 60.31613
+offset_bottom = 76.274
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor3" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control4" index="3"]
+offset_left = -51.680466
+offset_top = 97.55617
+offset_right = -33.680466
+offset_bottom = 115.55617
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor4" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control4" index="4"]
+offset_left = -9.592417
+offset_top = 5.66395
+offset_right = 8.407583
+offset_bottom = 23.66395
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor5" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control4" index="5"]
+offset_left = -64.30686
+offset_top = 36.52851
+offset_right = -46.30686
+offset_bottom = 54.52851
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor6" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control4" index="6"]
+offset_left = -9.59241
+offset_top = 59.67693
+offset_right = 8.40759
+offset_bottom = 77.676926
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 8.999998)
+
+[node name="Control5" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard" index="4" unique_id=33900241]
+ShowEmptyAnchorsForDebug = true
+CharacterAnchorDisplayScale = 3.3
+
+[node name="Anchor0" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control5" index="0"]
+offset_left = -10.328424
+offset_top = -6.2461157
+offset_right = 7.6715755
+offset_bottom = 11.753884
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor1" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control5" index="1"]
+offset_left = 37.37135
+offset_top = -33.60334
+offset_right = 55.37135
+offset_bottom = -15.60334
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor2" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control5" index="2"]
+offset_left = 96.29469
+offset_top = -30.797468
+offset_right = 114.29469
+offset_bottom = -12.797468
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor3" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control5" index="3"]
+offset_left = -29.969486
+offset_top = 44.961
+offset_right = -11.969486
+offset_bottom = 62.961
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor4" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control5" index="4"]
+offset_left = 71.04182
+offset_top = 19.708174
+offset_right = 89.04182
+offset_bottom = 37.708176
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9.000002)
+
+[node name="Anchor5" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control5" index="5"]
+offset_left = -22.253368
+offset_top = 96.86956
+offset_right = -4.2533684
+offset_bottom = 114.86956
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor6" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control5" index="6"]
+offset_left = 20.536179
+offset_top = 37.946304
+offset_right = 38.53618
+offset_bottom = 55.946304
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Control6" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard" index="5" unique_id=1277242496]
+ShowEmptyAnchorsForDebug = true
+CharacterAnchorDisplayScale = 3.3
+
+[node name="Anchor0" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control6" index="0"]
+offset_left = 28.247614
+offset_top = 9.290782
+offset_right = 46.247612
+offset_bottom = 27.290783
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(8.999999, 9)
+
+[node name="Anchor1" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control6" index="1"]
+offset_left = 62.61947
+offset_top = -38.408974
+offset_right = 80.61947
+offset_bottom = -20.408974
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor2" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control6" index="2"]
+offset_left = 77.35033
+offset_top = 14.902523
+offset_right = 95.35033
+offset_bottom = 32.902523
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor3" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control6" index="3"]
+offset_left = -18.75072
+offset_top = 34.543606
+offset_right = -0.7507191
+offset_bottom = 52.543606
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor4" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control6" index="4"]
+offset_left = 52.09749
+offset_top = 62.602303
+offset_right = 70.09749
+offset_bottom = 80.6023
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9.000001, 9)
+
+[node name="Anchor5" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control6" index="5"]
+offset_left = -48.91379
+offset_top = 80.840454
+offset_right = -30.913792
+offset_bottom = 98.840454
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor6" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control6" index="6"]
+offset_left = 5.099188
+offset_top = 85.049255
+offset_right = 23.099188
+offset_bottom = 103.049255
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Control7" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard" index="6" unique_id=1549923934]
+ShowEmptyAnchorsForDebug = true
+CharacterAnchorDisplayScale = 3.3
+
+[node name="Anchor0" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control7" index="0"]
+offset_left = 8.34322
+offset_top = 11.559248
+offset_right = 26.34322
+offset_bottom = 29.559248
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor1" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control7" index="1"]
+offset_left = 60.953224
+offset_top = 9.454845
+offset_right = 78.953224
+offset_bottom = 27.454845
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor2" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control7" index="2"]
+offset_left = 107.250114
+offset_top = -23.514116
+offset_right = 125.250114
+offset_bottom = -5.5141163
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor3" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control7" index="3"]
+offset_left = 10.447558
+offset_top = 65.57223
+offset_right = 28.44756
+offset_bottom = 83.57223
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor4" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control7" index="4"]
+offset_left = 106.54864
+offset_top = 102.04852
+offset_right = 124.54864
+offset_bottom = 120.04852
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor5" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control7" index="5"]
+offset_left = 64.46061
+offset_top = 65.57223
+offset_right = 82.46061
+offset_bottom = 83.572235
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor6" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control7" index="6"]
+offset_left = 110.75745
+offset_top = 34.006203
+offset_right = 128.75745
+offset_bottom = 52.006203
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Control8" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard" index="7" unique_id=1015913880]
+ShowEmptyAnchorsForDebug = true
+CharacterAnchorDisplayScale = 3.3
+
+[node name="Anchor0" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control8" index="0"]
+offset_left = 24.938803
+offset_top = 7.276119
+offset_right = 42.938805
+offset_bottom = 25.27612
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor1" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control8" index="1"]
+offset_left = 62.81804
+offset_top = 44.453888
+offset_right = 80.81804
+offset_bottom = 62.453888
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor2" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control8" index="2"]
+offset_left = 20.730038
+offset_top = 82.33312
+offset_right = 38.730038
+offset_bottom = 100.33312
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor3" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control8" index="3"]
+offset_left = -17.149216
+offset_top = 40.94655
+offset_right = 0.8507843
+offset_bottom = 58.94655
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor4" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control8" index="4"]
+offset_left = 14.416828
+offset_top = 137.74904
+offset_right = 32.41683
+offset_bottom = 155.74904
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor5" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control8" index="5"]
+offset_left = -71.86365
+offset_top = 47.961224
+offset_right = -53.863647
+offset_bottom = 65.96123
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9.000002)
+
+[node name="Anchor6" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control8" index="6"]
+offset_left = -32.581482
+offset_top = 100.57127
+offset_right = -14.581482
+offset_bottom = 118.57127
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Control9" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard" index="8" unique_id=1649517150]
+ShowEmptyAnchorsForDebug = true
+CharacterAnchorDisplayScale = 3.3
+
+[node name="Anchor0" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control9" index="0"]
+offset_left = -2.1693287
+offset_top = 16.459972
+offset_right = 15.830671
+offset_bottom = 34.45997
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 8.999999)
+
+[node name="Anchor1" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control9" index="1"]
+offset_left = 51.84366
+offset_top = 19.96731
+offset_right = 69.84366
+offset_bottom = 37.96731
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor2" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control9" index="2"]
+offset_left = 52.545166
+offset_top = 68.36855
+offset_right = 70.545166
+offset_bottom = 86.36855
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor3" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control9" index="3"]
+offset_left = -2.8707738
+offset_top = 67.66709
+offset_right = 15.129227
+offset_bottom = 85.66709
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor4" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control9" index="4"]
+offset_left = 91.82733
+offset_top = 109.75513
+offset_right = 109.82733
+offset_bottom = 127.75513
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor5" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control9" index="5"]
+offset_left = -38.64563
+offset_top = 107.650764
+offset_right = -20.64563
+offset_bottom = 125.650764
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor6" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control9" index="6"]
+offset_left = 23.083534
+offset_top = 113.96393
+offset_right = 41.083534
+offset_bottom = 131.96393
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 8.999996)
+
+[node name="Control10" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard" index="9" unique_id=1312109016]
+ShowEmptyAnchorsForDebug = true
+CharacterAnchorDisplayScale = 3.3
+
+[node name="Anchor0" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control10" index="0"]
+offset_left = 0.23892546
+offset_top = 37.857124
+offset_right = 18.238926
+offset_bottom = 55.857124
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor1" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control10" index="1"]
+offset_left = 40.92399
+offset_top = 1.3808222
+offset_right = 58.92399
+offset_bottom = 19.380821
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor2" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control10" index="2"]
+offset_left = 78.80326
+offset_top = 38.55859
+offset_right = 96.80326
+offset_bottom = 56.55859
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor3" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control10" index="3"]
+offset_left = 38.819565
+offset_top = 78.54223
+offset_right = 56.819565
+offset_bottom = 96.54223
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor4" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control10" index="4"]
+offset_left = 95.63848
+offset_top = 91.87011
+offset_right = 113.63848
+offset_bottom = 109.87011
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor5" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control10" index="5"]
+offset_left = 48.64017
+offset_top = 129.74934
+offset_right = 66.64017
+offset_bottom = 147.74934
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(9, 9)
+
+[node name="Anchor6" parent="MainUi/Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control10" index="6"]
+offset_left = 134.92065
+offset_top = 41.36446
+offset_right = 152.92065
+offset_bottom = 59.36446
+scale = Vector2(3.3, 3.3)
+pivot_offset = Vector2(8.999996, 9)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=774191597]
 position = Vector2(576, 327)

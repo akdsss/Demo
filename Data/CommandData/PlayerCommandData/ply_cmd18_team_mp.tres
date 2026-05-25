@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_script")
 commandId = 18
-commandName = "回蓝"
+commandName = "回元阵"
 commandDescription = "己方全体恢复30 MP。"
 priority = 50
 metadata/_custom_type_script = "uid://bjb2y4dhdh5gg"

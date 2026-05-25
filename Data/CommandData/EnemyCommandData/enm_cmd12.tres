@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_script")
 commandId = 12
-commandName = "至阴"
-commandDescription = "持续4个时点，沿至阴路径移动并造成范围近战伤害。当前兼容层先按1倍范围近战伤害展示和结算。"
+commandName = "阴巡八荒"
+commandDescription = "持续4个时点，沿阴巡八荒路径移动并造成范围近战伤害。当前兼容层先按1倍范围近战伤害展示和结算。"
 priority = 10
 metadata/_custom_type_script = "uid://c4mec8i6hyxs7"

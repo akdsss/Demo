@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_script")
 commandId = 8
-commandName = "精英蓄力"
+commandName = "虎贲破军"
 commandDescription = "该技能覆盖2个时点。蓄力1个时点后，对所处区域除自己外的所有单位造成（1.5）攻击力 的范围近战伤害。"
 priority = 40
 metadata/_custom_type_script = "uid://c4mec8i6hyxs7"

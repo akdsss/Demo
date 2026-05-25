@@ -39,7 +39,7 @@ texture_margin_bottom = 10.0
 modulate_color = Color(0.58203125, 0.4501648, 0.4501648, 1)
 
 [node name="CharacterHeadButton" type="Control" unique_id=1517803722 node_paths=PackedStringArray("characterHeadTextureRect", "actionStateLabel", "actionTimesArray", "button", "focusTrangle", "hpBar", "hpLabel")]
-custom_minimum_size = Vector2(127.505, 40.605)
+custom_minimum_size = Vector2(220, 72)
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -153,7 +153,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 7
+theme_override_font_sizes/font_size = 13
 text = "100"
 horizontal_alignment = 1
 vertical_alignment = 1

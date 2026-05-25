@@ -21,8 +21,24 @@ public partial class PlayerChoseListPanelControl : Panel
     private ChoiceMenuView currentView = ChoiceMenuView.Hidden;
     private List<PlayerCommandData> lastSkillList = new();
     private string lastSkillListTitle = string.Empty;
-    private const float MenuButtonHeight = 26f;
+    private const float MenuButtonHeight = 42f;
+    private const float PlayerSelectImageHeight = 500f;
+    private const float PlayerSelectImageSeparation = 0f;
+    private const float PlayerSelectFallbackImageWidth = 210f;
+    // Change this value to move character0A_SHOW.png; the other two images stay attached to its right edge.
+    private static readonly Vector2 PlayerSelectFirstImagePosition = new(24f, 380f);
+    private static readonly string[] PlayerSelectImagePaths =
+    {
+        "res://Asset/character/character0A_SHOW.png",
+        "res://Asset/character/character0B_SHOW.png",
+        "res://Asset/character/character0C_SHOW.png"
+    };
+    private static readonly Color ChoicePanelBackgroundColor = new(0.6958008f, 0.7204437f, 0.7421875f, 1f);
+    private static readonly Color TransparentPanelColor = new(0f, 0f, 0f, 0f);
+    private static readonly Color PlayerImageNormalColor = Colors.White;
+    private static readonly Color PlayerImageHoverColor = new(1.35f, 1.35f, 1.35f, 1f);
     private static readonly Color DisabledTargetColor = new(0.45f, 0.45f, 0.45f, 1f);
+    private Node compactPanelParent;
 
     public void SetChoseListPanel(List<PlayerCommandData> playerCommandDataList)
     {
@@ -32,38 +48,32 @@ public partial class PlayerChoseListPanelControl : Panel
 
     public void ShowPlayerSelectPanel(List<PlayerData> playerList)
     {
-        PrepareCompactPanel();
+        List<Texture2D> textures = LoadPlayerSelectTextures();
+        PreparePlayerSelectPanel(textures);
         PubTool.instance.ClearChildren(allChoseContent);
         currentPlayerData = null;
         currentView = ChoiceMenuView.PlayerSelect;
         ClearCachedSkillList();
         Visible = true;
-        AddTitle("选择行动角色");
 
-        foreach (PlayerData player in playerList ?? new List<PlayerData>())
+        HBoxContainer imageRow = new()
         {
-            Button playerButton = new()
-            {
-                Text = BuildPlayerButtonText(player),
-                CustomMinimumSize = new Vector2(0, MenuButtonHeight),
-                SizeFlagsHorizontal = Control.SizeFlags.ExpandFill
-            };
+            CustomMinimumSize = new Vector2(CalculatePlayerSelectPanelWidth(textures), PlayerSelectImageHeight),
+            SizeFlagsHorizontal = Control.SizeFlags.ShrinkBegin,
+            SizeFlagsVertical = Control.SizeFlags.ShrinkBegin,
+            MouseFilter = Control.MouseFilterEnum.Pass
+        };
+        imageRow.AddThemeConstantOverride("separation", (int)PlayerSelectImageSeparation);
+        allChoseContent.AddChild(imageRow);
 
+        List<PlayerData> players = playerList ?? new List<PlayerData>();
+        for (int index = 0; index < PlayerSelectImagePaths.Length; index++)
+        {
+            PlayerData player = index < players.Count ? players[index] : null;
+            Texture2D texture = index < textures.Count ? textures[index] : null;
             bool selectable = IsSelectablePlayer(player);
-            playerButton.Disabled = !selectable;
-            if (!selectable)
-            {
-                playerButton.Modulate = DisabledTargetColor;
-            }
-            else
-            {
-                playerButton.Pressed += () => ConfirmPlayerSelection(player);
-            }
-
-            allChoseContent.AddChild(playerButton);
+            imageRow.AddChild(CreatePlayerImageButton(player, texture, selectable, index));
         }
-
-        AddDetail("请选择仍有行动次数的我方角色。", 42);
     }
 
     public void ShowCommandCategoryPanel(PlayerData playerData)
@@ -101,7 +111,7 @@ public partial class PlayerChoseListPanelControl : Panel
             allChoseContent.AddChild(categoryButton);
         }
 
-        AddDetail("点击分类选择技能。", 42);
+        AddDetail("点击分类选择技能。", 72);
     }
 
     public void ShowSkillDetail(PlayerCommandData playerCommandData)
@@ -157,7 +167,7 @@ public partial class PlayerChoseListPanelControl : Panel
         backButton.Pressed += () => ShowCommandCategoryPanel(currentPlayerData);
         allChoseContent.AddChild(backButton);
 
-        AddDetail("选择目标后，再长按时间轴空白时点。已战败目标不可选。", 54);
+        AddDetail("选择目标后，再长按时间轴空白时点。已战败目标不可选。", 90);
     }
 
     public bool HandleBackPressed()
@@ -218,7 +228,7 @@ public partial class PlayerChoseListPanelControl : Panel
             ((PlayerActionButtonControl)choseButton).playerCommandData = playerCommandData;
         }
 
-        AddDetail("悬停查看详情；单击后选择目标，再长按时间轴空白时点。", 54);
+        AddDetail("悬停查看详情；单击后选择目标，再长按时间轴空白时点。", 90);
     }
 
     private void AddTitle(string text)
@@ -227,9 +237,9 @@ public partial class PlayerChoseListPanelControl : Panel
         {
             Text = text,
             AutowrapMode = TextServer.AutowrapMode.WordSmart,
-            CustomMinimumSize = new Vector2(0, 20)
-        };
-        titleLabel.AddThemeFontSizeOverride("font_size", 13);
+            CustomMinimumSize = new Vector2(0, 34)
+		};
+        titleLabel.AddThemeFontSizeOverride("font_size", 18);
         allChoseContent.AddChild(titleLabel);
     }
 
@@ -241,27 +251,190 @@ public partial class PlayerChoseListPanelControl : Panel
             AutowrapMode = TextServer.AutowrapMode.WordSmart,
             CustomMinimumSize = new Vector2(0, height)
         };
-        detailLabel.AddThemeFontSizeOverride("font_size", 12);
+        detailLabel.AddThemeFontSizeOverride("font_size", 16);
         allChoseContent.AddChild(detailLabel);
     }
 
     private void PrepareCompactPanel()
     {
-        CustomMinimumSize = new Vector2(0, 150);
+        RestoreCompactPanelParent();
+        SelfModulate = Colors.White;
+        SetChoicePanelBackgroundVisible(true);
+        SetAllChoiceContentAnchors(0.1f, 0.025f, 0.9f, 1f);
+        CustomMinimumSize = new Vector2(0, 260);
         SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
         SizeFlagsVertical = Control.SizeFlags.Fill;
         if (allChoseContent != null)
         {
-            allChoseContent.AddThemeConstantOverride("separation", 5);
+            allChoseContent.AddThemeConstantOverride("separation", 8);
         }
+    }
+
+    private void PreparePlayerSelectPanel(List<Texture2D> textures)
+    {
+        StoreCompactPanelParent();
+        Node screenPanel = GetTree()?.CurrentScene?.GetNodeOrNull<Node>("MainUi/Panel");
+        MoveToParent(screenPanel);
+        SelfModulate = TransparentPanelColor;
+        SetChoicePanelBackgroundVisible(false);
+        SetAllChoiceContentAnchors(0f, 0f, 1f, 1f);
+        float panelWidth = CalculatePlayerSelectPanelWidth(textures);
+        CustomMinimumSize = new Vector2(panelWidth, PlayerSelectImageHeight);
+        SizeFlagsHorizontal = Control.SizeFlags.ShrinkBegin;
+        SizeFlagsVertical = Control.SizeFlags.ShrinkBegin;
+        AnchorLeft = 0f;
+        AnchorTop = 0f;
+        AnchorRight = 0f;
+        AnchorBottom = 0f;
+        OffsetLeft = PlayerSelectFirstImagePosition.X;
+        OffsetTop = PlayerSelectFirstImagePosition.Y;
+        OffsetRight = PlayerSelectFirstImagePosition.X + panelWidth;
+        OffsetBottom = PlayerSelectFirstImagePosition.Y + PlayerSelectImageHeight;
+        MoveToFront();
+        if (allChoseContent != null)
+        {
+            allChoseContent.AddThemeConstantOverride("separation", 0);
+        }
+    }
+
+    private TextureButton CreatePlayerImageButton(PlayerData player, Texture2D texture, bool selectable, int imageIndex)
+    {
+        Vector2 imageSize = GetPlayerSelectImageSize(texture);
+        TextureButton imageButton = new()
+        {
+            Name = $"PlayerImageButton{imageIndex}",
+            TextureNormal = texture,
+            TexturePressed = texture,
+            TextureHover = texture,
+            TextureDisabled = texture,
+            IgnoreTextureSize = true,
+            StretchMode = TextureButton.StretchModeEnum.KeepAspectCentered,
+            CustomMinimumSize = imageSize,
+            SizeFlagsHorizontal = Control.SizeFlags.ShrinkBegin,
+            SizeFlagsVertical = Control.SizeFlags.ShrinkBegin,
+            Disabled = !selectable,
+            TooltipText = BuildPlayerButtonText(player),
+            FocusMode = Control.FocusModeEnum.None,
+            Modulate = selectable ? PlayerImageNormalColor : DisabledTargetColor
+        };
+
+        if (selectable)
+        {
+            imageButton.Pressed += () => ConfirmPlayerSelection(player);
+            imageButton.MouseEntered += () => imageButton.Modulate = PlayerImageHoverColor;
+            imageButton.MouseExited += () => imageButton.Modulate = PlayerImageNormalColor;
+        }
+
+        return imageButton;
+    }
+
+    private static List<Texture2D> LoadPlayerSelectTextures()
+    {
+        List<Texture2D> textures = new();
+        foreach (string imagePath in PlayerSelectImagePaths)
+        {
+            textures.Add(LoadTexture(imagePath));
+        }
+
+        return textures;
+    }
+
+    private static Texture2D LoadTexture(string resourcePath)
+    {
+        Texture2D texture = ResourceLoader.Load<Texture2D>(resourcePath);
+        if (texture != null)
+        {
+            return texture;
+        }
+
+        Image image = Image.LoadFromFile(ProjectSettings.GlobalizePath(resourcePath));
+        return image == null ? null : ImageTexture.CreateFromImage(image);
+    }
+
+    private static float CalculatePlayerSelectPanelWidth(List<Texture2D> textures)
+    {
+        float width = 0f;
+        int imageCount = PlayerSelectImagePaths.Length;
+        for (int index = 0; index < imageCount; index++)
+        {
+            Texture2D texture = index < textures.Count ? textures[index] : null;
+            width += GetPlayerSelectImageSize(texture).X;
+            if (index < imageCount - 1)
+            {
+                width += PlayerSelectImageSeparation;
+            }
+        }
+
+        return width;
+    }
+
+    private static Vector2 GetPlayerSelectImageSize(Texture2D texture)
+    {
+        if (texture == null || texture.GetHeight() <= 0)
+        {
+            return new Vector2(PlayerSelectFallbackImageWidth, PlayerSelectImageHeight);
+        }
+
+        float width = PlayerSelectImageHeight * texture.GetWidth() / texture.GetHeight();
+        return new Vector2(width, PlayerSelectImageHeight);
+    }
+
+    private void StoreCompactPanelParent()
+    {
+        if (compactPanelParent == null)
+        {
+            compactPanelParent = GetParent();
+        }
+    }
+
+    private void RestoreCompactPanelParent()
+    {
+        StoreCompactPanelParent();
+        MoveToParent(compactPanelParent);
+    }
+
+    private void MoveToParent(Node targetParent)
+    {
+        if (targetParent == null || GetParent() == targetParent)
+        {
+            return;
+        }
+
+        GetParent()?.RemoveChild(this);
+        targetParent.AddChild(this);
+    }
+
+    private void SetChoicePanelBackgroundVisible(bool visible)
+    {
+        ColorRect background = GetNodeOrNull<ColorRect>("ColorRect");
+        if (background != null)
+        {
+            background.Color = visible ? Colors.White : TransparentPanelColor;
+            background.SelfModulate = visible ? ChoicePanelBackgroundColor : Colors.White;
+        }
+    }
+
+    private void SetAllChoiceContentAnchors(float left, float top, float right, float bottom)
+    {
+        if (allChoseContent == null)
+        {
+            return;
+        }
+
+        allChoseContent.AnchorLeft = left;
+        allChoseContent.AnchorTop = top;
+        allChoseContent.AnchorRight = right;
+        allChoseContent.AnchorBottom = bottom;
+        allChoseContent.OffsetLeft = 0f;
+        allChoseContent.OffsetTop = 0f;
+        allChoseContent.OffsetRight = 0f;
+        allChoseContent.OffsetBottom = 0f;
     }
 
     private static bool IsSelectablePlayer(PlayerData player)
     {
         return player != null &&
-            player.characterBattleState == CharacterBattleState.ALIVE &&
-            player.hp > 0 &&
-            player.currentRestActionTimes > 0;
+            player.CanPrepareActionThisRound();
     }
 
     private static string BuildPlayerButtonText(PlayerData player)

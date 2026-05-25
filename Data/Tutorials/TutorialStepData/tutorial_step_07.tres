@@ -8,6 +8,7 @@ stepId = "tutorial_07_inspect"
 orderIndex = 7
 title = "检视详情"
 promptText = "使用检视详情查看已放置指令。怪物行动未揭示前只显示标签，揭示后会显示技能名和优先级。"
+promptHorizontalPosition = 2
 highlightTarget = 6
 waitCondition = 4
 blocksOtherInput = true

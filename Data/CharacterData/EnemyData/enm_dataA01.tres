@@ -9,8 +9,8 @@
 [resource]
 script = ExtResource("1_iwxkr")
 enemyCommandDataArray = Array[Object]([ExtResource("3_move"), ExtResource("4_attack"), ExtResource("5_skip")])
-characterName = "近战训练人偶"
-characterDescription = "教学关近战训练敌人。每回合2次行动机会，生命49，攻击力10。"
+characterName = "不语僧"
+characterDescription = "教学关不语僧。每回合2次行动机会，生命49，攻击力10。"
 characterHeadImage = ExtResource("1_head")
 hp = 49.0
 maxHp = 49.0

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="TutorialStepData" format=3]
+
+[ext_resource type="Script" path="res://Data/DataScript/TutorialStepData.cs" id="1_step"]
+
+[resource]
+script = ExtResource("1_step")
+stepId = "tutorial_10b_battle_log_panel"
+orderIndex = 11
+title = "阅读战斗记录"
+promptText = "这里按时间顺序保留战斗过程。遇到行动失败、伤害数字或位置变化时，可以回到这里复盘原因。关闭记录后继续观察区域变化。"
+promptHorizontalPosition = 2
+highlightTarget = 9
+waitCondition = 0
+blocksOtherInput = true

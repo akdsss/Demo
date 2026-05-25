@@ -9,18 +9,18 @@ public partial class CmdQueueUIControl : Node
 	public List<List<CommandItemUIControl>> commandItemUIControlMatrix;
 	public CmdQueueState cmdQueueState = CmdQueueState.NORMAL;
 	public bool IsInspectMode { get; private set; }
-	private const float TimelineWidth = 420f;
-	private const float TimelineSlotHeight = 22f;
-	private const float TimelineInfoWidth = 410f;
-	private const float TimelineTailWidth = 78f;
-	private const float TimelineSectionSeparation = 2f;
-	private const float TimelineInfoTextSeparation = 15f;
-	private const float TimelineTrackSeparation = 1f;
-	private const float TimelinePanelVerticalPadding = 3f;
-	private const int TimelineHostRowSeparation = 1;
-	private const float PlayerBannerHeight = 23f;
-	private const float TopPanelHeight = 98f;
-	private const float DownPanelHeight = 104f;
+	private const float TimelineWidth = 760f;
+	private const float TimelineSlotHeight = 34f;
+	private const float TimelineInfoWidth = 520f;
+	private const float TimelineTailWidth = 170f;
+	private const float TimelineSectionSeparation = 8f;
+	private const float TimelineInfoTextSeparation = 18f;
+	private const float TimelineTrackSeparation = 2f;
+	private const float TimelinePanelVerticalPadding = 8f;
+	private const int TimelineHostRowSeparation = 3;
+	private const float PlayerBannerHeight = 34f;
+	private const float TopPanelHeight = 170f;
+	private const float DownPanelHeight = 170f;
 	private PackedScene commandItemPrefab;
 	private VBoxContainer enemyTimelineHost;
 	private VBoxContainer playerTimelineHost;
@@ -226,7 +226,7 @@ public partial class CmdQueueUIControl : Node
 				choicePanel.GetParent()?.RemoveChild(choicePanel);
 				interactionHost.AddChild(choicePanel);
 			}
-			choicePanel.CustomMinimumSize = new Vector2(0, 150);
+			choicePanel.CustomMinimumSize = new Vector2(0, 260);
 			choicePanel.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
 			choicePanel.SizeFlagsVertical = Control.SizeFlags.Fill;
 			choicePanel.Visible = false;
@@ -262,7 +262,7 @@ public partial class CmdQueueUIControl : Node
 			};
 			battleInfoPanel.AddChild(battleInfoLabel);
 		}
-		battleInfoLabel.AddThemeFontSizeOverride("font_size", 13);
+		battleInfoLabel.AddThemeFontSizeOverride("font_size", 18);
 		battleInfoLabel.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
 		battleInfoLabel.SizeFlagsVertical = Control.SizeFlags.ExpandFill;
 	}
@@ -341,6 +341,7 @@ public partial class CmdQueueUIControl : Node
 					HorizontalAlignment = HorizontalAlignment.Center,
 					VerticalAlignment = VerticalAlignment.Center
 				};
+				actionLabel.AddThemeFontSizeOverride("font_size", 18);
 				row.AddChild(actionLabel);
 				PlaceTimelineTail(actionLabel);
 				if (timelineUnitInfoMap.TryGetValue(characterData, out TimelineUnitInfo info))
@@ -350,12 +351,19 @@ public partial class CmdQueueUIControl : Node
 			}
 			else
 			{
-				Control tailSpacer = new()
+				Label actionLabel = new()
 				{
-					CustomMinimumSize = new Vector2(TimelineTailWidth, TimelineSlotHeight)
+					CustomMinimumSize = new Vector2(TimelineTailWidth, TimelineSlotHeight),
+					HorizontalAlignment = HorizontalAlignment.Center,
+					VerticalAlignment = VerticalAlignment.Center
 				};
-				row.AddChild(tailSpacer);
-				PlaceTimelineTail(tailSpacer);
+				actionLabel.AddThemeFontSizeOverride("font_size", 18);
+				row.AddChild(actionLabel);
+				PlaceTimelineTail(actionLabel);
+				if (timelineUnitInfoMap.TryGetValue(characterData, out TimelineUnitInfo info))
+				{
+					info.ActionLabel = actionLabel;
+				}
 			}
 		}
 	}
@@ -373,7 +381,7 @@ public partial class CmdQueueUIControl : Node
 		TextureRect head = new()
 		{
 			Texture = characterData?.characterHeadImage ?? Autoloads.sceneSingleton.defaultCharacterImage,
-			CustomMinimumSize = new Vector2(16, 16),
+			CustomMinimumSize = new Vector2(28, 28),
 			SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter,
 			SizeFlagsVertical = Control.SizeFlags.ShrinkCenter,
 			ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize,
@@ -394,7 +402,7 @@ public partial class CmdQueueUIControl : Node
 			Text = characterData?.characterName ?? "未知",
 			AutowrapMode = TextServer.AutowrapMode.Off
 		};
-		nameLabel.AddThemeFontSizeOverride("font_size", 13);
+		nameLabel.AddThemeFontSizeOverride("font_size", 18);
 		nameLabel.HorizontalAlignment = HorizontalAlignment.Left;
 		nameLabel.VerticalAlignment = VerticalAlignment.Center;
 		nameLabel.ClipText = true;
@@ -405,8 +413,8 @@ public partial class CmdQueueUIControl : Node
 		{
 			AutowrapMode = TextServer.AutowrapMode.Off
 		};
-		hpLabel.AddThemeFontSizeOverride("font_size", 13);
-		hpLabel.CustomMinimumSize = new Vector2(characterData is PlayerData ? 60 : 70, TimelineSlotHeight);
+		hpLabel.AddThemeFontSizeOverride("font_size", 18);
+		hpLabel.CustomMinimumSize = new Vector2(characterData is PlayerData ? 96 : 110, TimelineSlotHeight);
 		hpLabel.HorizontalAlignment = HorizontalAlignment.Left;
 		hpLabel.VerticalAlignment = VerticalAlignment.Center;
 		hpLabel.ClipText = true;
@@ -417,13 +425,13 @@ public partial class CmdQueueUIControl : Node
 		{
 			mpLabel = new Label
 			{
-				CustomMinimumSize = new Vector2(60, TimelineSlotHeight),
+				CustomMinimumSize = new Vector2(96, TimelineSlotHeight),
 				HorizontalAlignment = HorizontalAlignment.Left,
 				VerticalAlignment = VerticalAlignment.Center,
 				AutowrapMode = TextServer.AutowrapMode.Off,
 				ClipText = true
 			};
-			mpLabel.AddThemeFontSizeOverride("font_size", 13);
+			mpLabel.AddThemeFontSizeOverride("font_size", 18);
 			textColumn.AddChild(mpLabel);
 		}
 		textColumn.MoveChild(nameLabel, textColumn.GetChildCount() - 1);
@@ -458,9 +466,11 @@ public partial class CmdQueueUIControl : Node
 			}
 			if (info.ActionLabel != null)
 			{
-				info.ActionLabel.Text = characterData.currentRestActionTimes <= 0
-					? "完成"
-					: $"剩余{characterData.currentRestActionTimes}次";
+				info.ActionLabel.Text = characterData is PlayerData
+					? $"剩余行动次数为{characterData.currentRestActionTimes}"
+					: characterData.currentRestActionTimes <= 0
+						? "完成"
+						: $"剩余{characterData.currentRestActionTimes}次";
 			}
 		}
 	}
@@ -560,7 +570,7 @@ public partial class CmdQueueUIControl : Node
 	{
 		BattleManager battleManager = Autoloads.sceneSingleton?.battleManager;
 		PlayerData currentPlayer = battleManager?.eventManager?.currentMainPlayer;
-		if (currentPlayer == null || currentPlayer.characterBattleState != CharacterBattleState.ALIVE || currentPlayer.currentRestActionTimes <= 0)
+		if (currentPlayer == null || !currentPlayer.CanPrepareActionThisRound())
 		{
 			ResetCommandSelectionContext("无法设置指令", "该角色已无行动次数。", true);
 			return;
@@ -589,6 +599,7 @@ public partial class CmdQueueUIControl : Node
 			commandItemUIControlList[playerIdx].EnablePlacement();
 		}
 		ShowCommandDetail("设置指令", "选择空白时点并长按 1.2 秒确认。已设置指令不可覆盖。");
+		Autoloads.sceneSingleton.tutorialOverlayControl?.Notify(TutorialWaitCondition.EnterTimelinePlacement);
 	}
 	public void SwitchOffPlayerCommandSet()
 	{
@@ -835,8 +846,7 @@ public partial class CmdQueueUIControl : Node
 	{
 		return Autoloads.sceneSingleton?.battleManager?.battlePlayerDataList?.Any(player =>
 			player != null &&
-			player.characterBattleState == CharacterBattleState.ALIVE &&
-			player.currentRestActionTimes > 0) == true;
+			player.CanPrepareActionThisRound()) == true;
 	}
 
 	public void RefreshPrepareControlVisibility()
@@ -905,10 +915,11 @@ public partial class CmdQueueUIControl : Node
 			timelineControlBar = new VBoxContainer
 			{
 				Name = "TimelineControlBar",
-				CustomMinimumSize = new Vector2(150, 0)
+				CustomMinimumSize = new Vector2(220, 0)
 			};
 			AddChild(timelineControlBar);
 		}
+		timelineControlBar.AddThemeConstantOverride("separation", 10);
 
 		setCommandButton = CreateOrGetButton("SetCommandButton", "设置指令");
 		inspectButton = CreateOrGetButton("InspectButton", "检视详情");
@@ -932,18 +943,19 @@ public partial class CmdQueueUIControl : Node
 	private Button CreateOrGetButton(string nodeName, string text)
 	{
 		Button button = timelineControlBar?.GetNodeOrNull<Button>(nodeName);
-		if (button != null)
+		if (button == null)
 		{
-			return button;
+			button = new Button
+			{
+				Name = nodeName
+			};
+			timelineControlBar.AddChild(button);
 		}
 
-		button = new Button
-		{
-			Name = nodeName,
-			Text = text,
-			ToggleMode = nodeName != "StartSettlementButton"
-		};
-		timelineControlBar.AddChild(button);
+		button.Text = text;
+		button.CustomMinimumSize = new Vector2(0, 44);
+		button.ToggleMode = nodeName != "StartSettlementButton";
+		button.AddThemeFontSizeOverride("font_size", 18);
 		return button;
 	}
 
@@ -1019,6 +1031,7 @@ public partial class CmdQueueUIControl : Node
 			TutorialHighlightTarget.PlayerTimeline => playerTimelineHost,
 			TutorialHighlightTarget.EnemyTimeline => enemyTimelineHost,
 			TutorialHighlightTarget.TimelineSlot => playerTimelineHost,
+			TutorialHighlightTarget.SetCommandButton => setCommandButton,
 			TutorialHighlightTarget.InspectButton => inspectButton,
 			TutorialHighlightTarget.StartSettlementButton => startSettlementButton,
 			TutorialHighlightTarget.BattleLog => battleInfoLabel,
@@ -1076,8 +1089,7 @@ public partial class CmdQueueUIControl : Node
 		BattleManager battleManager = Autoloads.sceneSingleton?.battleManager;
 		PlayerData currentPlayer = battleManager?.eventManager?.currentMainPlayer;
 		if (currentPlayer != null &&
-			currentPlayer.characterBattleState == CharacterBattleState.ALIVE &&
-			currentPlayer.currentRestActionTimes > 0)
+			currentPlayer.CanPrepareActionThisRound())
 		{
 			return currentPlayer;
 		}
@@ -1085,8 +1097,7 @@ public partial class CmdQueueUIControl : Node
 		return battleManager?.battlePlayerDataList?
 			.FirstOrDefault(player =>
 				player != null &&
-				player.currentRestActionTimes > 0 &&
-				player.characterBattleState == CharacterBattleState.ALIVE);
+				player.CanPrepareActionThisRound());
 	}
 
 	private CharacterData GetTimelineOwner(int rowIdx)

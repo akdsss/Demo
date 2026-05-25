@@ -16,6 +16,7 @@ public partial class BattleManager : Node
 	private readonly EnemyActionPlanner enemyActionPlanner = new();
 
 	public EventManager eventManager = new();
+	public LevelData CurrentLevelData => currentLevelData;
 
 	[Signal] public delegate void BSEventHandler();
 	[Signal] public delegate void MainTSEventHandler();
@@ -111,10 +112,11 @@ public partial class BattleManager : Node
 		PrepareTurnInitialize();
 		while (prepareTurnState != PrepareTurnState.PRE_OVER)
 		{
+			EnemyPrepareInitialize();
 			bool enemyHasRemainingAction = false;
 			foreach (var enemyData in battleEnemyDataList)
 			{
-				if (enemyData.currentRestActionTimes > 0)
+				if (enemyData.CanPrepareActionThisRound())
 				{
 					enemyHasRemainingAction = true;
 					break;
@@ -132,7 +134,7 @@ public partial class BattleManager : Node
 				for (int i = 0; i < battleEnemyDataList.Count; i++)
 				{
 					EnemyData enemyData = battleEnemyDataList[i];
-					if (enemyData.currentRestActionTimes <= 0)
+					if (!enemyData.CanPrepareActionThisRound())
 					{
 						continue;
 					}
@@ -172,7 +174,7 @@ public partial class BattleManager : Node
 			bool playerHasRemainingAction = false;
 			foreach (var characterData in battlePlayerDataList)
 			{
-				if (characterData.currentRestActionTimes > 0)
+				if (characterData.CanPrepareActionThisRound())
 				{
 					playerHasRemainingAction = true;
 					break;
@@ -194,7 +196,7 @@ public partial class BattleManager : Node
 			enemyHasRemainingAction = false;
 			foreach (var enemyData in battleEnemyDataList)
 			{
-				if (enemyData.currentRestActionTimes > 0)
+				if (enemyData.HasRemainingActionChance())
 				{
 					enemyHasRemainingAction = true;
 					break;
@@ -203,7 +205,7 @@ public partial class BattleManager : Node
 			playerHasRemainingAction = false;
 			foreach (var characterData in battlePlayerDataList)
 			{
-				if (characterData.currentRestActionTimes > 0)
+				if (characterData.HasRemainingActionChance())
 				{
 					playerHasRemainingAction = true;
 					break;
@@ -370,7 +372,7 @@ public partial class BattleManager : Node
 	{
 		foreach (var playerData in battlePlayerDataList)
 		{
-			if (playerData.currentRestActionTimes > 0 && playerData.characterBattleState == CharacterBattleState.ALIVE)
+			if (playerData.CanPrepareActionThisRound())
 			{
 				GD.Print($"玩家{playerData.characterName}仍有{playerData.currentRestActionTimes}次行动机会");
 				return;

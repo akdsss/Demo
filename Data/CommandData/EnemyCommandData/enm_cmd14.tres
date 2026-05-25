@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_script")
 commandId = 14
-commandName = "范围远程"
+commandName = "五雷召令"
 commandDescription = "4个时点后，对目标区域造成（1.0）攻击力的范围远程伤害。"
 priority = 10
 metadata/_custom_type_script = "uid://c4mec8i6hyxs7"

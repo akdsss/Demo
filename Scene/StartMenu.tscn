@@ -17,38 +17,45 @@ grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Panel" unique_id=1329977137]
 layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
+anchors_preset = -1
+anchor_left = 0.68
+anchor_top = 0.58
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -336.0
-offset_top = -262.0
-offset_right = -39.0
-offset_bottom = -26.649292
+offset_left = 0.0
+offset_top = 0.0
+offset_right = -72.0
+offset_bottom = -72.0
 grow_horizontal = 0
 grow_vertical = 0
+theme_override_constants/separation = 16
 alignment = 1
 
 [node name="Button" type="Button" parent="Panel/VBoxContainer" unique_id=807588531]
+custom_minimum_size = Vector2(0, 62)
 layout_mode = 2
+theme_override_font_sizes/font_size = 24
 text = "开始游戏"
 
 [node name="Button2" type="Button" parent="Panel/VBoxContainer" unique_id=1665108991]
+custom_minimum_size = Vector2(0, 62)
 layout_mode = 2
+theme_override_font_sizes/font_size = 24
 text = "设置"
 
 [node name="Button3" type="Button" parent="Panel/VBoxContainer" unique_id=1584112462]
+custom_minimum_size = Vector2(0, 62)
 layout_mode = 2
+theme_override_font_sizes/font_size = 24
 text = "退出"
 
 [node name="SystemSetPanel" type="Panel" parent="." unique_id=644664660]
 visible = false
 anchors_preset = -1
-anchor_left = 0.1
-anchor_top = 0.1
-anchor_right = 0.8
-anchor_bottom = 0.8
+anchor_left = 0.24
+anchor_top = 0.18
+anchor_right = 0.76
+anchor_bottom = 0.82
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -66,10 +73,10 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -59.600037
-offset_top = 3.199997
-offset_right = -3.0
-offset_bottom = 61.399994
+offset_left = -76.0
+offset_top = 12.0
+offset_right = -12.0
+offset_bottom = 76.0
 grow_horizontal = 0
 
 [node name="ColorRect" type="ColorRect" parent="SystemSetPanel/Button" unique_id=1790602694]

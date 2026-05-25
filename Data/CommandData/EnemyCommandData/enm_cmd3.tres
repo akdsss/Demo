@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_vdndv")
 commandId = 3
-commandName = "攻击"
+commandName = "拂尘手"
 commandDescription = "攻击指定目标"
 priority = 20
 metadata/_custom_type_script = "uid://c4mec8i6hyxs7"

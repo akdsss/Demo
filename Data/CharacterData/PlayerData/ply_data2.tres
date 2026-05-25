@@ -14,13 +14,13 @@
 script = ExtResource("4_g50c1")
 playerCommandDataList = Array[Object]([ExtResource("1_move"), ExtResource("2_defense"), ExtResource("5_mp"), ExtResource("6_shot"), ExtResource("3_heal"), ExtResource("7_area_heal"), ExtResource("8_power")])
 characterId = 2
-characterName = "我方支援"
-characterDescription = "教学关支援角色。初始生命22，攻击力10，每回合2次行动。"
+characterName = "神算子"
+characterDescription = "教学关神算子。初始生命22，攻击力10，每回合2次行动。"
 characterHeadImage = ExtResource("1_head")
 hp = 22.0
 maxHp = 22.0
 mp = 60
 maxMp = 60
-atk = 100.0
-turnInitialActionTimes = 0
+atk = 10.0
+turnInitialActionTimes = 2
 metadata/_custom_type_script = "uid://bw07j5wfv22k0"

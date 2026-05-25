@@ -5,9 +5,10 @@
 [resource]
 script = ExtResource("1_step")
 stepId = "tutorial_12_growth"
-orderIndex = 12
+orderIndex = 13
 title = "胜利后的成长"
 promptText = "击败训练人偶后，将展示角色属性变化和新技能提示。成长数据从奖励配置读取。"
+promptHorizontalPosition = 2
 highlightTarget = 10
 waitCondition = 9
 blocksOtherInput = true

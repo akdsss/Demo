@@ -8,6 +8,7 @@ stepId = "tutorial_02_timeline"
 orderIndex = 2
 title = "六个时点"
 promptText = "每回合有 6 个时点。每名角色会把行动放进自己的时间轴槽位，结算时按时点和优先级依次执行。"
+promptHorizontalPosition = 0
 highlightTarget = 2
 waitCondition = 0
 blocksOtherInput = true

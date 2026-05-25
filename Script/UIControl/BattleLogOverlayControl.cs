@@ -2,7 +2,7 @@ using Godot;
 
 public partial class BattleLogOverlayControl : Control
 {
-    private const float PanelWidth = 760f;
+    private const float PanelWidth = 1180f;
     private const string EmptyLogText = "暂无战斗记录";
     private Panel panel;
     private RichTextLabel logTextLabel;
@@ -57,6 +57,11 @@ public partial class BattleLogOverlayControl : Control
         Visible = false;
     }
 
+    public Control GetTutorialHighlightControl(TutorialHighlightTarget target)
+    {
+        return target == TutorialHighlightTarget.BattleLog && Visible ? panel : null;
+    }
+
     public void RefreshLogText()
     {
         if (logTextLabel == null)
@@ -91,8 +96,8 @@ public partial class BattleLogOverlayControl : Control
         };
         panel.AnchorLeft = 0.5f;
         panel.AnchorRight = 0.5f;
-        panel.AnchorTop = 0.14f;
-        panel.AnchorBottom = 0.86f;
+        panel.AnchorTop = 0.12f;
+        panel.AnchorBottom = 0.88f;
         panel.OffsetLeft = -PanelWidth * 0.5f;
         panel.OffsetRight = PanelWidth * 0.5f;
         panel.OffsetTop = 0f;
@@ -114,10 +119,10 @@ public partial class BattleLogOverlayControl : Control
             MouseFilter = MouseFilterEnum.Pass
         };
         margin.SetAnchorsPreset(LayoutPreset.FullRect);
-        margin.AddThemeConstantOverride("margin_left", 18);
-        margin.AddThemeConstantOverride("margin_right", 18);
-        margin.AddThemeConstantOverride("margin_top", 14);
-        margin.AddThemeConstantOverride("margin_bottom", 16);
+        margin.AddThemeConstantOverride("margin_left", 28);
+        margin.AddThemeConstantOverride("margin_right", 28);
+        margin.AddThemeConstantOverride("margin_top", 22);
+        margin.AddThemeConstantOverride("margin_bottom", 24);
         panel.AddChild(margin);
 
         VBoxContainer content = new()
@@ -141,15 +146,17 @@ public partial class BattleLogOverlayControl : Control
             SizeFlagsHorizontal = SizeFlags.ExpandFill
         };
         titleLabel.AddThemeColorOverride("font_color", new Color(1, 1, 1, 0.96f));
+        titleLabel.AddThemeFontSizeOverride("font_size", 24);
         header.AddChild(titleLabel);
 
         Button closeButton = new()
         {
             Name = "CloseButton",
             Text = "关闭",
-            CustomMinimumSize = new Vector2(72, 34),
+            CustomMinimumSize = new Vector2(110, 44),
             MouseFilter = MouseFilterEnum.Stop
         };
+        closeButton.AddThemeFontSizeOverride("font_size", 18);
         closeButton.Pressed += CloseLog;
         header.AddChild(closeButton);
 
@@ -165,6 +172,7 @@ public partial class BattleLogOverlayControl : Control
             MouseFilter = MouseFilterEnum.Stop
         };
         logTextLabel.AddThemeColorOverride("default_color", new Color(1, 1, 1, 0.92f));
+        logTextLabel.AddThemeFontSizeOverride("normal_font_size", 18);
         content.AddChild(logTextLabel);
     }
 

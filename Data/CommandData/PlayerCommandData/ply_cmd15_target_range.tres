@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_script")
 commandId = 15
-commandName = "目标范围"
+commandName = "扣魂杯"
 commandDescription = "4个时点后，对指定目标所在区域造成（1.0）攻击力的范围远程伤害。"
 priority = 10
 metadata/_custom_type_script = "uid://bjb2y4dhdh5gg"

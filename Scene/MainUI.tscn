@@ -37,19 +37,19 @@ grow_vertical = 2
 
 [node name="TopPanel" type="Panel" parent="Panel/VBoxContainer" unique_id=1859375851]
 self_modulate = Color(6.4442754, 4.9101825, 4.9101825, 1)
+custom_minimum_size = Vector2(0, 170)
 layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 0.2
+size_flags_vertical = 1
 
 [node name="Button" type="Button" parent="Panel/VBoxContainer/TopPanel" unique_id=1297374720]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -72.0
-offset_top = 6.0
-offset_right = -6.0
-offset_bottom = 72.00001
+offset_left = -88.0
+offset_top = 12.0
+offset_right = -12.0
+offset_bottom = 88.0
 grow_horizontal = 0
 
 [node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/TopPanel/Button" unique_id=396422756]
@@ -81,10 +81,10 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -435.0
+offset_left = -440.0
 offset_top = 8.0
-offset_right = 435.0
-offset_bottom = 148.0
+offset_right = 440.0
+offset_bottom = 162.0
 grow_horizontal = 2
 theme_override_constants/separation = 5
 
@@ -199,6 +199,9 @@ position = Vector2(244.42342, 169.14)
 scale = Vector2(0.4222395, 0.42223957)
 texture = ExtResource("9_ffrsf")
 script = ExtResource("7_75wr5")
+UseResponsiveLayout = false
+ShowEmptyCharacterAnchorsForDebug = false
+CharacterAnchorDisplayScale = 3.3
 chessCellUIControlArray = [NodePath("ChessCell"), NodePath("Control2"), NodePath("Control3"), NodePath("Control4"), NodePath("Control5"), NodePath("Control6"), NodePath("Control7"), NodePath("Control8"), NodePath("Control9"), NodePath("Control10")]
 
 [node name="ChessCell" type="Control" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard" unique_id=1752298667 node_paths=PackedStringArray("allCharacterPointArray", "chessCellButton")]
@@ -210,92 +213,92 @@ offset_right = -158.3335
 offset_bottom = -155.9524
 scale = Vector2(1.59, 1.59)
 script = ExtResource("8_00qq1")
-allCharacterPointArray = [NodePath("CharacterDisplay/row0/col0"), NodePath("CharacterDisplay/row0/col1"), NodePath("CharacterDisplay/row0/col2"), NodePath("CharacterDisplay/row1/col0"), NodePath("CharacterDisplay/row1/col1"), NodePath("CharacterDisplay/row1/col2"), NodePath("CharacterDisplay/row2/col0"), NodePath("CharacterDisplay/row2/col1"), NodePath("CharacterDisplay/row2/col2")]
+allCharacterPointArray = [NodePath("Anchor0"), NodePath("Anchor1"), NodePath("Anchor2"), NodePath("Anchor3"), NodePath("Anchor4"), NodePath("Anchor5"), NodePath("Anchor6")]
 chessCellButton = NodePath("ChessCellButton")
 
-[node name="CharacterDisplay" type="VBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/ChessCell" unique_id=1644790583]
+[node name="Anchor0" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/ChessCell"]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="row0" type="HBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/ChessCell/CharacterDisplay" unique_id=14914503]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="col0" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/ChessCell/CharacterDisplay/row0" unique_id=520140336]
-layout_mode = 2
-size_flags_horizontal = 3
-texture = ExtResource("6_ttkx3")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="col1" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/ChessCell/CharacterDisplay/row0" unique_id=601725176]
-layout_mode = 2
-size_flags_horizontal = 3
-texture = ExtResource("13_e46wd")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="col2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/ChessCell/CharacterDisplay/row0" unique_id=1244837758]
-layout_mode = 2
-size_flags_horizontal = 3
+anchors_preset = 0
+offset_left = 6
+offset_top = 6
+offset_right = 24
+offset_bottom = 24
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="row1" type="HBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/ChessCell/CharacterDisplay" unique_id=368781745]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="col0" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/ChessCell/CharacterDisplay/row1" unique_id=1531170304]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor1" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/ChessCell"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 28.5
+offset_top = 6
+offset_right = 46.5
+offset_bottom = 24
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="col1" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/ChessCell/CharacterDisplay/row1" unique_id=1662684535]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/ChessCell"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 51
+offset_top = 6
+offset_right = 69
+offset_bottom = 24
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="col2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/ChessCell/CharacterDisplay/row1" unique_id=1277995774]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/ChessCell"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 12
+offset_top = 28.5
+offset_right = 30
+offset_bottom = 46.5
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="row2" type="HBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/ChessCell/CharacterDisplay" unique_id=516432900]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="col0" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/ChessCell/CharacterDisplay/row2" unique_id=1647465148]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor4" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/ChessCell"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 37.5
+offset_top = 28.5
+offset_right = 55.5
+offset_bottom = 46.5
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="col1" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/ChessCell/CharacterDisplay/row2" unique_id=215079917]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor5" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/ChessCell"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 6
+offset_top = 51
+offset_right = 24
+offset_bottom = 69
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="col2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/ChessCell/CharacterDisplay/row2" unique_id=1609778337]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor6" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/ChessCell"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 51
+offset_top = 51
+offset_right = 69
+offset_bottom = 69
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
-
 [node name="ChessCellButton" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/ChessCell" unique_id=1986853642 instance=ExtResource("12_jcthh")]
 layout_mode = 1
 anchors_preset = 15
@@ -316,92 +319,92 @@ offset_right = 17.856934
 offset_bottom = -229.76193
 scale = Vector2(1.59, 1.59)
 script = ExtResource("8_00qq1")
-allCharacterPointArray = [NodePath("VBoxContainer/HBoxContainer/TextureRect"), NodePath("VBoxContainer/HBoxContainer/TextureRect2"), NodePath("VBoxContainer/HBoxContainer/TextureRect3"), NodePath("VBoxContainer/HBoxContainer2/TextureRect"), NodePath("VBoxContainer/HBoxContainer2/TextureRect2"), NodePath("VBoxContainer/HBoxContainer2/TextureRect3"), NodePath("VBoxContainer/HBoxContainer3/TextureRect"), NodePath("VBoxContainer/HBoxContainer3/TextureRect2"), NodePath("VBoxContainer/HBoxContainer3/TextureRect3")]
+allCharacterPointArray = [NodePath("Anchor0"), NodePath("Anchor1"), NodePath("Anchor2"), NodePath("Anchor3"), NodePath("Anchor4"), NodePath("Anchor5"), NodePath("Anchor6")]
 chessCellButton = NodePath("ChessCellButton")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control2" unique_id=66157071]
+[node name="Anchor0" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control2"]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control2/VBoxContainer" unique_id=2045881082]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control2/VBoxContainer/HBoxContainer" unique_id=586127599]
-layout_mode = 2
-size_flags_horizontal = 3
+anchors_preset = 0
+offset_left = 6
+offset_top = 6
+offset_right = 24
+offset_bottom = 24
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control2/VBoxContainer/HBoxContainer" unique_id=1870829324]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor1" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control2"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 28.5
+offset_top = 6
+offset_right = 46.5
+offset_bottom = 24
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control2/VBoxContainer/HBoxContainer" unique_id=671524026]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control2"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 51
+offset_top = 6
+offset_right = 69
+offset_bottom = 24
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control2/VBoxContainer" unique_id=1093496024]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control2/VBoxContainer/HBoxContainer2" unique_id=827449336]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control2"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 12
+offset_top = 28.5
+offset_right = 30
+offset_bottom = 46.5
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control2/VBoxContainer/HBoxContainer2" unique_id=1757714493]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor4" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control2"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 37.5
+offset_top = 28.5
+offset_right = 55.5
+offset_bottom = 46.5
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control2/VBoxContainer/HBoxContainer2" unique_id=665691857]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor5" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control2"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 6
+offset_top = 51
+offset_right = 24
+offset_bottom = 69
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control2/VBoxContainer" unique_id=1278515355]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control2/VBoxContainer/HBoxContainer3" unique_id=178003029]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor6" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control2"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 51
+offset_top = 51
+offset_right = 69
+offset_bottom = 69
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
-
-[node name="TextureRect2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control2/VBoxContainer/HBoxContainer3" unique_id=1696774660]
-layout_mode = 2
-size_flags_horizontal = 3
-texture = ExtResource("9_6xff3")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="TextureRect3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control2/VBoxContainer/HBoxContainer3" unique_id=1720258031]
-layout_mode = 2
-size_flags_horizontal = 3
-texture = ExtResource("9_6xff3")
-expand_mode = 1
-stretch_mode = 5
-
 [node name="ChessCellButton" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control2" unique_id=2123824228 instance=ExtResource("12_jcthh")]
 layout_mode = 1
 anchors_preset = 15
@@ -422,92 +425,92 @@ offset_right = 201.19032
 offset_bottom = -151.19049
 scale = Vector2(1.59, 1.59)
 script = ExtResource("8_00qq1")
-allCharacterPointArray = [NodePath("VBoxContainer/HBoxContainer/TextureRect"), NodePath("VBoxContainer/HBoxContainer/TextureRect2"), NodePath("VBoxContainer/HBoxContainer/TextureRect3"), NodePath("VBoxContainer/HBoxContainer2/TextureRect"), NodePath("VBoxContainer/HBoxContainer2/TextureRect2"), NodePath("VBoxContainer/HBoxContainer2/TextureRect3"), NodePath("VBoxContainer/HBoxContainer3/TextureRect"), NodePath("VBoxContainer/HBoxContainer3/TextureRect2"), NodePath("VBoxContainer/HBoxContainer3/TextureRect3")]
+allCharacterPointArray = [NodePath("Anchor0"), NodePath("Anchor1"), NodePath("Anchor2"), NodePath("Anchor3"), NodePath("Anchor4"), NodePath("Anchor5"), NodePath("Anchor6")]
 chessCellButton = NodePath("ChessCellButton2")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control3" unique_id=1173094621]
+[node name="Anchor0" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control3"]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control3/VBoxContainer" unique_id=1348622448]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control3/VBoxContainer/HBoxContainer" unique_id=931876975]
-layout_mode = 2
-size_flags_horizontal = 3
+anchors_preset = 0
+offset_left = 6
+offset_top = 6
+offset_right = 24
+offset_bottom = 24
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control3/VBoxContainer/HBoxContainer" unique_id=1278321485]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor1" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control3"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 28.5
+offset_top = 6
+offset_right = 46.5
+offset_bottom = 24
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control3/VBoxContainer/HBoxContainer" unique_id=1593306624]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control3"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 51
+offset_top = 6
+offset_right = 69
+offset_bottom = 24
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control3/VBoxContainer" unique_id=156082358]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control3/VBoxContainer/HBoxContainer2" unique_id=1732137365]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control3"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 12
+offset_top = 28.5
+offset_right = 30
+offset_bottom = 46.5
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control3/VBoxContainer/HBoxContainer2" unique_id=1153197140]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor4" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control3"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 37.5
+offset_top = 28.5
+offset_right = 55.5
+offset_bottom = 46.5
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control3/VBoxContainer/HBoxContainer2" unique_id=899581998]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor5" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control3"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 6
+offset_top = 51
+offset_right = 24
+offset_bottom = 69
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control3/VBoxContainer" unique_id=1694074121]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control3/VBoxContainer/HBoxContainer3" unique_id=1317989016]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor6" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control3"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 51
+offset_top = 51
+offset_right = 69
+offset_bottom = 69
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
-
-[node name="TextureRect2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control3/VBoxContainer/HBoxContainer3" unique_id=374105519]
-layout_mode = 2
-size_flags_horizontal = 3
-texture = ExtResource("9_6xff3")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="TextureRect3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control3/VBoxContainer/HBoxContainer3" unique_id=600441136]
-layout_mode = 2
-size_flags_horizontal = 3
-texture = ExtResource("9_6xff3")
-expand_mode = 1
-stretch_mode = 5
-
 [node name="ChessCellButton2" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control3" unique_id=887549856 instance=ExtResource("12_jcthh")]
 layout_mode = 1
 anchors_preset = 15
@@ -528,92 +531,92 @@ offset_right = -229.76208
 offset_bottom = 13.095245
 scale = Vector2(1.59, 1.59)
 script = ExtResource("8_00qq1")
-allCharacterPointArray = [NodePath("VBoxContainer/HBoxContainer/TextureRect"), NodePath("VBoxContainer/HBoxContainer/TextureRect2"), NodePath("VBoxContainer/HBoxContainer/TextureRect3"), NodePath("VBoxContainer/HBoxContainer2/TextureRect"), NodePath("VBoxContainer/HBoxContainer2/TextureRect2"), NodePath("VBoxContainer/HBoxContainer2/TextureRect3"), NodePath("VBoxContainer/HBoxContainer3/TextureRect"), NodePath("VBoxContainer/HBoxContainer3/TextureRect2"), NodePath("VBoxContainer/HBoxContainer3/TextureRect3")]
+allCharacterPointArray = [NodePath("Anchor0"), NodePath("Anchor1"), NodePath("Anchor2"), NodePath("Anchor3"), NodePath("Anchor4"), NodePath("Anchor5"), NodePath("Anchor6")]
 chessCellButton = NodePath("ChessCellButton3")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control4" unique_id=2107728502]
+[node name="Anchor0" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control4"]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control4/VBoxContainer" unique_id=821858457]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control4/VBoxContainer/HBoxContainer" unique_id=1819849520]
-layout_mode = 2
-size_flags_horizontal = 3
+anchors_preset = 0
+offset_left = 6
+offset_top = 6
+offset_right = 24
+offset_bottom = 24
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control4/VBoxContainer/HBoxContainer" unique_id=1709435808]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor1" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control4"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 28.5
+offset_top = 6
+offset_right = 46.5
+offset_bottom = 24
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control4/VBoxContainer/HBoxContainer" unique_id=97854219]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control4"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 51
+offset_top = 6
+offset_right = 69
+offset_bottom = 24
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control4/VBoxContainer" unique_id=634331771]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control4/VBoxContainer/HBoxContainer2" unique_id=579389576]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control4"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 12
+offset_top = 28.5
+offset_right = 30
+offset_bottom = 46.5
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control4/VBoxContainer/HBoxContainer2" unique_id=2090694538]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor4" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control4"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 37.5
+offset_top = 28.5
+offset_right = 55.5
+offset_bottom = 46.5
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control4/VBoxContainer/HBoxContainer2" unique_id=987231849]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor5" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control4"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 6
+offset_top = 51
+offset_right = 24
+offset_bottom = 69
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control4/VBoxContainer" unique_id=321878495]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control4/VBoxContainer/HBoxContainer3" unique_id=749727586]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor6" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control4"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 51
+offset_top = 51
+offset_right = 69
+offset_bottom = 69
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
-
-[node name="TextureRect2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control4/VBoxContainer/HBoxContainer3" unique_id=1910598704]
-layout_mode = 2
-size_flags_horizontal = 3
-texture = ExtResource("9_6xff3")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="TextureRect3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control4/VBoxContainer/HBoxContainer3" unique_id=1470799559]
-layout_mode = 2
-size_flags_horizontal = 3
-texture = ExtResource("9_6xff3")
-expand_mode = 1
-stretch_mode = 5
-
 [node name="ChessCellButton3" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control4" unique_id=1916940775 instance=ExtResource("12_jcthh")]
 layout_mode = 1
 anchors_preset = 15
@@ -634,92 +637,92 @@ offset_right = -34.52391
 offset_bottom = -22.619057
 scale = Vector2(1.59, 1.59)
 script = ExtResource("8_00qq1")
-allCharacterPointArray = [NodePath("VBoxContainer/HBoxContainer/TextureRect"), NodePath("VBoxContainer/HBoxContainer/TextureRect2"), NodePath("VBoxContainer/HBoxContainer/TextureRect3"), NodePath("VBoxContainer/HBoxContainer2/TextureRect"), NodePath("VBoxContainer/HBoxContainer2/TextureRect2"), NodePath("VBoxContainer/HBoxContainer2/TextureRect3"), NodePath("VBoxContainer/HBoxContainer3/TextureRect"), NodePath("VBoxContainer/HBoxContainer3/TextureRect2"), NodePath("VBoxContainer/HBoxContainer3/TextureRect3")]
+allCharacterPointArray = [NodePath("Anchor0"), NodePath("Anchor1"), NodePath("Anchor2"), NodePath("Anchor3"), NodePath("Anchor4"), NodePath("Anchor5"), NodePath("Anchor6")]
 chessCellButton = NodePath("ChessCellButton4")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control5" unique_id=1229386520]
+[node name="Anchor0" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control5"]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control5/VBoxContainer" unique_id=1084521389]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control5/VBoxContainer/HBoxContainer" unique_id=2066365788]
-layout_mode = 2
-size_flags_horizontal = 3
+anchors_preset = 0
+offset_left = 6
+offset_top = 6
+offset_right = 24
+offset_bottom = 24
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control5/VBoxContainer/HBoxContainer" unique_id=720383355]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor1" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control5"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 28.5
+offset_top = 6
+offset_right = 46.5
+offset_bottom = 24
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control5/VBoxContainer/HBoxContainer" unique_id=116282958]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control5"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 51
+offset_top = 6
+offset_right = 69
+offset_bottom = 24
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control5/VBoxContainer" unique_id=508803861]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control5/VBoxContainer/HBoxContainer2" unique_id=1729376476]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control5"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 12
+offset_top = 28.5
+offset_right = 30
+offset_bottom = 46.5
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control5/VBoxContainer/HBoxContainer2" unique_id=423758766]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor4" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control5"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 37.5
+offset_top = 28.5
+offset_right = 55.5
+offset_bottom = 46.5
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control5/VBoxContainer/HBoxContainer2" unique_id=259324177]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor5" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control5"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 6
+offset_top = 51
+offset_right = 24
+offset_bottom = 69
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control5/VBoxContainer" unique_id=282820372]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control5/VBoxContainer/HBoxContainer3" unique_id=1952345289]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor6" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control5"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 51
+offset_top = 51
+offset_right = 69
+offset_bottom = 69
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
-
-[node name="TextureRect2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control5/VBoxContainer/HBoxContainer3" unique_id=1400712924]
-layout_mode = 2
-size_flags_horizontal = 3
-texture = ExtResource("9_6xff3")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="TextureRect3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control5/VBoxContainer/HBoxContainer3" unique_id=2013863712]
-layout_mode = 2
-size_flags_horizontal = 3
-texture = ExtResource("9_6xff3")
-expand_mode = 1
-stretch_mode = 5
-
 [node name="ChessCellButton4" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control5" unique_id=521697973 instance=ExtResource("12_jcthh")]
 layout_mode = 1
 anchors_preset = 15
@@ -740,92 +743,92 @@ offset_right = 89.28557
 offset_bottom = 63.095222
 scale = Vector2(1.59, 1.59)
 script = ExtResource("8_00qq1")
-allCharacterPointArray = [NodePath("VBoxContainer/HBoxContainer/TextureRect"), NodePath("VBoxContainer/HBoxContainer/TextureRect2"), NodePath("VBoxContainer/HBoxContainer/TextureRect3"), NodePath("VBoxContainer/HBoxContainer2/TextureRect"), NodePath("VBoxContainer/HBoxContainer2/TextureRect2"), NodePath("VBoxContainer/HBoxContainer2/TextureRect3"), NodePath("VBoxContainer/HBoxContainer3/TextureRect"), NodePath("VBoxContainer/HBoxContainer3/TextureRect2"), NodePath("VBoxContainer/HBoxContainer3/TextureRect3")]
+allCharacterPointArray = [NodePath("Anchor0"), NodePath("Anchor1"), NodePath("Anchor2"), NodePath("Anchor3"), NodePath("Anchor4"), NodePath("Anchor5"), NodePath("Anchor6")]
 chessCellButton = NodePath("ChessCellButton5")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control6" unique_id=1558886783]
+[node name="Anchor0" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control6"]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control6/VBoxContainer" unique_id=1970258164]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control6/VBoxContainer/HBoxContainer" unique_id=873579162]
-layout_mode = 2
-size_flags_horizontal = 3
+anchors_preset = 0
+offset_left = 6
+offset_top = 6
+offset_right = 24
+offset_bottom = 24
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control6/VBoxContainer/HBoxContainer" unique_id=908226697]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor1" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control6"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 28.5
+offset_top = 6
+offset_right = 46.5
+offset_bottom = 24
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control6/VBoxContainer/HBoxContainer" unique_id=164539228]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control6"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 51
+offset_top = 6
+offset_right = 69
+offset_bottom = 24
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control6/VBoxContainer" unique_id=1709648508]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control6/VBoxContainer/HBoxContainer2" unique_id=937466180]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control6"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 12
+offset_top = 28.5
+offset_right = 30
+offset_bottom = 46.5
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control6/VBoxContainer/HBoxContainer2" unique_id=1951091510]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor4" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control6"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 37.5
+offset_top = 28.5
+offset_right = 55.5
+offset_bottom = 46.5
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control6/VBoxContainer/HBoxContainer2" unique_id=52948627]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor5" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control6"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 6
+offset_top = 51
+offset_right = 24
+offset_bottom = 69
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control6/VBoxContainer" unique_id=1228054850]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control6/VBoxContainer/HBoxContainer3" unique_id=144210891]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor6" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control6"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 51
+offset_top = 51
+offset_right = 69
+offset_bottom = 69
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
-
-[node name="TextureRect2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control6/VBoxContainer/HBoxContainer3" unique_id=528951964]
-layout_mode = 2
-size_flags_horizontal = 3
-texture = ExtResource("9_6xff3")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="TextureRect3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control6/VBoxContainer/HBoxContainer3" unique_id=1260288378]
-layout_mode = 2
-size_flags_horizontal = 3
-texture = ExtResource("9_6xff3")
-expand_mode = 1
-stretch_mode = 5
-
 [node name="ChessCellButton5" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control6" unique_id=1000906915 instance=ExtResource("12_jcthh")]
 layout_mode = 1
 anchors_preset = 15
@@ -846,92 +849,92 @@ offset_right = 272.61884
 offset_bottom = 5.9523926
 scale = Vector2(1.59, 1.59)
 script = ExtResource("8_00qq1")
-allCharacterPointArray = [NodePath("VBoxContainer/HBoxContainer/TextureRect"), NodePath("VBoxContainer/HBoxContainer/TextureRect2"), NodePath("VBoxContainer/HBoxContainer/TextureRect3"), NodePath("VBoxContainer/HBoxContainer2/TextureRect"), NodePath("VBoxContainer/HBoxContainer2/TextureRect2"), NodePath("VBoxContainer/HBoxContainer2/TextureRect3"), NodePath("VBoxContainer/HBoxContainer3/TextureRect"), NodePath("VBoxContainer/HBoxContainer3/TextureRect2"), NodePath("VBoxContainer/HBoxContainer3/TextureRect3")]
+allCharacterPointArray = [NodePath("Anchor0"), NodePath("Anchor1"), NodePath("Anchor2"), NodePath("Anchor3"), NodePath("Anchor4"), NodePath("Anchor5"), NodePath("Anchor6")]
 chessCellButton = NodePath("ChessCellButton")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control7" unique_id=672179031]
+[node name="Anchor0" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control7"]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control7/VBoxContainer" unique_id=1114406646]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control7/VBoxContainer/HBoxContainer" unique_id=1521052871]
-layout_mode = 2
-size_flags_horizontal = 3
+anchors_preset = 0
+offset_left = 6
+offset_top = 6
+offset_right = 24
+offset_bottom = 24
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control7/VBoxContainer/HBoxContainer" unique_id=1932898908]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor1" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control7"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 28.5
+offset_top = 6
+offset_right = 46.5
+offset_bottom = 24
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control7/VBoxContainer/HBoxContainer" unique_id=583941198]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control7"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 51
+offset_top = 6
+offset_right = 69
+offset_bottom = 24
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control7/VBoxContainer" unique_id=1017677438]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control7/VBoxContainer/HBoxContainer2" unique_id=1038389164]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control7"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 12
+offset_top = 28.5
+offset_right = 30
+offset_bottom = 46.5
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control7/VBoxContainer/HBoxContainer2" unique_id=2138495276]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor4" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control7"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 37.5
+offset_top = 28.5
+offset_right = 55.5
+offset_bottom = 46.5
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control7/VBoxContainer/HBoxContainer2" unique_id=1118803888]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor5" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control7"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 6
+offset_top = 51
+offset_right = 24
+offset_bottom = 69
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control7/VBoxContainer" unique_id=159819156]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control7/VBoxContainer/HBoxContainer3" unique_id=1480607339]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor6" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control7"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 51
+offset_top = 51
+offset_right = 69
+offset_bottom = 69
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
-
-[node name="TextureRect2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control7/VBoxContainer/HBoxContainer3" unique_id=32991219]
-layout_mode = 2
-size_flags_horizontal = 3
-texture = ExtResource("9_6xff3")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="TextureRect3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control7/VBoxContainer/HBoxContainer3" unique_id=860103195]
-layout_mode = 2
-size_flags_horizontal = 3
-texture = ExtResource("9_6xff3")
-expand_mode = 1
-stretch_mode = 5
-
 [node name="ChessCellButton" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control7" unique_id=1263812689 instance=ExtResource("12_jcthh")]
 layout_mode = 1
 anchors_preset = 15
@@ -952,92 +955,92 @@ offset_right = -163.09541
 offset_bottom = 184.5238
 scale = Vector2(1.59, 1.59)
 script = ExtResource("8_00qq1")
-allCharacterPointArray = [NodePath("VBoxContainer/HBoxContainer/TextureRect"), NodePath("VBoxContainer/HBoxContainer/TextureRect2"), NodePath("VBoxContainer/HBoxContainer/TextureRect3"), NodePath("VBoxContainer/HBoxContainer2/TextureRect"), NodePath("VBoxContainer/HBoxContainer2/TextureRect2"), NodePath("VBoxContainer/HBoxContainer2/TextureRect3"), NodePath("VBoxContainer/HBoxContainer3/TextureRect"), NodePath("VBoxContainer/HBoxContainer3/TextureRect2"), NodePath("VBoxContainer/HBoxContainer3/TextureRect3")]
+allCharacterPointArray = [NodePath("Anchor0"), NodePath("Anchor1"), NodePath("Anchor2"), NodePath("Anchor3"), NodePath("Anchor4"), NodePath("Anchor5"), NodePath("Anchor6")]
 chessCellButton = NodePath("ChessCellButton")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control8" unique_id=931608005]
+[node name="Anchor0" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control8"]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control8/VBoxContainer" unique_id=383019954]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control8/VBoxContainer/HBoxContainer" unique_id=1309840838]
-layout_mode = 2
-size_flags_horizontal = 3
+anchors_preset = 0
+offset_left = 6
+offset_top = 6
+offset_right = 24
+offset_bottom = 24
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control8/VBoxContainer/HBoxContainer" unique_id=617588191]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor1" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control8"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 28.5
+offset_top = 6
+offset_right = 46.5
+offset_bottom = 24
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control8/VBoxContainer/HBoxContainer" unique_id=675850006]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control8"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 51
+offset_top = 6
+offset_right = 69
+offset_bottom = 24
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control8/VBoxContainer" unique_id=1766869387]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control8/VBoxContainer/HBoxContainer2" unique_id=1143244546]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control8"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 12
+offset_top = 28.5
+offset_right = 30
+offset_bottom = 46.5
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control8/VBoxContainer/HBoxContainer2" unique_id=947424623]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor4" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control8"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 37.5
+offset_top = 28.5
+offset_right = 55.5
+offset_bottom = 46.5
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control8/VBoxContainer/HBoxContainer2" unique_id=1480436868]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor5" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control8"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 6
+offset_top = 51
+offset_right = 24
+offset_bottom = 69
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control8/VBoxContainer" unique_id=528431190]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control8/VBoxContainer/HBoxContainer3" unique_id=1805129879]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor6" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control8"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 51
+offset_top = 51
+offset_right = 69
+offset_bottom = 69
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
-
-[node name="TextureRect2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control8/VBoxContainer/HBoxContainer3" unique_id=881634454]
-layout_mode = 2
-size_flags_horizontal = 3
-texture = ExtResource("9_6xff3")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="TextureRect3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control8/VBoxContainer/HBoxContainer3" unique_id=85593671]
-layout_mode = 2
-size_flags_horizontal = 3
-texture = ExtResource("9_6xff3")
-expand_mode = 1
-stretch_mode = 5
-
 [node name="ChessCellButton" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control8" unique_id=1357429949 instance=ExtResource("12_jcthh")]
 layout_mode = 1
 anchors_preset = 15
@@ -1058,92 +1061,92 @@ offset_right = 24.999817
 offset_bottom = 253.57146
 scale = Vector2(1.59, 1.59)
 script = ExtResource("8_00qq1")
-allCharacterPointArray = [NodePath("VBoxContainer/HBoxContainer/TextureRect"), NodePath("VBoxContainer/HBoxContainer/TextureRect2"), NodePath("VBoxContainer/HBoxContainer/TextureRect3"), NodePath("VBoxContainer/HBoxContainer2/TextureRect"), NodePath("VBoxContainer/HBoxContainer2/TextureRect2"), NodePath("VBoxContainer/HBoxContainer2/TextureRect3"), NodePath("VBoxContainer/HBoxContainer3/TextureRect"), NodePath("VBoxContainer/HBoxContainer3/TextureRect2"), NodePath("VBoxContainer/HBoxContainer3/TextureRect3")]
+allCharacterPointArray = [NodePath("Anchor0"), NodePath("Anchor1"), NodePath("Anchor2"), NodePath("Anchor3"), NodePath("Anchor4"), NodePath("Anchor5"), NodePath("Anchor6")]
 chessCellButton = NodePath("ChessCellButton")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control9" unique_id=2060013089]
+[node name="Anchor0" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control9"]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control9/VBoxContainer" unique_id=1541839851]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control9/VBoxContainer/HBoxContainer" unique_id=196722934]
-layout_mode = 2
-size_flags_horizontal = 3
+anchors_preset = 0
+offset_left = 6
+offset_top = 6
+offset_right = 24
+offset_bottom = 24
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control9/VBoxContainer/HBoxContainer" unique_id=1331546456]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor1" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control9"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 28.5
+offset_top = 6
+offset_right = 46.5
+offset_bottom = 24
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control9/VBoxContainer/HBoxContainer" unique_id=1846945477]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control9"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 51
+offset_top = 6
+offset_right = 69
+offset_bottom = 24
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control9/VBoxContainer" unique_id=600750283]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control9/VBoxContainer/HBoxContainer2" unique_id=389659670]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control9"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 12
+offset_top = 28.5
+offset_right = 30
+offset_bottom = 46.5
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control9/VBoxContainer/HBoxContainer2" unique_id=847980656]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor4" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control9"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 37.5
+offset_top = 28.5
+offset_right = 55.5
+offset_bottom = 46.5
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control9/VBoxContainer/HBoxContainer2" unique_id=1749628689]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor5" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control9"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 6
+offset_top = 51
+offset_right = 24
+offset_bottom = 69
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control9/VBoxContainer" unique_id=1503716029]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control9/VBoxContainer/HBoxContainer3" unique_id=2010489820]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor6" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control9"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 51
+offset_top = 51
+offset_right = 69
+offset_bottom = 69
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
-
-[node name="TextureRect2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control9/VBoxContainer/HBoxContainer3" unique_id=1373899247]
-layout_mode = 2
-size_flags_horizontal = 3
-texture = ExtResource("9_6xff3")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="TextureRect3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control9/VBoxContainer/HBoxContainer3" unique_id=771454465]
-layout_mode = 2
-size_flags_horizontal = 3
-texture = ExtResource("9_6xff3")
-expand_mode = 1
-stretch_mode = 5
-
 [node name="ChessCellButton" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control9" unique_id=2082883613 instance=ExtResource("12_jcthh")]
 layout_mode = 1
 anchors_preset = 15
@@ -1164,92 +1167,92 @@ offset_right = 194.04741
 offset_bottom = 191.66666
 scale = Vector2(1.59, 1.59)
 script = ExtResource("8_00qq1")
-allCharacterPointArray = [NodePath("VBoxContainer/HBoxContainer/TextureRect"), NodePath("VBoxContainer/HBoxContainer/TextureRect2"), NodePath("VBoxContainer/HBoxContainer/TextureRect3"), NodePath("VBoxContainer/HBoxContainer2/TextureRect"), NodePath("VBoxContainer/HBoxContainer2/TextureRect2"), NodePath("VBoxContainer/HBoxContainer2/TextureRect3"), NodePath("VBoxContainer/HBoxContainer3/TextureRect"), NodePath("VBoxContainer/HBoxContainer3/TextureRect2"), NodePath("VBoxContainer/HBoxContainer3/TextureRect3")]
+allCharacterPointArray = [NodePath("Anchor0"), NodePath("Anchor1"), NodePath("Anchor2"), NodePath("Anchor3"), NodePath("Anchor4"), NodePath("Anchor5"), NodePath("Anchor6")]
 chessCellButton = NodePath("ChessCellButton")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control10" unique_id=1547536982]
+[node name="Anchor0" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control10"]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control10/VBoxContainer" unique_id=548028324]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control10/VBoxContainer/HBoxContainer" unique_id=227004565]
-layout_mode = 2
-size_flags_horizontal = 3
+anchors_preset = 0
+offset_left = 6
+offset_top = 6
+offset_right = 24
+offset_bottom = 24
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control10/VBoxContainer/HBoxContainer" unique_id=1018695706]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor1" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control10"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 28.5
+offset_top = 6
+offset_right = 46.5
+offset_bottom = 24
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control10/VBoxContainer/HBoxContainer" unique_id=590148544]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control10"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 51
+offset_top = 6
+offset_right = 69
+offset_bottom = 24
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control10/VBoxContainer" unique_id=283984928]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control10/VBoxContainer/HBoxContainer2" unique_id=1906599962]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control10"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 12
+offset_top = 28.5
+offset_right = 30
+offset_bottom = 46.5
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control10/VBoxContainer/HBoxContainer2" unique_id=592029134]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor4" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control10"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 37.5
+offset_top = 28.5
+offset_right = 55.5
+offset_bottom = 46.5
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="TextureRect3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control10/VBoxContainer/HBoxContainer2" unique_id=1522130122]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor5" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control10"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 6
+offset_top = 51
+offset_right = 24
+offset_bottom = 69
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control10/VBoxContainer" unique_id=299927443]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="TextureRect" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control10/VBoxContainer/HBoxContainer3" unique_id=710205745]
-layout_mode = 2
-size_flags_horizontal = 3
+[node name="Anchor6" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control10"]
+layout_mode = 1
+anchors_preset = 0
+offset_left = 51
+offset_top = 51
+offset_right = 69
+offset_bottom = 69
+mouse_filter = 2
 texture = ExtResource("9_6xff3")
 expand_mode = 1
 stretch_mode = 5
-
-[node name="TextureRect2" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control10/VBoxContainer/HBoxContainer3" unique_id=1631481524]
-layout_mode = 2
-size_flags_horizontal = 3
-texture = ExtResource("9_6xff3")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="TextureRect3" type="TextureRect" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control10/VBoxContainer/HBoxContainer3" unique_id=1453419461]
-layout_mode = 2
-size_flags_horizontal = 3
-texture = ExtResource("9_6xff3")
-expand_mode = 1
-stretch_mode = 5
-
 [node name="ChessCellButton" parent="Panel/VBoxContainer/MidPanel/HBoxContainer/MidRegion/ChessBoard/Control10" unique_id=1943287034 instance=ExtResource("12_jcthh")]
 layout_mode = 1
 anchors_preset = 15
@@ -1282,9 +1285,9 @@ script = ExtResource("12_6xff3")
 enemyHeadButtonPrefab = ExtResource("13_jcthh")
 
 [node name="DownPanel" type="Panel" parent="Panel/VBoxContainer" unique_id=680743190]
+custom_minimum_size = Vector2(0, 170)
 layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 0.7
+size_flags_vertical = 1
 
 [node name="ColorRect" type="ColorRect" parent="Panel/VBoxContainer/DownPanel" unique_id=366311626]
 layout_mode = 1
@@ -1301,7 +1304,7 @@ layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
 offset_top = 5.0
-offset_bottom = 27.0
+offset_bottom = 39.0
 grow_horizontal = 2
 color = Color(0.62, 0.86, 0.58, 1)
 
@@ -1321,10 +1324,10 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -435.0
-offset_top = 34.0
-offset_right = 435.0
-offset_bottom = 184.0
+offset_left = -440.0
+offset_top = 44.0
+offset_right = 440.0
+offset_bottom = 162.0
 grow_horizontal = 2
 theme_override_constants/separation = 5
 
@@ -1334,10 +1337,10 @@ layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -214.0
-offset_top = 78.0
+offset_left = -300.0
+offset_top = 104.0
 offset_right = -12.0
-offset_bottom = 252.0
+offset_bottom = 404.0
 grow_horizontal = 0
 
 [node name="ColorRect" type="ColorRect" parent="Panel/SetPanel" unique_id=208453488]
@@ -1354,24 +1357,36 @@ layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.08
 anchor_top = 0.12
-anchor_right = 0.78
+anchor_right = 0.86
 anchor_bottom = 0.9
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 14
 
 [node name="TitleLabel" type="Label" parent="Panel/SetPanel/VBoxContainer"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 22
 text = "设置"
 
 [node name="EncyclopediaButton" type="Button" parent="Panel/SetPanel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
+theme_override_font_sizes/font_size = 20
 text = "百科"
 
-[node name="ExitGameButton" type="Button" parent="Panel/SetPanel/VBoxContainer"]
+[node name="TutorialButton" type="Button" parent="Panel/SetPanel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "教学"
+
+[node name="ExitGameButton" type="Button" parent="Panel/SetPanel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
 text = "退出游戏"
 
 [connection signal="pressed" from="Panel/VBoxContainer/TopPanel/Button" to="." method="SetPanelOpenButtonClicked"]
 [connection signal="pressed" from="Panel/SetPanel/VBoxContainer/EncyclopediaButton" to="." method="EncyclopediaButtonClicked"]
+[connection signal="pressed" from="Panel/SetPanel/VBoxContainer/TutorialButton" to="." method="TutorialButtonClicked"]
 [connection signal="pressed" from="Panel/SetPanel/VBoxContainer/ExitGameButton" to="." method="ExitGameButtonClicked"]

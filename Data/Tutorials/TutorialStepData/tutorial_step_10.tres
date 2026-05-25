@@ -6,8 +6,9 @@
 script = ExtResource("1_step")
 stepId = "tutorial_10_battle_log"
 orderIndex = 10
-title = "战斗记录"
-promptText = "战斗记录会展示行动开始、伤害、治疗、移动、战败和失败原因。它来自后台 CombatEvent。"
+title = "打开战斗记录"
+promptText = "结算开始后，右上角的战斗记录会持续收集后台 CombatEvent 生成的行动、伤害、治疗、移动和战败信息。点击它查看本回合发生了什么。"
+promptHorizontalPosition = 2
 highlightTarget = 9
-waitCondition = 7
+waitCondition = 10
 blocksOtherInput = true

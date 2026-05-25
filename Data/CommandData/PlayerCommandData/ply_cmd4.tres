@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_script")
 commandId = 4
-commandName = "单体"
+commandName = "飞豆弹"
 commandDescription = "对目标造成（1.0）攻击力的单体远程伤害。"
 priority = 20
 metadata/_custom_type_script = "uid://bjb2y4dhdh5gg"

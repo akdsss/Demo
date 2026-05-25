@@ -17,8 +17,8 @@
 script = ExtResource("1_script")
 playerCommandDataList = Array[Object]([ExtResource("3_move"), ExtResource("4_defense"), ExtResource("6_mp"), ExtResource("7_shot"), ExtResource("5_heal"), ExtResource("8_area_heal"), ExtResource("9_reveal_past"), ExtResource("10_reveal_cross"), ExtResource("11_reveal_future"), ExtResource("12_power")])
 characterId = 2
-characterName = "我方支援"
-characterDescription = "第2关支援角色。关卡1结束后：生命32，攻击力10，MP60，每回合2次行动。"
+characterName = "神算子"
+characterDescription = "第2关神算子。关卡1结束后：生命32，攻击力10，MP60，每回合2次行动。"
 characterHeadImage = ExtResource("2_head")
 hp = 32.0
 maxHp = 32.0

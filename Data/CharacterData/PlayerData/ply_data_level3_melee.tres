@@ -15,8 +15,8 @@
 script = ExtResource("1_script")
 playerCommandDataList = Array[Object]([ExtResource("3_move"), ExtResource("8_raid"), ExtResource("4_defense"), ExtResource("6_mp"), ExtResource("5_melee"), ExtResource("7_charge"), ExtResource("9_counter_plus"), ExtResource("10_kick")])
 characterId = 0
-characterName = "我方近战"
-characterDescription = "第3关近战角色。关卡2结束后：生命56，攻击力20，MP100，每回合3次行动。"
+characterName = "虬髯客"
+characterDescription = "第3关虬髯客。关卡2结束后：生命56，攻击力20，MP100，每回合3次行动。"
 characterHeadImage = ExtResource("2_head")
 hp = 56.0
 maxHp = 56.0

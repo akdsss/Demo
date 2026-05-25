@@ -6,6 +6,7 @@ public partial class MainUIControl : CanvasLayer
 	[Export] public Panel SetPanel;
 	private Button settingsOpenButton;
 	private Button battleLogButton;
+	private bool battleLogButtonSignalConnected;
 
 	// Called when the node enters the scene tree for the first time.
 	public override void _Ready()
@@ -48,6 +49,18 @@ public partial class MainUIControl : CanvasLayer
 
 	public Control GetTutorialHighlightControl(TutorialHighlightTarget target)
 	{
+		if (target == TutorialHighlightTarget.BattleLog)
+		{
+			BattleLogOverlayControl overlay = Autoloads.sceneSingleton?.battleLogOverlayControl;
+			if (overlay != null && overlay.IsOpen)
+			{
+				return overlay.GetTutorialHighlightControl(target) ?? battleLogButton;
+			}
+
+			EnsureBattleLogButton();
+			return battleLogButton;
+		}
+
 		if (target != TutorialHighlightTarget.EncyclopediaButton)
 		{
 			return null;
@@ -75,6 +88,18 @@ public partial class MainUIControl : CanvasLayer
 	{
 		EnsureBattleLogOverlay();
 		Autoloads.sceneSingleton?.battleLogOverlayControl?.OpenLog();
+		Autoloads.sceneSingleton?.tutorialOverlayControl?.Notify(TutorialWaitCondition.OpenBattleLog);
+	}
+
+	public void TutorialButtonClicked()
+	{
+		if (SetPanel != null)
+		{
+			SetPanel.Visible = false;
+		}
+
+		LevelData levelData = Autoloads.sceneSingleton?.battleManager?.CurrentLevelData;
+		Autoloads.sceneSingleton?.tutorialOverlayControl?.RestartTutorial(levelData);
 	}
 
 	public void ExitGameButtonClicked()
@@ -99,6 +124,18 @@ public partial class MainUIControl : CanvasLayer
 			}
 			GetViewport().SetInputAsHandled();
 			return;
+		}
+
+		if (@event.IsActionPressed("back"))
+		{
+			Vector2 backPosition = @event is InputEventMouseButton backMouseButton
+				? backMouseButton.Position
+				: GetViewport().GetMousePosition();
+			if (Autoloads.sceneSingleton?.encyclopediaOverlayControl?.HandleBackPressed(backPosition) == true)
+			{
+				GetViewport().SetInputAsHandled();
+				return;
+			}
 		}
 
 		if (@event.IsActionPressed("back") && battleLogOpen)
@@ -358,17 +395,20 @@ public partial class MainUIControl : CanvasLayer
 			battleLogButton.AnchorRight = 1f;
 			battleLogButton.AnchorTop = 0f;
 			battleLogButton.AnchorBottom = 0f;
-			battleLogButton.OffsetLeft = -144f;
-			battleLogButton.OffsetTop = 6f;
-			battleLogButton.OffsetRight = -78f;
-			battleLogButton.OffsetBottom = 72f;
+			battleLogButton.OffsetLeft = -176f;
+			battleLogButton.OffsetTop = 12f;
+			battleLogButton.OffsetRight = -100f;
+			battleLogButton.OffsetBottom = 88f;
 			battleLogButton.ZIndex = 100;
 		}
 
 		battleLogButton.MouseFilter = Control.MouseFilterEnum.Stop;
 		battleLogButton.MoveToFront();
-		battleLogButton.Pressed -= BattleLogButtonClicked;
-		battleLogButton.Pressed += BattleLogButtonClicked;
+		if (!battleLogButtonSignalConnected)
+		{
+			battleLogButton.Pressed += BattleLogButtonClicked;
+			battleLogButtonSignalConnected = true;
+		}
 
 		TextureRect icon = battleLogButton.GetNodeOrNull<TextureRect>("TextureRect");
 		if (icon == null)
@@ -388,7 +428,7 @@ public partial class MainUIControl : CanvasLayer
 		icon.OffsetBottom = 0f;
 		icon.ExpandMode = TextureRect.ExpandModeEnum.IgnoreSize;
 		icon.StretchMode = TextureRect.StretchModeEnum.KeepAspectCentered;
-		icon.Texture = ResourceLoader.Load<Texture2D>("res://Asset/ui image/log.png");
+		icon.Texture = ResourceLoader.Load<Texture2D>("res://Asset/ui image/battlelog.png");
 		icon.MouseFilter = Control.MouseFilterEnum.Ignore;
 	}
 
