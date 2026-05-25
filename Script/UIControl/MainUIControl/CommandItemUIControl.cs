@@ -437,7 +437,7 @@ public partial class CommandItemUIControl : Control
 			Source = CharacterState.FromCharacterData(owner),
 			Skill = skill
 		});
-		return $"{commandData.commandName}\nP{adjustedPriority}";
+		return $"{commandData.commandName}\nP{CombatAreaRules.ToDisplayPriority(adjustedPriority)}";
 	}
 
 	private static string FormatSkillTags(SkillTag tags)

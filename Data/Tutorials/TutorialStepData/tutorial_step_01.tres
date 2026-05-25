@@ -6,8 +6,8 @@
 script = ExtResource("1_step")
 stepId = "tutorial_01_core"
 orderIndex = 1
-title = "时间点与区域"
-promptText = "战斗的核心是时间点和区域：你先在时间轴上安排指令，再根据结算时敌我所在区域决定效果。"
+title = "战场划分为十个区域"
+promptText = "距离无关紧要——只需关注指令结算时机敌我所在的区域。\n例如，近战攻击仅命中同区域目标，而范围伤害会影响区域内所有单位。"
 promptHorizontalPosition = 0
 highlightTarget = 0
 waitCondition = 0

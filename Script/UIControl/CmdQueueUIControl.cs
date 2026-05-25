@@ -472,11 +472,20 @@ public partial class CmdQueueUIControl : Node
 			}
 			if (info.ActionLabel != null)
 			{
-				info.ActionLabel.Text = characterData is PlayerData
-					? $"剩余行动次数为{characterData.currentRestActionTimes}"
-					: characterData.currentRestActionTimes <= 0
+				if (characterData is PlayerData)
+				{
+					info.ActionLabel.Text = $"剩余行动次数为{characterData.currentRestActionTimes}";
+				}
+				else if (characterData.characterBattleState != CharacterBattleState.ALIVE)
+				{
+					info.ActionLabel.Text = "已战败";
+				}
+				else
+				{
+					info.ActionLabel.Text = characterData.currentRestActionTimes <= 0
 						? "完成"
 						: $"剩余{characterData.currentRestActionTimes}次";
+				}
 			}
 		}
 	}
@@ -1010,7 +1019,7 @@ public partial class CmdQueueUIControl : Node
 			: AreaDefinition.FormatAreaId(source.ResolveCurrentAreaId());
 		string description = SkillDescriptionFormatter.Format(skill, source);
 		string detail = revealed
-			? $"来源：{source?.characterName ?? "未知"}\n当前区域：{areaText}\n优先级：{skill.Priority}（区域修正后：{FormatAdjustedPriority(skill, source)}）\nMP：{skill.MpCost}\n目标：{FormatTargetType(skill.TargetType)}\n标签：{FormatSkillTags(skill.Tags)}\n效果：{description}"
+			? $"来源：{source?.characterName ?? "未知"}\n当前区域：{areaText}\n优先级：{CombatAreaRules.ToDisplayPriority(skill.Priority)}（区域修正后：{FormatAdjustedPriority(skill, source)}）\nMP：{skill.MpCost}\n目标：{FormatTargetType(skill.TargetType)}\n标签：{FormatSkillTags(skill.Tags)}\n效果：{description}"
 			: $"来源：{source?.characterName ?? "怪物"}\n当前区域：{areaText}\n标签：{FormatSkillTags(skill.Tags)}\n怪物行动尚未揭示。";
 		ShowCommandDetail(title, detail);
 	}
@@ -1283,14 +1292,14 @@ public partial class CmdQueueUIControl : Node
 	{
 		if (source == null || skill == null)
 		{
-			return skill?.Priority ?? 0;
+			return CombatAreaRules.ToDisplayPriority(skill?.Priority ?? 0);
 		}
 
-		return CombatAreaRules.GetAdjustedPriority(new PlannedAction
+		return CombatAreaRules.ToDisplayPriority(CombatAreaRules.GetAdjustedPriority(new PlannedAction
 		{
 			Source = CharacterState.FromCharacterData(source),
 			Skill = skill
-		});
+		}));
 	}
 }
 

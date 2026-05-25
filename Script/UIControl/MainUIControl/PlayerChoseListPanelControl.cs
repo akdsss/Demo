@@ -149,7 +149,7 @@ public partial class PlayerChoseListPanelControl : Panel
         SkillDefinition skill = SkillDefinition.FromCommandData(playerCommandData);
         CharacterData source = currentPlayerData ?? Autoloads.sceneSingleton?.battleManager?.eventManager?.currentMainPlayer;
         string description = SkillDescriptionFormatter.Format(skill, source);
-        detailLabel.Text = $"优先级：{skill.Priority}\nMP：{skill.MpCost}\n效果：{description}";
+        detailLabel.Text = $"优先级：{CombatAreaRules.ToDisplayPriority(skill.Priority)}\nMP：{skill.MpCost}\n效果：{description}";
     }
 
     public void ShowCharacterTargetList(PlayerCommandData playerCommandData, List<CharacterData> targetList, string title)

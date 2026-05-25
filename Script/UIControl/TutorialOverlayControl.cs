@@ -12,6 +12,9 @@ public partial class TutorialOverlayControl : Control
     private const float PromptRightCenterX = 0.68f;
     private const float PromptEdgeMargin = 48.0f;
     private const float HighlightPadding = 6.0f;
+    private const int TitleFontSize = 18;
+    private const int PromptFontSize = 16;
+    private const int WaitFontSize = 16;
 
     private static readonly Color HighlightColor = new(1.0f, 0.86f, 0.24f, 0.32f);
     private static readonly Color WaitTextColor = new(1.0f, 0.88f, 0.12f);
@@ -149,6 +152,7 @@ public partial class TutorialOverlayControl : Control
             Name = "TitleLabel",
             AutowrapMode = TextServer.AutowrapMode.WordSmart
         };
+        titleLabel.AddThemeFontSizeOverride("font_size", TitleFontSize);
         content.AddChild(titleLabel);
 
         promptLabel = new Label
@@ -156,6 +160,7 @@ public partial class TutorialOverlayControl : Control
             Name = "PromptLabel",
             AutowrapMode = TextServer.AutowrapMode.WordSmart
         };
+        promptLabel.AddThemeFontSizeOverride("font_size", PromptFontSize);
         content.AddChild(promptLabel);
 
         waitLabel = new Label
@@ -163,6 +168,7 @@ public partial class TutorialOverlayControl : Control
             Name = "WaitLabel",
             AutowrapMode = TextServer.AutowrapMode.WordSmart
         };
+        waitLabel.AddThemeFontSizeOverride("font_size", WaitFontSize);
         content.AddChild(waitLabel);
 
         Control buttonSpacer = new()

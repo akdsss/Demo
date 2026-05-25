@@ -5,16 +5,28 @@ using System.Linq;
 
 public static class CombatAreaRules
 {
+    public const int DesignPriorityStep = 10;
+
     public static int GetAdjustedPriority(PlannedAction action)
     {
         int priority = action?.Skill?.Priority ?? 0;
         if (action?.Source?.CurrentAreaId == CombatAreaId.Zhen &&
             action.Skill.HasTag(SkillTag.Move))
         {
-            priority += 1;
+            priority += DesignPriorityStep;
         }
 
         return priority;
+    }
+
+    public static int ToDisplayPriority(int priority)
+    {
+        if (priority <= 0)
+        {
+            return priority;
+        }
+
+        return Math.Clamp(priority / DesignPriorityStep, 1, 5);
     }
 
     public static void ApplyRoundStart(IEnumerable<CharacterState> states, int roundIndex, List<CombatEvent> events)
