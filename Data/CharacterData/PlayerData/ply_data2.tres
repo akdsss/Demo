@@ -9,10 +9,13 @@
 [ext_resource type="Resource" uid="uid://m5rplysupportshot" path="res://Data/CommandData/PlayerCommandData/ply_cmd19_support_shot.tres" id="6_shot"]
 [ext_resource type="Resource" uid="uid://m5rplyareaheal" path="res://Data/CommandData/PlayerCommandData/ply_cmd20_area_heal.tres" id="7_area_heal"]
 [ext_resource type="Resource" uid="uid://m5rplypowerup" path="res://Data/CommandData/PlayerCommandData/ply_cmd24_power_up.tres" id="8_power"]
+[ext_resource type="Resource" uid="uid://m5rplyrevealpast" path="res://Data/CommandData/PlayerCommandData/ply_cmd21_reveal_past.tres" id="9_reveal_past"]
+[ext_resource type="Resource" uid="uid://m5rplyrevealcross" path="res://Data/CommandData/PlayerCommandData/ply_cmd22_reveal_cross.tres" id="10_reveal_cross"]
+[ext_resource type="Resource" uid="uid://m5rplyrevealfuture" path="res://Data/CommandData/PlayerCommandData/ply_cmd23_reveal_future.tres" id="11_reveal_future"]
 
 [resource]
 script = ExtResource("4_g50c1")
-playerCommandDataList = Array[Object]([ExtResource("1_move"), ExtResource("2_defense"), ExtResource("5_mp"), ExtResource("6_shot"), ExtResource("3_heal"), ExtResource("7_area_heal"), ExtResource("8_power")])
+playerCommandDataList = Array[Object]([ExtResource("1_move"), ExtResource("2_defense"), ExtResource("5_mp"), ExtResource("6_shot"), ExtResource("3_heal"), ExtResource("7_area_heal"), ExtResource("9_reveal_past"), ExtResource("10_reveal_cross"), ExtResource("11_reveal_future"), ExtResource("8_power")])
 characterId = 2
 characterName = "神算子"
 characterDescription = "教学关神算子。初始生命22，攻击力10，每回合2次行动。"
